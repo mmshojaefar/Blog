@@ -1,0 +1,4 @@
+project/settings.py
+project/__pycache__
+blog/__pycache__
+.git
