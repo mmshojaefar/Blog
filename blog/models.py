@@ -1,5 +1,5 @@
 from django.db import models
-# from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator
 
 # Create your models here.
 
@@ -153,13 +153,13 @@ class User(models.Model):
         verbose_name='نام خانوداگی',
         max_length=100,
     )
-    # phone_regex = RegexValidator(
-    #     regex=r'\b[0]{1}[9]{1}[0-9]{9}\b',
-    #     message="شماره تلفن همراه باید به فرمت 09123456789 باشد"
-    # )
+    phone_regex = RegexValidator(
+        regex=r'\b[0]{1}[9]{1}[0-9]{9}\b',
+        message="شماره تلفن همراه باید به فرمت 09123456789 باشد"
+    )
     phone = models.CharField(
         verbose_name='تلفن همراه',
-        # validators=[phone_regex],
+        validators=[phone_regex],
         max_length=17,
         blank=True,
     )
