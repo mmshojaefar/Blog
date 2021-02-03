@@ -2,7 +2,6 @@ from django.db import models
 from django.core.validators import RegexValidator
 
 # Create your models here.
-
 class Tag(models.Model):
     class Meta:
         verbose_name = 'برچسب'
@@ -38,17 +37,16 @@ class Post(models.Model):
         verbose_name='عنوان',
         max_length=200,
     )
-    text = models.CharField(
+    text = models.TextField(
         verbose_name='متن',
-        max_length=2000,
     )
-    image = models.CharField(
+    image = models.URLField(
         verbose_name='تصویر',
         blank=True,
         null=True,
         max_length=200,
     )
-    video = models.CharField(
+    video = models.URLField(
         verbose_name='ویدئو',
         blank=True,
         null=True,
@@ -68,25 +66,19 @@ class Post(models.Model):
     tags = models.ManyToManyField(
         Tag,
         verbose_name='برچسب ها',
+        through='Post_tag',
     )
     categories = models.ForeignKey(
         Category,
         on_delete=models.CASCADE,
         verbose_name='دسته بندی ها',
     )
-    post_like = models.ManyToManyField(
+    post_likes = models.ManyToManyField(
         'User',
         verbose_name='پسندیدم',
         blank=True,
-        # null=True,
         related_name='post_like',
-    )
-    post_dislike = models.ManyToManyField(
-        'User',
-        verbose_name='نپسندیدم',
-        blank=True,
-        # null=True,
-        related_name='post_dislike',
+        through='Post_rating',
     )
     user = models.ForeignKey(
         'User',
@@ -97,6 +89,25 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+class Post_tag(models.Model):
+    class Meta:
+        verbose_name = 'برچسب'
+        verbose_name_plural = 'برچسب ها'
+
+    post = models.ForeignKey('Post', on_delete=models.CASCADE)
+    tag = models.ForeignKey('Tag', on_delete=models.CASCADE)
+
+class Post_rating(models.Model):
+    class Meta:
+        verbose_name = 'پسندیدن/نپسندیدن پست'
+        verbose_name_plural = 'پسندیدن/نپسندیدن پست ها'
+
+    post = models.ForeignKey('Post', on_delete=models.CASCADE)
+    user = models.ForeignKey('User', on_delete=models.CASCADE)
+    positive = models.BooleanField(
+        verbose_name='پسندیدن؟'
+    )
 
 class Comment(models.Model):
     class Meta:
@@ -122,23 +133,24 @@ class Comment(models.Model):
         verbose_name='کاربر',
         related_name='comment_user',
     )
-    comment_like = models.ManyToManyField(
+    comment_likes = models.ManyToManyField(
         'User',
         verbose_name='پسندیدم',
         blank=True,
-        # null=True,
         related_name='comment_like',
-    )
-    comment_dislike = models.ManyToManyField(
-        'User',
-        verbose_name='نپسندیدم',
-        blank=True,
-        # null=True,
-        related_name='comment_dislike'
+        through='Comment_rating',
     )
 
     def __str__(self):
-        return self.text[:50] + '...'
+        return str(self.text)[:50] + '...'
+
+class Comment_rating(models.Model):
+    class Meta:
+        verbose_name = 'پسندیدن/نپسندیدن نظر'
+        verbose_name_plural = 'پسندیدن/نپسندیدن نظرات'
+
+    comment = models.ForeignKey('Comment', on_delete=models.CASCADE)
+    user = models.ForeignKey('User', on_delete=models.CASCADE)
 
 class User(models.Model):
     class Meta:
@@ -155,19 +167,20 @@ class User(models.Model):
     )
     phone_regex = RegexValidator(
         regex=r'\b[0]{1}[9]{1}[0-9]{9}\b',
-        message="شماره تلفن همراه باید به فرمت 09123456789 باشد"
+        message="شماره تلفن همراه باید به فرمت 09123456789 باشد",
     )
     phone = models.CharField(
         verbose_name='تلفن همراه',
         validators=[phone_regex],
         max_length=17,
         blank=True,
+        null=True,
     )
     email = models.EmailField(
         verbose_name='ایمیل',
         unique=True,
     )
-    image = models.CharField(
+    image = models.URLField(
         verbose_name='تصویر',
         blank=True,
         null=True,
@@ -176,17 +189,35 @@ class User(models.Model):
     register_time = models.DateField(
         verbose_name='زمان ثبت نام',
         blank=True,
+        null=True,
     )
-    register_time = models.DateTimeField(
+    lastseen_time = models.DateTimeField(
         verbose_name='اخرین بازدید',
         blank=True,
+        null=True,
     )
     follow = models.ManyToManyField(
         'User',
         verbose_name='دنبال کنندگان',
         blank=True,
-        # null=True
+        through='Follow',
     )
 
     def __str__(self):
         return self.first_name + " " + self.last_name
+
+class Follow(models.Model):
+    class Meta:
+        verbose_name = 'ارتباطات کاربران'
+        verbose_name_plural = 'ارتباط کاربران'
+
+    follower = models.ForeignKey(
+        'User',
+        on_delete=models.CASCADE,
+        related_name='follower',
+    )
+    followed = models.ForeignKey(
+        'User',
+        on_delete=models.CASCADE,
+        related_name='followed',
+    )
