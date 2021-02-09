@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import RegexValidator
+from tinymce import models as tinymce_models
 
 # Create your models here.
 class Tag(models.Model):
@@ -25,6 +26,14 @@ class Category(models.Model):
         max_length=100,
     )
 
+    supercategories = models.ForeignKey(
+        'Category',
+        verbose_name='سر دسته',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+
     def __str__(self):
         return self.name
 
@@ -37,23 +46,25 @@ class Post(models.Model):
         verbose_name='عنوان',
         max_length=200,
     )
-    text = models.TextField(
+    text = tinymce_models.HTMLField(
         verbose_name='متن',
     )
-    image = models.URLField(
+    # text = models.TextField(
+    #     verbose_name='متن',
+    # )
+    image = models.ImageField(
         verbose_name='تصویر',
         blank=True,
         null=True,
-        max_length=200,
     )
-    video = models.URLField(
-        verbose_name='ویدئو',
-        blank=True,
-        null=True,
-        max_length=200,
-    )
+    # video = models.URLField(
+    #     verbose_name='ویدئو',
+    #     blank=True,
+    #     null=True,
+    #     max_length=200,
+    # )
     show_post = models.BooleanField(
-        verbose_name='نمایش داده شود',
+        verbose_name='آیا پست نمایش داده شود',
         default=True,
     )
     post_send_time = models.DateTimeField(
@@ -221,3 +232,4 @@ class Follow(models.Model):
         on_delete=models.CASCADE,
         related_name='followed',
     )
+1
