@@ -35,3 +35,17 @@ tinymce.init({
     },
     content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:15px; line-height: 0.4}'
 });
+
+function invalid_input(){
+    $('.has-error').each(function(){
+        $(this).find('input').addClass('border border-danger')
+    });
+}
+
+
+invalid_input()
+$(document).ready(function(){
+    setTimeout(function() {
+        $('.has-error').find('.tox').addClass('border border-danger');}, 10000);
+    }
+);
