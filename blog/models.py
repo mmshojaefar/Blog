@@ -41,6 +41,11 @@ class Post(models.Model):
     class Meta:
         verbose_name = 'پست'
         verbose_name_plural = 'پست ها'
+        permissions = [
+            ('accept_post', 'تایید کردن پست'),
+            ('show_post', 'نمایش دادن پست'),
+            ('rate_post', 'پسندیدن/نپسندیدن پست'),
+        ]
 
     title = models.CharField(
         verbose_name='عنوان',
@@ -74,6 +79,10 @@ class Post(models.Model):
         verbose_name='پست تایید شده است',
         default=False,
     )
+    # checked_by_admin = models.BooleanField(
+    #     verbose_name='پست برای تایید دیده شده است',
+    #     default=False,
+    # )
     tags = models.ManyToManyField(
         Tag,
         verbose_name='برچسب ها',
@@ -124,6 +133,10 @@ class Comment(models.Model):
     class Meta:
         verbose_name = 'نظر'
         verbose_name_plural = 'نظرات'
+        permissions = [
+            ('accept_comment', 'تایید کردن نظر'),
+            ('rate_comment', 'پسندیدن/نپسندیدن نظر'),
+        ]
     
     text = models.CharField(
         verbose_name='متن',
@@ -131,6 +144,10 @@ class Comment(models.Model):
     )
     accept_by_admin = models.BooleanField(
         verbose_name='کامنت تایید شده است',
+        default=False,
+    )
+    checked_by_admin = models.BooleanField(
+        verbose_name='پست برای تایید دیده شده است',
         default=False,
     )
     post = models.ForeignKey(
@@ -232,4 +249,3 @@ class Follow(models.Model):
         on_delete=models.CASCADE,
         related_name='followed',
     )
-1
