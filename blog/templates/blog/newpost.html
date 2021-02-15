@@ -2,7 +2,7 @@
 {% load bootstrap %}
 
 <!DOCTYPE html>
-<html lang="fa">
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +12,9 @@
     {{ form.media }}
 </head>
 <body>
+    {% if user.is_authenticated %}
+        خوش آمدید {{ user }} <a href="{% url 'logout' %}">خروج</a>
+    {% endif %}
     <form method="POST">
         {% csrf_token %}
         {%for field in form %}

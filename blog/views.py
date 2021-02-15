@@ -9,7 +9,7 @@ from django.utils import timezone
 
 # Create your views here.
 
-# @login_required
+@login_required
 def newpost(request):
     ans = ''
     # username = request.user.username
