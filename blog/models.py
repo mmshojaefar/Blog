@@ -61,13 +61,8 @@ class Post(models.Model):
         verbose_name='تصویر',
         blank=True,
         null=True,
+        upload_to='post_imgs'
     )
-    # video = models.URLField(
-    #     verbose_name='ویدئو',
-    #     blank=True,
-    #     null=True,
-    #     max_length=200,
-    # )
     show_post = models.BooleanField(
         verbose_name='آیا پست نمایش داده شود',
         default=True,
@@ -137,6 +132,7 @@ class Comment(models.Model):
             ('accept_comment', 'تایید کردن نظر'),
             ('rate_comment', 'پسندیدن/نپسندیدن نظر'),
         ]
+        ordering = ['-comment_send_time']
     
     text = models.CharField(
         verbose_name='متن',
@@ -146,9 +142,12 @@ class Comment(models.Model):
         verbose_name='کامنت تایید شده است',
         default=False,
     )
-    checked_by_admin = models.BooleanField(
-        verbose_name='پست برای تایید دیده شده است',
-        default=False,
+    # checked_by_admin = models.BooleanField(
+    #     verbose_name='نظر برای تایید دیده شده است',
+    #     default=False,
+    # )
+    comment_send_time = models.DateTimeField(
+        verbose_name='زمان ارسال نظر',
     )
     post = models.ForeignKey(
         Post,
@@ -219,11 +218,11 @@ class User(models.Model):
         blank=True,
         null=True,
     )
-    lastseen_time = models.DateTimeField(
-        verbose_name='اخرین بازدید',
-        blank=True,
-        null=True,
-    )
+    # lastseen_time = models.DateTimeField(
+    #     verbose_name='اخرین بازدید',
+    #     blank=True,
+    #     null=True,
+    # )
     follow = models.ManyToManyField(
         'User',
         verbose_name='دنبال کنندگان',
