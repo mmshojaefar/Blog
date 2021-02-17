@@ -43,8 +43,8 @@ class Post(models.Model):
         verbose_name_plural = 'پست ها'
         permissions = [
             ('accept_post', 'تایید کردن پست'),
-            ('show_post', 'نمایش دادن پست'),
-            ('rate_post', 'پسندیدن/نپسندیدن پست'),
+            # ('show_post', 'نمایش دادن پست'),
+            # ('rate_post', 'پسندیدن/نپسندیدن پست'),
         ]
 
     title = models.CharField(
@@ -130,7 +130,7 @@ class Comment(models.Model):
         verbose_name_plural = 'نظرات'
         permissions = [
             ('accept_comment', 'تایید کردن نظر'),
-            ('rate_comment', 'پسندیدن/نپسندیدن نظر'),
+            # ('rate_comment', 'پسندیدن/نپسندیدن نظر'),
         ]
         ordering = ['-comment_send_time']
     

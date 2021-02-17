@@ -31,22 +31,35 @@ class Command(BaseCommand):
             return
 
         # Create permissions and add them to groups
-        # add_comment = Permission.objects.filter(codename='add_comment')
-        # print(add_comment)
-        # edit_comment = Permission.objects.get(name='blog.change_comment')
-        # delete_comment = Permission.objects.get(name='blog.delete_comment')
-        # view_comment = Permission.objects.get(name='blog.view_comment')
 
-        # add_post = Permission.objects.get(name='blog.add_post')
-        # edit_post = Permission.objects.get(name='blog.change_post')
-        # delete_post = Permission.objects.get(name='blog.delete_post')
-        # view_post = Permission.objects.get(name='blog.view_post')
+        # Like/dislike doesn't need permissions! It is enough to check user is logged in or not!
 
-        # add_category = Permission.objects.get(name='blog.add_post')
-        # edit_categry = Permission.objects.get(name='blog.change_post')
-        # delete_category = Permission.objects.get(name='blog.delete_post')
-        # view_category = Permission.objects.get(name='blog.view_post')
+        # Leaving comment does not need premissions (of course logged in user can leave comment) but editting comment
+        # need permissions(writer of comment/edittor/admin can edit a comment). Needless to say everyone can see all
+        # comments although logged in or not 
+        add_comment = Permission.objects.filter(codename='add_comment')
+        edit_comment = Permission.objects.filter(name='change_comment')
+        delete_comment = Permission.objects.filter(name='delete_comment')
+        view_comment = Permission.objects.filter(name='view_comment')
+
+        # Leaving and editting post need premissions(writer/editor/admin user can leave post and admin/editor can edit 
+        # all post and writer user can edit her/his post), so we set all permissions. Needless to say everyone can see
+        # all comments although logged in or not
+        add_post = Permission.objects.filter(name='add_post')
+        edit_post = Permission.objects.filter(name='change_post')
+        delete_post = Permission.objects.filter(name='delete_post')
+        view_post = Permission.objects.filter(name='view_post')
+
+        # Only admin user can add/edit/delete category but every writer can select the category for their post and everyone
+        # (although logged in or not) can see all post of a category so everyone has permission for viewnig categories!  
+        add_category = Permission.objects.filter(name='add_category')
+        edit_categry = Permission.objects.filter(name='change_category')
+        delete_category = Permission.objects.filter(name='delete_category')
+        view_category = Permission.objects.filter(name='view_category')
         
-        # rate_comment = Permission.objects.get(name='blog.add_post')
-        # rate_post = Permission.objects.get(name='blog.add_post')
+        #only editor/admin user can accept post for public view!
+        accept_post = Permission.objects.filter(name='accept_post')
+
+        #only editor/admin user can accept comment for public view!
+        accept_post = Permission.objects.filter(name='accept_comment')
         self.stdout.write(self.style.SUCCESS('Successfully created 4 groups!'))
