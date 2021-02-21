@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import RegexValidator
 from tinymce import models as tinymce_models
+from django.contrib.auth.base_user import AbstractBaseUser
 
 # Create your models here.
 class Tag(models.Model):
@@ -179,11 +180,15 @@ class Comment_rating(models.Model):
     comment = models.ForeignKey('Comment', on_delete=models.CASCADE)
     user = models.ForeignKey('User', on_delete=models.CASCADE)
 
-class User(models.Model):
+class User(AbstractBaseUser):
     class Meta:
         verbose_name = 'کاربر'
         verbose_name_plural = 'کاربران'
 
+    identifier = models.CharField(
+        max_length=40,
+        unique=True,
+    )
     first_name = models.CharField(
         verbose_name='نام',
         max_length=100,
@@ -229,6 +234,9 @@ class User(models.Model):
         blank=True,
         through='Follow',
     )
+    USERNAME_FIELD = 'identifier'
+
+
 
     def __str__(self):
         return self.first_name + " " + self.last_name
