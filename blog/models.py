@@ -3,6 +3,7 @@ from django.core.validators import RegexValidator
 from tinymce import models as tinymce_models
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+# from django.contrib.auth.hashers import make_password
 from django.utils.translation import ugettext_lazy
 from django.utils import timezone
 
@@ -217,10 +218,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name = 'کاربر'
         verbose_name_plural = 'کاربران'
 
-    password = models.CharField(
-        verbose_name=ugettext_lazy('رمز عبور'),
-        max_length=128,
-    )
+    # password = models.CharField(
+    #     verbose_name=ugettext_lazy('رمز عبور'),
+    #     max_length=128,
+    # )
     username = models.CharField(
         verbose_name='نام کاربری',
         max_length=40,
@@ -249,6 +250,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name='ایمیل',
         unique=True,
     )
+    birth_day = models.DateField(
+        verbose_name='تاریخ تولد',
+        blank=True,
+        null=True,
+    )
     image = models.ImageField(
         verbose_name='تصویر',
         blank=True,
@@ -270,8 +276,12 @@ class User(AbstractBaseUser, PermissionsMixin):
         default=False,
     )
     is_active = models.BooleanField(
-        verbose_name='فعال است',
+        verbose_name='فعال است؟',
         default=True,
+    )
+    is_superuser = models.BooleanField(
+        verbose_name='ابرکاربر',
+        default=False,
     )
     follow = models.ManyToManyField(
         'User',
