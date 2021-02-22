@@ -1,7 +1,10 @@
 from django.db import models
 from django.core.validators import RegexValidator
 from tinymce import models as tinymce_models
-from django.contrib.auth.base_user import AbstractBaseUser
+from django.contrib.auth.base_user import BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.utils.translation import ugettext_lazy
+from django.utils import timezone
 
 # Create your models here.
 class Tag(models.Model):
@@ -180,12 +183,46 @@ class Comment_rating(models.Model):
     comment = models.ForeignKey('Comment', on_delete=models.CASCADE)
     user = models.ForeignKey('User', on_delete=models.CASCADE)
 
-class User(AbstractBaseUser):
+class CustomUserManager(BaseUserManager):
+    '''
+    Custom user model manager where username is the unique identifiers for authentication
+    '''
+    def create_user(self, username, password, **extra_fields):
+        '''
+        Create and save a User with the given username and password.
+        '''
+        if not username:
+            raise ValueError(ugettext_lazy('The Username must be set'))
+        user = self.model(username=username, **extra_fields)
+        user.set_password(password)
+        user.save()
+        return user
+
+    def create_superuser(self, username, password, **extra_fields):
+        '''
+        Create and save a SuperUser with the given username and password.
+        '''
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_active', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError(ugettext_lazy('Superuser must have is_staff=True.'))
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError(ugettext_lazy('Superuser must have is_superuser=True.'))
+        return self.create_user(username, password, **extra_fields)
+
+class User(AbstractBaseUser, PermissionsMixin):
     class Meta:
         verbose_name = 'کاربر'
         verbose_name_plural = 'کاربران'
 
-    identifier = models.CharField(
+    password = models.CharField(
+        verbose_name=ugettext_lazy('رمز عبور'),
+        max_length=128,
+    )
+    username = models.CharField(
+        verbose_name='نام کاربری',
         max_length=40,
         unique=True,
     )
@@ -212,34 +249,43 @@ class User(AbstractBaseUser):
         verbose_name='ایمیل',
         unique=True,
     )
-    image = models.URLField(
+    image = models.ImageField(
         verbose_name='تصویر',
         blank=True,
         null=True,
-        max_length=200,
+        upload_to='user_imgs'
     )
-    register_time = models.DateField(
+    date_joined = models.DateTimeField(
         verbose_name='زمان ثبت نام',
         blank=True,
-        null=True,
+        default=timezone.now,
     )
     # lastseen_time = models.DateTimeField(
     #     verbose_name='اخرین بازدید',
     #     blank=True,
     #     null=True,
     # )
+    is_staff = models.BooleanField(
+        verbose_name='کارمند است؟',
+        default=False,
+    )
+    is_active = models.BooleanField(
+        verbose_name='فعال است',
+        default=True,
+    )
     follow = models.ManyToManyField(
         'User',
         verbose_name='دنبال کنندگان',
         blank=True,
         through='Follow',
     )
-    USERNAME_FIELD = 'identifier'
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = []
 
-
+    objects = CustomUserManager()
 
     def __str__(self):
-        return self.first_name + " " + self.last_name
+        return self.username + ' : ' + self.first_name + " " + self.last_name
 
 class Follow(models.Model):
     class Meta:
