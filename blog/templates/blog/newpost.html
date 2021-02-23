@@ -15,17 +15,15 @@
     {% if user.is_authenticated %}
         خوش آمدید {{ user }} <a href="{% url 'logout' %}">خروج</a>
     {% endif %}
-    <form method="POST">
+    <form method="POST" class='w-50 m-auto'>
         {% csrf_token %}
         {%for field in form %}
             <div class="control-group {%if field.errors %}text-danger{%endif%}">
                 {{ field|bootstrap }}
-            {# render your field #}
             </div>
         {% endfor %}
         <input type="submit" value="ارسال" class="btn btn-primary"/>
     </form>
-    {{ ans }}
     <script src="{% static 'blog/lib/js/jquery-3.4.1.min.js' %}"></script>  
     <script src="{% static 'blog/lib/js/bootstrap.min.js' %}"></script>  
     <script src="{% static 'blog/tinymce.min.js' %}"></script>

@@ -5,6 +5,7 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.utils.translation import ugettext_lazy
 from django.utils import timezone
+from django.contrib.auth.password_validation import validate_password
 
 # Create your models here.
 class Tag(models.Model):
