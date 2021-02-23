@@ -3,7 +3,6 @@ from django.core.validators import RegexValidator
 from tinymce import models as tinymce_models
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
-# from django.contrib.auth.hashers import make_password
 from django.utils.translation import ugettext_lazy
 from django.utils import timezone
 
@@ -290,7 +289,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         through='Follow',
     )
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = []
+    # REQUIRED_FIELDS = []
 
     objects = CustomUserManager()
 
