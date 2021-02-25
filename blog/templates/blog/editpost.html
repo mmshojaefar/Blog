@@ -1,0 +1,32 @@
+{% load static %}
+{% load bootstrap %}
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پست جدید</title>
+    <link rel="stylesheet" href="{% static 'blog/lib/css/bootstrap.min.css' %}">  
+    <link rel="stylesheet" href="{% static 'blog/newpost.css' %}">
+    {{ form.media }}
+</head>
+<body>
+    {% if user.is_authenticated %}
+        خوش آمدید {{ user }} <a href="{% url 'logout' %}">خروج</a>
+    {% endif %}
+    <form method="POST" class='w-50 m-auto' enctype="multipart/form-data">
+        {% csrf_token %}
+        {%for field in form %}
+            <div class="control-group {%if field.errors %}text-danger{%endif%}">
+                {{ field|bootstrap }}
+            </div>
+        {% endfor %}
+        <input type="submit" value="ارسال" class="btn btn-primary"/>
+    </form>
+    <script src="{% static 'blog/lib/js/jquery-3.4.1.min.js' %}"></script>  
+    <script src="{% static 'blog/lib/js/bootstrap.min.js' %}"></script>  
+    <script src="{% static 'blog/tinymce.min.js' %}"></script>
+    <script src="{% static 'blog/newpost.js' %}"></script>
+</body>
+</html>

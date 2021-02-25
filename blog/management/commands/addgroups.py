@@ -55,8 +55,11 @@ class Command(BaseCommand):
             editor_user.permissions.add(add_comment)
             admin_user.permissions.add(add_comment)
 
+            writer_user.permissions.add(edit_comment)
             editor_user.permissions.add(edit_comment)
             admin_user.permissions.add(edit_comment)
+
+            writer_user.permissions.add(delete_comment)
             editor_user.permissions.add(delete_comment)
             admin_user.permissions.add(delete_comment)
             self.stdout.write(self.style.SUCCESS('Successfully permissions of model comment added to groups!'))
@@ -81,8 +84,11 @@ class Command(BaseCommand):
             editor_user.permissions.add(add_post)
             admin_user.permissions.add(add_post)
 
+            writer_user.permissions.add(edit_post)
             editor_user.permissions.add(edit_post)
             admin_user.permissions.add(edit_post)
+
+            writer_user.permissions.add(delete_post)
             editor_user.permissions.add(delete_post)
             admin_user.permissions.add(delete_post)
             self.stdout.write(self.style.SUCCESS('Successfully permissions of model post added to groups!'))

@@ -38,26 +38,41 @@ def newpost(request, username):
         form = PostForm()
     return render(request, 'blog/newpost.html', context={'form':form})
 
-
-def editpost(request, username):
+# @permission_required('blog.change_post')
+def editpost(request, username, pk):
     '''
-        This function used for create new post! writer/editor/admin can add new posts.
+        This function used for edit a post! Only owner can edit the posts.
     '''
-    username = request.user
-    if request.POST:
-        form = PostForm(request.POST)
+    user = request.user
+    if not user.username == username:
+        raise Http404
+    # print(request.method=='GET')
+    if request.method=='GET':
+        post = Post.objects.get(pk=pk)
+        form = PostForm(initial={'title': post.title,
+                                'text': post.text,
+                                'image': post.image,
+                                'show_post': post.show_post,
+                                'categories': post.categories,
+                                #  'tags': post.tags,
+                                })
+        # , 'text', 'image', 'show_post', 'categories', 'tags')
+        return render(request, 'blog/editpost.html', context={'form':form})
+    else:
+        form = PostForm(request.POST, request.FILES)
         if form.is_valid():
-            post = form.save(commit=False)
-            post.post_send_time = timezone.now()
-            post.user = username
+            post = Post.objects.get(pk=pk)
+            edited_post = form.save(commit=False)
+            post.title = edited_post.title
+            post.text = edited_post.text
+            post.image = edited_post.image
+            post.show_post = edited_post.show_post
+            post.categories = edited_post.categories
             post.save()
-            print(reverse('showpost', kwargs={'username':username.username, 'pk':post.pk}))
-            return HttpResponseRedirect(reverse('showpost', kwargs={'username':username.username, 'pk':post.pk}))
+            return HttpResponseRedirect(reverse('showpost', kwargs={'username':post.user.username, 'pk':post.pk}))
         else:
             form = PostForm(request.POST)
-    else:
-        form = PostForm()
-    return render(request, 'blog/newpost.html', context={'form':form})
+    return render(request, 'blog/editpost.html', context={})
 
 
 def showpost(request, username, pk):
