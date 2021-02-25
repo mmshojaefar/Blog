@@ -48,8 +48,6 @@ class Post(models.Model):
         verbose_name_plural = 'پست ها'
         permissions = [
             ('accept_post', 'تایید کردن پست'),
-            # ('show_post', 'نمایش دادن پست'),
-            # ('rate_post', 'پسندیدن/نپسندیدن پست'),
         ]
 
     title = models.CharField(
@@ -59,9 +57,6 @@ class Post(models.Model):
     text = tinymce_models.HTMLField(
         verbose_name='متن',
     )
-    # text = models.TextField(
-    #     verbose_name='متن',
-    # )
     image = models.ImageField(
         verbose_name='تصویر',
         blank=True,
@@ -174,7 +169,7 @@ class Comment(models.Model):
     )
 
     def __str__(self):
-        return str(self.text)[:50] + '...'
+        return str(self.text)[:50] + (len(self.text)>50)*'...'
 
 class Comment_rating(models.Model):
     class Meta:
@@ -226,6 +221,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name='نام کاربری',
         max_length=40,
         unique=True,
+        primary_key=True,
     )
     first_name = models.CharField(
         verbose_name='نام',

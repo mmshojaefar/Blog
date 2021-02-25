@@ -9,19 +9,53 @@
     {{ post.media }}
 </head>
 <body>
+    {{ post.user.username }}
+    {% comment %} {{ post.user.image }} {% endcomment %}
     <table>
-        <td>
-            <tr>{{ post.text|safe }}</tr>
-        </td>
-    </table>
-    <table>
-        {% for comment in comments %}
         <tr>
-            <td>{{ comment.text }}</td>
+            <td>{{ post.title }}</td>
         </tr>
-        {% endfor %}
+        {% if post.image %}
+            <tr>
+                <td>
+                    <img src="{{ post.image.url }}" width=100 height=100 >
+                </td>
+            </tr>
+        {% endif %}
+        <tr>
+            <td>{{ post.text|safe }}</td>
+        </tr>
     </table>
-    <img src="{{ post.image.url }}" width=100 height=100 >
+    <input type='button' value='{{ likes }}'>
+    <input type='button' value='{{ dislikes }}'>
+    {% if can_accept %}
+        {% if post.accept_by_admin %}
+            <input type='button' value='عدم تایید'>
+        {% else %}
+            <input type='button' value='تایید'>
+        {% endif %}
+    {% endif %}
+    {% if owner %}
+        <input type='button' value='ویرایش'>
+    {% endif %}
+    {% if can_accept %}
+        <table>
+            {% for comment in allcomments %}
+            <tr>
+                <td>{{ comment.text }}</td>
+                <td><input type='button' value='تایید'></td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <table>
+            {% for comment in comments %}
+            <tr>
+                <td>{{ comment.text }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
     <script src="{% static 'blog/tinymce.min.js' %}"></script>
     <script src="{% static 'blog/newpost.js' %}"></script>
 </body>

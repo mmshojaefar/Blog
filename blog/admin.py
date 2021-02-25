@@ -1,18 +1,57 @@
 from django import forms
 from django.contrib import admin
 from django.contrib.auth.models import Group
+from django.utils import timezone
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
-from .models import Tag, Category, Post, User, Comment
+from .models import Tag, Category, Post, User, Comment, Post_rating, Post_tag, Comment_rating, Follow
 from django.contrib.auth.password_validation import validate_password
 
 # Register your models here.
 
 admin.site.register(Tag)
 admin.site.register(Category)
-admin.site.register(Post)
 admin.site.register(Comment)
+admin.site.register(Comment_rating)
+admin.site.register(Post_rating)
+admin.site.register(Post_tag)
+
+# class CommentsInline(admin.TabularInline):
+#     model = Comment
+#     extra = 1
+#     fieldsets = [
+#         (None, {'fields': ['user', 'text', 'comment_send_time', 'accept_by_admin']}),
+#     ]
+
+#     readonly_fields = ['user', 'comment_send_time']
+
+
+# class PostAdmin(admin.ModelAdmin):
+
+#     fieldsets = [
+#         (None, {'fields': ['user', 'title', 'text', 'image', 'show_post']}),
+#         # ('طبقه بندی', {'fields': ['tags', 'categories']}),
+#         # ('نظرات و امتیازات', {'fields': ['post_likes',]}),
+#     ]
+
+#     def get_form(self, request, obj=None, **kwargs):
+#         form = super(PostAdmin, self).get_form(request, obj, **kwargs)
+#         # form.base_fields['user'].initial = request.user
+#         return form
+    
+#     inlines = [CommentsInline]
+#     readonly_fields = ['post_send_time', 'post_likes', 'user']
+
+#     def save_model(self, request, obj, form, change):
+#         obj.user = request.user
+#         obj.post_send_time = timezone.now()
+#         super(PostAdmin, self).save_model(request, obj, form, change)
+
+    
+# admin.site.register(Post, PostAdmin)
+admin.site.register(Post)
+
 
 class UserCreationForm(forms.ModelForm):
     '''
@@ -59,7 +98,7 @@ class UserChangeForm(forms.ModelForm):
         # field does not have access to the initial value
         return self.initial["password"]
 
-class UserAdmin(BaseUserAdmin):
+class UserAdmin(BaseUserAdmin, admin.ModelAdmin):
     # The forms to add and change user instances
     form = UserChangeForm
     add_form = UserCreationForm
@@ -70,20 +109,13 @@ class UserAdmin(BaseUserAdmin):
 
     list_display = ('username', 'first_name', 'last_name', 'email', 'is_superuser')
     # list_filter = ('is_superuser',)
-    # fieldsets = (
-    #     (None, {'fields': ('email', 'password')}),
-    #     ('Personal info', {'fields': ('birth_day',)}),
-    #     ('Permissions', {'fields': ('is_superuser',)}),
-    # )
+    fieldsets = (
+        (None, {'fields': ('username', 'password')}),
+        ('اطلاعات شخصی', {'fields': ('first_name', 'last_name', 'email', 'birth_day', 'image', 'date_joined')}),
+        ('دسترسی ها', {'fields': ('is_superuser', 'is_staff', 'is_active')}),
+        ('گروه ها', {'fields': ('groups',)}),
+    )
     
-    # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
-    # overrides get_fieldsets to use this attribute when creating a user.
-    # add_fieldsets = (
-    #     (None, {
-    #         'classes': ('wide',),
-    #         'fields': ('email', 'birth_day', 'password1', 'password2'),
-    #     }),
-    # )
     search_fields = ('email','username','first_name', 'last_name')
     ordering = ('username',)
     # filter_horizontal = ()

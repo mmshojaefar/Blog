@@ -1,6 +1,7 @@
 from django.http import HttpResponse, Http404
-from django.shortcuts import render
+from django.shortcuts import render, HttpResponseRedirect, reverse
 from .forms import PostForm, UserForm
+from .models import Post_rating
 from tinymce.views import render_to_link_list
 from unicodedata import bidirectional
 from django.contrib.auth.decorators import login_required, permission_required
@@ -13,7 +14,35 @@ from django.contrib.auth.models import Group
 # Create your views here.
 
 @login_required
-def newpost(request):
+@permission_required('blog.add_post')
+def newpost(request, username):
+    '''
+        This function used for create new post! writer/editor/admin can add new posts. Each user can leave post if go to 
+        blog/posts/<user name>/newpost
+    '''
+    user = request.user
+    if not user.username == username:
+        return HttpResponseRedirect(reverse('newpost', kwargs={'username':request.user.username}))
+
+    if request.POST:
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.post_send_time = timezone.now()
+            post.user = user
+            post.save()
+            return HttpResponseRedirect(reverse('showpost', kwargs={'username':username.username, 'pk':post.pk}))
+        else:
+            form = PostForm(request.POST)
+    else:
+        form = PostForm()
+    return render(request, 'blog/newpost.html', context={'form':form})
+
+
+def editpost(request, username):
+    '''
+        This function used for create new post! writer/editor/admin can add new posts.
+    '''
     username = request.user
     if request.POST:
         form = PostForm(request.POST)
@@ -22,36 +51,49 @@ def newpost(request):
             post.post_send_time = timezone.now()
             post.user = username
             post.save()
-            # print(p_form['text'].value())
-            # ans = p_form['text'].value()
-            # return HttpResponseRedirect(reverse('polls:user', args=(username, post.id)))
+            print(reverse('showpost', kwargs={'username':username.username, 'pk':post.pk}))
+            return HttpResponseRedirect(reverse('showpost', kwargs={'username':username.username, 'pk':post.pk}))
         else:
             form = PostForm(request.POST)
     else:
-        print(1111111111111111111)
         form = PostForm()
     return render(request, 'blog/newpost.html', context={'form':form})
 
 
-def showpost(request, pk):
+def showpost(request, username, pk):
     '''
         This function used for showing post! Each post has a primary key(here is an id). Each post show in url below:
             blog/posts/post_id/
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
         The post show completely.
         Also all comments show in this page view.
         Each user (logged in or not) can see the post and comments but only logged in user can like/dislike post/comments.
         If the writer of post/editor/admin see this view, They see edit button and can edit post!
+        Admin/editor user can see a button to accept the post for public display also.
     '''
     post = get_object_or_404(Post, pk=pk)
-    print(post.accept_by_admin)
-    if not post.accept_by_admin:
+    can_accept =  request.user.groups.filter(name='مدیران').exists() or request.user.groups.filter(name='ویراستاران').exists()
+    owner = (request.user == post.user)
+    if (not can_accept) and (not owner) and (not post.accept_by_admin):
         raise Http404
-    comments = post.comment_set.filter(accept_by_admin=True)
+    allcomments = post.comment_set.all()
+    comments = allcomments.filter(accept_by_admin=True)
+    likes = Post_rating.objects.filter(positive=True, post=post).count()
+    dislikes = Post_rating.objects.filter(positive=False, post=post).count()
     print('---------------------')
+    print(likes)
+    print(allcomments)
     print(comments)
+    print(can_accept)
+    print(owner)
     print('---------------------')
-    return render(request, 'blog/showpost.html', context={'post':post, 'comments':comments})
+    return render(request, 'blog/showpost.html', context={'post':post,
+                                                          'comments':comments,
+                                                          'allcomments':allcomments,
+                                                          'owner':owner,
+                                                          'can_accept':can_accept,
+                                                          'likes':likes,
+                                                          'dislikes':dislikes,
+                                                          })
 
 
 def register(request):
@@ -65,6 +107,7 @@ def register(request):
             user.save()
             std_user = Group.objects.get(name='کاربران عادی')
             std_user.user_set.add(user)
+            return HttpResponseRedirect(reverse('blog:profile', args=(user.username)))
         else:
             form = UserForm(request.POST)
             return render(request, 'blog/register.html', context={'form':form})

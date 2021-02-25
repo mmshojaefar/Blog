@@ -124,4 +124,28 @@ class Command(BaseCommand):
         else:
             editor_user.permissions.add(accept_comment)
             admin_user.permissions.add(accept_comment)            
-            self.stdout.write(self.style.SUCCESS('Successfully accept_comment added to groups!'))       
+            self.stdout.write(self.style.SUCCESS('Successfully accept_comment added to groups!'))     
+
+        try:
+            view_tag = Permission.objects.get(codename='view_tag')
+            add_tag = Permission.objects.get(codename='add_tag')
+            edit_tag = Permission.objects.get(codename='change_tag')
+            delete_tag = Permission.objects.get(codename='delete_tag')
+        except:
+            self.stdout.write(self.style.ERROR('Probably name of model comment changed! Unable to find some/all permissions of model comment!'))
+        else:
+            std_user.permissions.add(view_tag)
+            writer_user.permissions.add(view_tag)
+            editor_user.permissions.add(view_tag)
+            admin_user.permissions.add(view_tag)
+
+            std_user.permissions.add(add_tag)
+            writer_user.permissions.add(add_tag)
+            editor_user.permissions.add(add_tag)
+            admin_user.permissions.add(add_tag)
+
+            editor_user.permissions.add(edit_tag)
+            admin_user.permissions.add(edit_tag)
+            editor_user.permissions.add(delete_tag)
+            admin_user.permissions.add(delete_tag)
+            self.stdout.write(self.style.SUCCESS('Successfully permissions of model tag added to groups!'))  
