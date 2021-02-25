@@ -19,6 +19,8 @@ def newpost(request, username):
     '''
         This function used for create new post! writer/editor/admin can add new posts. Each user can leave post if go to 
         blog/posts/<user name>/newpost
+        When post created, The page will redirect to a page to show post! The owner(Writer of post) and editor/admin can
+        see it before accepting by admin/editor. And owner can edit post before accepting by admin.
     '''
     user = request.user
     if not user.username == username:
@@ -38,10 +40,12 @@ def newpost(request, username):
         form = PostForm()
     return render(request, 'blog/newpost.html', context={'form':form})
 
-# @permission_required('blog.change_post')
+@permission_required('blog.change_post')
 def editpost(request, username, pk):
     '''
         This function used for edit a post! Only owner can edit the posts.
+        If post accepted by admin, after editing the post, Other people cant see the post until editor/admin user accept
+        the post again 
     '''
     user = request.user
     if not user.username == username:
@@ -49,14 +53,14 @@ def editpost(request, username, pk):
     # print(request.method=='GET')
     if request.method=='GET':
         post = Post.objects.get(pk=pk)
-        form = PostForm(initial={'title': post.title,
-                                'text': post.text,
-                                'image': post.image,
-                                'show_post': post.show_post,
-                                'categories': post.categories,
-                                #  'tags': post.tags,
-                                })
-        # , 'text', 'image', 'show_post', 'categories', 'tags')
+        # form = PostForm(initial={'title': post.title,
+        #                         'text': post.text,
+        #                         'image': post.image,
+        #                         'show_post': post.show_post,
+        #                         'categories': post.categories,
+        #                         #  'tags': post.tags,
+        #                         })
+        form = PostForm(instance=post)
         return render(request, 'blog/editpost.html', context={'form':form})
     else:
         form = PostForm(request.POST, request.FILES)
@@ -68,7 +72,10 @@ def editpost(request, username, pk):
             post.image = edited_post.image
             post.show_post = edited_post.show_post
             post.categories = edited_post.categories
-            post.save()
+            # post.tags = edited_post.tags
+            post.accept_by_admin = False
+            # post.save(update_fields=['title', 'text', 'image', 'show_post', 'categories', 'tags', 'accept_by_admin'])
+            post.save(update_fields=['title', 'text', 'image', 'show_post', 'categories', 'accept_by_admin'])
             return HttpResponseRedirect(reverse('showpost', kwargs={'username':post.user.username, 'pk':post.pk}))
         else:
             form = PostForm(request.POST)
@@ -81,26 +88,30 @@ def showpost(request, username, pk):
             blog/posts/post_id/
         The post show completely.
         Also all comments show in this page view.
-        Each user (logged in or not) can see the post and comments but only logged in user can like/dislike post/comments.
-        If the writer of post/editor/admin see this view, They see edit button and can edit post!
-        Admin/editor user can see a button to accept the post for public display also.
+        Each user (logged in or not) can see the post and comments(If the owner(writer of post) did not archive the post)
+        but only logged in user can like/dislike post/comments.
+        If the owner(writer of post) see this view, he/she see edit button and can edit post!
+        Admin/editor user can see a button to accept the post/comments or reject accepted post/comments for public display
+        also.
     '''
     post = get_object_or_404(Post, pk=pk)
     can_accept =  request.user.groups.filter(name='مدیران').exists() or request.user.groups.filter(name='ویراستاران').exists()
     owner = (request.user == post.user)
+    if not post.show_post and not owner:
+        raise Http404
     if (not can_accept) and (not owner) and (not post.accept_by_admin):
         raise Http404
     allcomments = post.comment_set.all()
     comments = allcomments.filter(accept_by_admin=True)
     likes = Post_rating.objects.filter(positive=True, post=post).count()
     dislikes = Post_rating.objects.filter(positive=False, post=post).count()
-    print('---------------------')
-    print(likes)
-    print(allcomments)
-    print(comments)
-    print(can_accept)
-    print(owner)
-    print('---------------------')
+    # print('-'*50)
+    # print(likes)
+    # print(allcomments)
+    # print(comments)
+    # print(can_accept)
+    # print(owner)
+    # print('-'*50)
     return render(request, 'blog/showpost.html', context={'post':post,
                                                           'comments':comments,
                                                           'allcomments':allcomments,
