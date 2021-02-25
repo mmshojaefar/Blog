@@ -124,7 +124,7 @@ def showpost(request, username, pk):
 
 def register(request):
     if request.POST:
-        form = UserForm(request.POST)
+        form = UserForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save(commit=False)
             user.date_joined = timezone.now()
