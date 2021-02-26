@@ -1,4 +1,3 @@
-from django.http import HttpResponse, Http404
 from django.shortcuts import render, HttpResponseRedirect, reverse
 from .forms import PostForm, UserForm
 from .models import Post_rating
@@ -133,7 +132,8 @@ def register(request):
             user.save()
             std_user = Group.objects.get(name='کاربران عادی')
             std_user.user_set.add(user)
-            return HttpResponseRedirect(reverse('blog:profile', args=(user.username)))
+            # return HttpResponseRedirect(reverse('blog:profile', args=(user.username)))
+            return HttpResponseRedirect(reverse('profile', args=(user.username)))
         else:
             form = UserForm(request.POST)
             return render(request, 'blog/register.html', context={'form':form})
