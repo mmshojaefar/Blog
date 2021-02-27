@@ -7,4 +7,5 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     # path('profile/<str:pk>', views.profile, name='profile'),
     path('posts/<str:username>/<int:pk>/', views.showpost, name='showpost'),
+    path('api/like/', views.apilike, name='apilike'),
 ]

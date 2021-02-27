@@ -117,6 +117,9 @@ class Post_rating(models.Model):
     class Meta:
         verbose_name = 'پسندیدن/نپسندیدن پست'
         verbose_name_plural = 'پسندیدن/نپسندیدن پست ها'
+        constraints = [
+            models.UniqueConstraint(fields=['post','user'], name='rates'),
+        ]
 
     post = models.ForeignKey('Post', on_delete=models.CASCADE)
     user = models.ForeignKey('User', on_delete=models.CASCADE)

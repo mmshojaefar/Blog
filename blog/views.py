@@ -1,9 +1,10 @@
-from django.shortcuts import render, HttpResponseRedirect, reverse
+from django.shortcuts import render, HttpResponseRedirect, reverse, Http404
 from .forms import PostForm, UserForm
 from .models import Post_rating
 from tinymce.views import render_to_link_list
 from unicodedata import bidirectional
 from django.contrib.auth.decorators import login_required, permission_required
+from django.views.decorators.http import require_http_methods
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from .models import Post, Comment
@@ -140,3 +141,7 @@ def register(request):
     form = UserForm()
     return render(request, 'blog/register.html', context={'form':form})
 
+@require_http_methods(["POST"])
+def apilike(request):
+    print(request.POST)
+    return render(request, {'ok':True}, context={})
