@@ -62,7 +62,6 @@ function like(){
             {
             'post': $postId,
             'user': $userName,
-            'csrftoken' : csrftoken
             },
             function (response, status) {
                 console.log(response, status)

@@ -1,4 +1,5 @@
 from django.shortcuts import render, HttpResponseRedirect, reverse, Http404
+from django.http import JsonResponse
 from .forms import PostForm, UserForm
 from .models import Post_rating
 from tinymce.views import render_to_link_list
@@ -9,6 +10,8 @@ from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from .models import Post, Comment
 from django.contrib.auth.models import Group
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 
 # Create your views here.
@@ -141,7 +144,8 @@ def register(request):
     form = UserForm()
     return render(request, 'blog/register.html', context={'form':form})
 
+# @csrf_exempt
 @require_http_methods(["POST"])
 def apilike(request):
     print(request.POST)
-    return render(request, {'ok':True}, context={})
+    return JsonResponse(data={'ok':True})

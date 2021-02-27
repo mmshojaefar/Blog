@@ -9,6 +9,9 @@ class PostForm(forms.ModelForm):
         fields = ['title', 'text', 'image', 'show_post', 'categories', 'tags']
         widgets = {'text' : TinyMCE()}
 
+    def get_form(request):
+        pass
+
 class UserForm(forms.ModelForm):
     '''
     This form created for registering to the blog and each user is member of std_user group at first
