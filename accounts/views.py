@@ -8,7 +8,7 @@ def change_password(request):
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
             user = form.save()
-            update_session_auth_hash(request, user)  # Important!
+            update_session_auth_hash(request, user)
             messages.success(request, 'رمزعبور شما با موفقیت تغییر کرد!')
             return redirect('change_password')
         else:
