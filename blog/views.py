@@ -150,19 +150,44 @@ def register(request):
 #     print(request.POST)
 #     return JsonResponse(data={'ok':True})
 
+@login_required()
 @require_http_methods(["POST"])
 def apilike(request):
-    # print(request.POST['post'])
-    # print(request.user)
     post = Post.objects.get(pk=request.POST['post'])
     try:
         like = Post_rating.objects.get(post=post, user=request.user)
-    except:
+    except Post_rating.DoesNotExist:
         like = Post_rating.objects.create(post=post, user=request.user, positive=True)
-        return JsonResponse(data={'ok':'add'})
+        return JsonResponse(data={'ok':'like'})
     else:
         if like.positive == False:
             dislike = Post_rating.objects.get(post=post, user=request.user)
             dislike.delete()  
-            return JsonResponse(data={'ok':'remove'})
+            return JsonResponse(data={'ok':'removedislike'})
     return JsonResponse(data={'ok':'nothing'})
+
+@login_required()
+@require_http_methods(["POST"])
+def apidislike(request):
+    post = Post.objects.get(pk=request.POST['post'])
+    try:
+        dislike = Post_rating.objects.get(post=post, user=request.user)
+    except Post_rating.DoesNotExist:
+        dislike = Post_rating.objects.create(post=post, user=request.user, positive=False)
+        return JsonResponse(data={'ok':'dislike'})
+    else:
+        if dislike.positive == True:
+            like = Post_rating.objects.get(post=post, user=request.user)
+            like.delete()  
+            return JsonResponse(data={'ok':'removelike'})
+    return JsonResponse(data={'ok':'nothing'})
+
+@permission_required('accept_post')
+@require_http_methods(["POST"])
+def api_accept_post(request):
+    post = Post.objects.get(pk=request.POST['post'])
+    post.accept_by_admin = (not post.accept_by_admin)
+    post.save()
+    return JsonResponse(data={'ok':'ok'})
+    # return JsonResponse(data={})
+

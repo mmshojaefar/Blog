@@ -51,43 +51,109 @@
 // );
 
 
-function like(){
+function likePost() {
     $("#like").click(function () {
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-        $postId = window.location.href.split('/').filter(function(i){return i}).pop();
+        $postId = window.location.href.split('/').filter(function (i) { return i }).pop();
         // $userName = $('#username').html();
         console.log($postId)
         $.post({
-            url: 'http://127.0.0.1:8000/blog/api/like/',
-            headers : {'X-CSRFToken': csrftoken}
-            },
+            url: 'http://127.0.0.1:8000/blog/api/likepost/',
+            headers: { 'X-CSRFToken': csrftoken }
+        },
             {
-            'post': $postId,
-            // 'user': $userName,
+                'post': $postId,
+                // 'user': $userName,
             },
             function (response, status) {
                 console.log(response, status)
-            //   if (status == "success" && response["response"] == "SUCCESS") {
-            //     $($row[2]).text($price);
-            //     $($row[3]).text($count);
-            //     $("#editModal").modal("hide");
-            //   } else if (status == "success" && response["response"] != "SUCCESS") {
-            //     if (response["response"] != "FAILED") {
-            //       $(response["response"]).addClass("form-control is-invalid");
-            //       $(response["response"]).next().html(response["msg"]);
-            //     } else {
-            //       $("#editFinalError").html(response["msg"]);
-            //       $("#editFinalError").addClass("form-control is-invalid");
-            //     }
-            //   } else {
-            //     $("#editFinalError").html(
-            //       "ارتباط با سرور قطع شده است. لطفا مجددا تلاش کنید"
-            //     );
-            //     $("#editFinalError").addClass("form-control is-invalid");
-            //   }
+                likesNumber = parseInt($('#like').val())
+                dislikesNumber = parseInt($('#dislike').val())
+                if (status == "success" && response["ok"] == "like") {
+                    console.log(1111111)
+                    $('#like').val(likesNumber+1)
+                    // $('#like').css('fontWeight', 'bold')
+                } else if (status == "success" && response["ok"] == "removedislike") {
+                    console.log(2222222)
+                    $('#dislike').val(dislikesNumber-1)
+                } else if (status != "success"){
+                    console.log(333333)
+                    console.log('eerrrror')
+                    // $("#editFinalError").html(
+                    //     "ارتباط با سرور قطع شده است. لطفا مجددا تلاش کنید"
+                    // );
+                    // $("#editFinalError").addClass("form-control is-invalid");
+                }
             }
         );
     })
 }
 
-like()
+likePost()
+
+function dislikePost() {
+    $("#dislike").click(function () {
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        $postId = window.location.href.split('/').filter(function (i) { return i }).pop();
+        console.log($postId)
+        $.post({
+            url: 'http://127.0.0.1:8000/blog/api/dislikepost/',
+            headers: { 'X-CSRFToken': csrftoken }
+        },
+            {
+                'post': $postId,
+            },
+            function (response, status) {
+                console.log(response, status)
+                likesNumber = parseInt($('#like').val())
+                dislikesNumber = parseInt($('#dislike').val())
+                if (status == "success" && response["ok"] == "dislike") {
+                    console.log(1111111)
+                    $('#dislike').val(dislikesNumber+1)
+                } else if (status == "success" && response["ok"] == "removelike") {
+                    console.log(2222222)
+                    $('#like').val(likesNumber-1)
+                } else if (status != "success"){
+                    console.log(333333)
+                    console.log('eerrrror')
+                }
+            }
+        );
+    })
+}
+
+dislikePost()
+
+function acceptPost() {
+    $("#accept_post").click(function () {
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        $postId = window.location.href.split('/').filter(function (i) { return i }).pop();
+        console.log($postId)
+        $.post({
+            url: 'http://127.0.0.1:8000/blog/api/acceptpost/',
+            headers: { 'X-CSRFToken': csrftoken }
+        },
+            {
+                'post': $postId,
+            },
+            function (response, status) {
+                if (status == "success" && response["ok"] == "ok") {
+                    console.log(1111111)
+                    $('#accept_post').val($('#accept_post').val() == 'تایید' ? 'عدم تایید' : 'تایید')
+                // console.log(response, status)
+                // if (status == "success" && response["ok"] == "ok") {
+                //     console.log(1111111)
+                //     $('#dislike').val(dislikesNumber+1)
+                // } else if (status == "success" && response["ok"] == "reject") {
+                //     console.log(2222222)
+                //     $('#like').val(likesNumber-1)
+                } else if (status != "success"){
+                    console.log(333333)
+                    console.log('eerrrror')
+                }
+            }
+        );
+    })
+}
+
+acceptPost()

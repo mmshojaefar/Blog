@@ -181,6 +181,9 @@ class Comment_rating(models.Model):
 
     comment = models.ForeignKey('Comment', on_delete=models.CASCADE)
     user = models.ForeignKey('User', on_delete=models.CASCADE)
+    positive = models.BooleanField(
+        verbose_name='پسندیدن؟'
+    )
 
 class CustomUserManager(BaseUserManager):
     '''
