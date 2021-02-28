@@ -145,7 +145,24 @@ def register(request):
     return render(request, 'blog/register.html', context={'form':form})
 
 # @csrf_exempt
+# @require_http_methods(["POST"])
+# def apilike(request):
+#     print(request.POST)
+#     return JsonResponse(data={'ok':True})
+
 @require_http_methods(["POST"])
 def apilike(request):
-    print(request.POST)
-    return JsonResponse(data={'ok':True})
+    # print(request.POST['post'])
+    # print(request.user)
+    post = Post.objects.get(pk=request.POST['post'])
+    try:
+        like = Post_rating.objects.get(post=post, user=request.user)
+    except:
+        like = Post_rating.objects.create(post=post, user=request.user, positive=True)
+        return JsonResponse(data={'ok':'add'})
+    else:
+        if like.positive == False:
+            dislike = Post_rating.objects.get(post=post, user=request.user)
+            dislike.delete()  
+            return JsonResponse(data={'ok':'remove'})
+    return JsonResponse(data={'ok':'nothing'})

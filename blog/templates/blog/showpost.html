@@ -61,6 +61,7 @@
             {% endfor %}
         </table>
     {% endif %}
+    {% csrf_token %}
     <script src="{% static 'blog/lib/js/jquery-3.4.1.min.js' %}"></script>
     <script src="{% static 'blog/lib/js/bootstrap.min.js' %}"></script>
     <!--<script src="{% static 'blog/tinymce.min.js' %}"></script>-->

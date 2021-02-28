@@ -52,16 +52,18 @@
 
 
 function like(){
-    console.log(111111)
     $("#like").click(function () {
-        $postId = window.location.href.split('/').filter(function(i){return i}).pop()
-        $userName = $('#username').html();
-        console.log($postId, $userName)
-        $.post(
-            'http://127.0.0.1:8000/blog/api/like/',
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        $postId = window.location.href.split('/').filter(function(i){return i}).pop();
+        // $userName = $('#username').html();
+        console.log($postId)
+        $.post({
+            url: 'http://127.0.0.1:8000/blog/api/like/',
+            headers : {'X-CSRFToken': csrftoken}
+            },
             {
             'post': $postId,
-            'user': $userName,
+            // 'user': $userName,
             },
             function (response, status) {
                 console.log(response, status)
