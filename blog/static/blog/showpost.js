@@ -56,7 +56,6 @@ function likePost() {
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
         $postId = window.location.href.split('/').filter(function (i) { return i }).pop();
         // $userName = $('#username').html();
-        console.log($postId)
         $.post({
             url: 'http://127.0.0.1:8000/blog/api/likepost/',
             headers: { 'X-CSRFToken': csrftoken }
@@ -66,15 +65,14 @@ function likePost() {
                 // 'user': $userName,
             },
             function (response, status) {
-                console.log(response, status)
                 likesNumber = parseInt($('#like').val())
                 dislikesNumber = parseInt($('#dislike').val())
                 if (status == "success" && response["ok"] == "like") {
-                    $('#like').val(likesNumber+1)
+                    $('#like').val(likesNumber + 1)
                     // $('#like').css('fontWeight', 'bold')
                 } else if (status == "success" && response["ok"] == "removedislike") {
-                    $('#dislike').val(dislikesNumber-1)
-                } else if (status != "success"){
+                    $('#dislike').val(dislikesNumber - 1)
+                } else if (status != "success") {
                     console.log(333333)
                     console.log('eerrrror')
                     // $("#editFinalError").html(
@@ -87,13 +85,11 @@ function likePost() {
     })
 }
 
-likePost()
 
 function dislikePost() {
     $("#dislike").click(function () {
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
         $postId = window.location.href.split('/').filter(function (i) { return i }).pop();
-        console.log($postId)
         $.post({
             url: 'http://127.0.0.1:8000/blog/api/dislikepost/',
             headers: { 'X-CSRFToken': csrftoken }
@@ -102,14 +98,13 @@ function dislikePost() {
                 'post': $postId,
             },
             function (response, status) {
-                console.log(response, status)
                 likesNumber = parseInt($('#like').val())
                 dislikesNumber = parseInt($('#dislike').val())
                 if (status == "success" && response["ok"] == "dislike") {
-                    $('#dislike').val(dislikesNumber+1)
+                    $('#dislike').val(dislikesNumber + 1)
                 } else if (status == "success" && response["ok"] == "removelike") {
-                    $('#like').val(likesNumber-1)
-                } else if (status != "success"){
+                    $('#like').val(likesNumber - 1)
+                } else if (status != "success") {
                     console.log(333333)
                     console.log('eerrrror')
                 }
@@ -118,13 +113,11 @@ function dislikePost() {
     })
 }
 
-dislikePost()
 
 function acceptPost() {
     $("#accept_post").click(function () {
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
         $postId = window.location.href.split('/').filter(function (i) { return i }).pop();
-        console.log($postId)
         $.post({
             url: 'http://127.0.0.1:8000/blog/api/acceptpost/',
             headers: { 'X-CSRFToken': csrftoken }
@@ -135,7 +128,7 @@ function acceptPost() {
             function (response, status) {
                 if (status == "success" && response["ok"] == "ok") {
                     $('#accept_post').val($('#accept_post').val() == 'تایید' ? 'عدم تایید' : 'تایید')
-                } else if (status != "success"){
+                } else if (status != "success") {
                     console.log(333333)
                     console.log('eerrrror')
                 }
@@ -144,14 +137,12 @@ function acceptPost() {
     })
 }
 
-acceptPost()
 
 function acceptComment() {
     $(".accept_comment").click(function () {
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
         $comment = $(this)
         $commentId = $comment.closest('tr').attr('id').substring(8)
-        console.log($commentId)
         $.post({
             url: 'http://127.0.0.1:8000/blog/api/acceptcomment/',
             headers: { 'X-CSRFToken': csrftoken }
@@ -161,9 +152,8 @@ function acceptComment() {
             },
             function (response, status) {
                 if (status == "success" && response["ok"] == "ok") {
-                    console.log($comment)
                     $comment.val($comment.val() == 'تایید' ? 'عدم تایید' : 'تایید')
-                } else if (status != "success"){
+                } else if (status != "success") {
                     console.log(333333)
                     console.log('eerrrror')
                 }
@@ -172,7 +162,6 @@ function acceptComment() {
     })
 }
 
-acceptComment()
 
 function likeComment() {
     $(".like_comment").click(function () {
@@ -192,10 +181,10 @@ function likeComment() {
             },
             function (response, status) {
                 if (status == "success" && response["ok"] == "like") {
-                    $like.val(likesNumber+1)
+                    $like.val(likesNumber + 1)
                 } else if (status == "success" && response["ok"] == "removedislike") {
-                    $dislike.val(dislikesNumber-1)
-                } else if (status != "success"){
+                    $dislike.val(dislikesNumber - 1)
+                } else if (status != "success") {
                     console.log(333333)
                     console.log('eerrrror')
                 }
@@ -204,7 +193,6 @@ function likeComment() {
     })
 }
 
-likeComment()
 
 function dislikeComment() {
     $(".dislike_comment").click(function () {
@@ -224,10 +212,10 @@ function dislikeComment() {
             },
             function (response, status) {
                 if (status == "success" && response["ok"] == "dislike") {
-                    $dislike.val(dislikesNumber+1)
+                    $dislike.val(dislikesNumber + 1)
                 } else if (status == "success" && response["ok"] == "removelike") {
-                    $like.val(likesNumber-1)
-                } else if (status != "success"){
+                    $like.val(likesNumber - 1)
+                } else if (status != "success") {
                     console.log(333333)
                     console.log('eerrrror')
                 }
@@ -236,4 +224,10 @@ function dislikeComment() {
     })
 }
 
+
+likePost()
+dislikePost()
+acceptPost()
+likeComment()
 dislikeComment()
+acceptComment()

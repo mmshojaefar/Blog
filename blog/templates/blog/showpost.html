@@ -16,7 +16,6 @@
         <p>خوش آمدید </p><p id="username">{{ user.username }}</p><a href="{% url 'logout' %}">خروج</a> 
     {% endif %}
     <p>{{ post.user.username }}</p>
-    {% comment %} {{ post.user.image }} {% endcomment %}
     <table>
         <tr>
             <td>{{ post.title }}</td>
@@ -24,7 +23,7 @@
         {% if post.image %}
             <tr>
                 <td>
-                    <img src="{{ post.image.url }}" width=100 height=100 >
+                    <img src="{{ post.image.url }}" width=500 height=500 >
                 </td>
             </tr>
         {% endif %}
@@ -41,8 +40,8 @@
             <input id='accept_post' type='button' value='تایید'>
         {% endif %}
     {% endif %}
-    {% if owner %}
-        <input type='button' value='ویرایش'>
+    {% if owner %}        
+        <a class="btn" href="{% url 'editpost' post.user.username post.pk%}"><button>ویرایش</button></a>
     {% endif %}
     {% if can_accept %}
         <table>

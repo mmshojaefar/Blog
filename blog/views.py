@@ -232,4 +232,3 @@ def apidislikecomment(request):
             like.delete()
             return JsonResponse(data={'ok':'removelike'})
     return JsonResponse(data={'ok':'nothing'})
-

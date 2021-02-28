@@ -59,8 +59,8 @@ class Post(models.Model):
     )
     image = models.ImageField(
         verbose_name='تصویر',
-        blank=True,
-        null=True,
+        # blank=True,
+        # null=True,
         upload_to='post_imgs'
     )
     show_post = models.BooleanField(
