@@ -1,14 +1,13 @@
 from django.shortcuts import render, HttpResponseRedirect, reverse, Http404
 from django.http import JsonResponse
-from .forms import PostForm, UserForm
-from .models import Post_rating
+from blog.forms import PostForm, UserForm
+from blog.models import Post_rating, Comment_rating, Post, Comment
 from tinymce.views import render_to_link_list
 from unicodedata import bidirectional
 from django.contrib.auth.decorators import login_required, permission_required
 from django.views.decorators.http import require_http_methods
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
-from .models import Post, Comment
 from django.contrib.auth.models import Group
 from django.views.decorators.csrf import csrf_exempt
 import json
@@ -190,4 +189,47 @@ def api_accept_post(request):
     post.save()
     return JsonResponse(data={'ok':'ok'})
     # return JsonResponse(data={})
+
+@permission_required('accept_comment')
+@require_http_methods(["POST"])
+def api_accept_comment(request):
+    comment = Comment.objects.get(pk=request.POST['comment'])
+    comment.accept_by_admin = (not comment.accept_by_admin)
+    comment.save()
+    return JsonResponse(data={'ok':'ok'})
+    # return JsonResponse(data={})
+
+@login_required()
+@require_http_methods(["POST"])
+def apilikecomment(request):
+    comment = Comment.objects.get(pk=request.POST['comment'])
+    print(comment)
+    try:
+        like = Comment_rating.objects.get(comment=comment, user=request.user)
+    except Comment_rating.DoesNotExist:
+        like = Comment_rating.objects.create(comment=comment, user=request.user, positive=True)
+        return JsonResponse(data={'ok':'like'})
+    else:
+        if like.positive == False:
+            dislike = Comment_rating.objects.get(comment=comment, user=request.user)
+            dislike.delete()  
+            return JsonResponse(data={'ok':'removedislike'})
+    return JsonResponse(data={'ok':'nothing'})
+
+
+@login_required()
+@require_http_methods(["POST"])
+def apidislikecomment(request):
+    comment = Comment.objects.get(pk=request.POST['comment'])
+    try:
+        dislike = Comment_rating.objects.get(comment=comment, user=request.user)
+    except Comment_rating.DoesNotExist:
+        dislike = Comment_rating.objects.create(comment=comment, user=request.user, positive=False)
+        return JsonResponse(data={'ok':'dislike'})
+    else:
+        if dislike.positive == True:
+            like = Comment_rating.objects.get(comment=comment, user=request.user)
+            like.delete()
+            return JsonResponse(data={'ok':'removelike'})
+    return JsonResponse(data={'ok':'nothing'})
 

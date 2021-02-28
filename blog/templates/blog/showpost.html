@@ -47,21 +47,27 @@
     {% if can_accept %}
         <table>
             {% for comment in allcomments %}
-            <tr>
-                <td id="comment_{{ comment.pk }}">{{ comment.text }}</td>
-                <td><input id="like" type='button' value='{{ comment|likes }}'></td>
-                <td><input id="dislike" type='button' value='{{ comment|dislikes }}'></td>
-                <td><input type='button' value='تایید'></td>
+            <tr id="comment_{{ comment.pk }}">
+                <td>{{ comment.user }}</td>
+                <td>{{ comment.text }}</td>
+                <td><input class="like_comment" type='button' value='{{ comment|likes }}'></td>
+                <td><input class="dislike_comment" type='button' value='{{ comment|dislikes }}'></td>
+                {% if comment.accept_by_admin %}
+                    <td><input class='accept_comment' type='button' value='عدم تایید'></td>
+                {% else %}
+                    <td><input class='accept_comment' type='button' value='تایید'></td>
+                {% endif %}
             </tr>
             {% endfor %}
         </table>
     {% else %}
         <table>
             {% for comment in comments %}
-            <tr>
+            <tr id="comment_{{ comment.pk }}">
+                <td>{{ comment.user }}</td>
                 <td>{{ comment.text }}</td>
-                <td><input id="like" type='button' value='{{ comment|likes }}'></td>
-                <td><input id="dislike" type='button' value='{{ comment|dislikes }}'></td>
+                <td><input class="like_comment" type='button' value='{{ comment|likes }}'></td>
+                <td><input class="dislike_comment" type='button' value='{{ comment|dislikes }}'></td>
             </tr>
             {% endfor %}
         </table>
