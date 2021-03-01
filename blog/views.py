@@ -36,7 +36,7 @@ def newpost(request, username):
             post.post_send_time = timezone.now()
             post.user = user
             post.save()
-            return HttpResponseRedirect(reverse('showpost', kwargs={'username':username.username, 'pk':post.pk}))
+            return HttpResponseRedirect(reverse('showpost', kwargs={'username':username, 'pk':post.pk}))
         else:
             form = PostForm(request.POST)
     else:
@@ -66,6 +66,7 @@ def editpost(request, username, pk):
         form = PostForm(instance=post)
         return render(request, 'blog/editpost.html', context={'form':form})
     else:
+        print(request.POST)
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             post = Post.objects.get(pk=pk)
@@ -260,10 +261,10 @@ def apidislikecomment(request):
 
 @require_http_methods(["POST"])
 def add_tag(request):
-    print(222222222222222222222)
+    # print(222222222222222222222)
     tag = request.POST['tag']
     # result = Tag.objects.filter(name__icontains=tag).only("pk", "name")
     result = Tag.objects.filter(name__icontains=tag)
-    print(result)
-    print(serializers.serialize("json" ,result))
+    # print(result)
+    # print(serializers.serialize("json" ,result))
     return JsonResponse(data={'result': serializers.serialize("json" ,result)})

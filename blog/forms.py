@@ -6,10 +6,10 @@ from django.contrib.auth.password_validation import validate_password
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['title', 'text', 'image', 'show_post', 'categories', 'tags']
+        fields = ['title', 'text', 'image', 'show_post', 'categories']
         widgets = {'text' : TinyMCE()}
 
-    def get_form(request):
+    def get_form(self, request):
         pass
 
 class UserForm(forms.ModelForm):

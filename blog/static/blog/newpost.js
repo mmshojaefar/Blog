@@ -83,12 +83,12 @@ $("#tag").on('input' ,function() {
 
 function divClicked(){
     $(".tagResult").click(function() {
-        // console.log(this)
-        id = $(this).attr('id').substring(7)
-        console.log(id)
-        selected = "<div id='selected_" + id + "' style='margin:1px'>" + $(this).html() + "</div>"
-        $('#selectedTags').prepend(selected)
-        $('#allTags').empty()
+        id = $(this).attr('id').substring(7);
+        // console.log(id);
+        selected = "<div id='selected_" + id + "' style='background-color:#D3D3D3;margin:1px 3px; display:inline;'>" + $(this).html() + "</div>";
+        $('#selectedTags').prepend(selected);
+        $('#tag').val("");
+        $('#allTags').empty();
     });
 }
 
