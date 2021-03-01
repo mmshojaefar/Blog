@@ -10,6 +10,8 @@
         {% comment %} <meta http-equiv="REFRESH" content="0; url="{% url 'login' %}"> {% endcomment %}
     {% comment %} {% endif %} {% endcomment %}
     <p>شما با موفقیت خارج شده اید.</p>
+    <p>ممنون از اینکه وقتتان را در اختیار ما قرار دادید.</p>
     <p><a href="{% url 'login' %}">ورود</a></p>
+    {% comment %} <p><a href="{% url 'blog:index' %}">صفحه اصلی</a><a href="{% url 'login' %}">ورود</a></p> {% endcomment %}
 </body>
 </html>
