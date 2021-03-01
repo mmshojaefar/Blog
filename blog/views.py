@@ -152,7 +152,11 @@ def register(request):
 @login_required()
 @require_http_methods(["POST"])
 def apilike(request):
-    post = Post.objects.get(pk=request.POST['post'])
+    try:
+        post = Post.objects.get(pk=request.POST['post'])
+    except Post.DoesNotExist:
+        return JsonResponse(data={'ok':'NOT FOUND'})
+
     try:
         like = Post_rating.objects.get(post=post, user=request.user)
     except Post_rating.DoesNotExist:
@@ -168,7 +172,11 @@ def apilike(request):
 @login_required()
 @require_http_methods(["POST"])
 def apidislike(request):
-    post = Post.objects.get(pk=request.POST['post'])
+    try:
+        post = Post.objects.get(pk=request.POST['post'])
+    except Post.DoesNotExist:
+        return JsonResponse(data={'ok':'NOT FOUND'})
+
     try:
         dislike = Post_rating.objects.get(post=post, user=request.user)
     except Post_rating.DoesNotExist:
@@ -184,7 +192,11 @@ def apidislike(request):
 @permission_required('accept_post')
 @require_http_methods(["POST"])
 def api_accept_post(request):
-    post = Post.objects.get(pk=request.POST['post'])
+    try:
+        post = Post.objects.get(pk=request.POST['post'])
+    except Post.DoesNotExist:
+        return JsonResponse(data={'ok':'NOT FOUND'})
+
     post.accept_by_admin = (not post.accept_by_admin)
     post.save()
     return JsonResponse(data={'ok':'ok'})
@@ -193,7 +205,10 @@ def api_accept_post(request):
 @permission_required('accept_comment')
 @require_http_methods(["POST"])
 def api_accept_comment(request):
-    comment = Comment.objects.get(pk=request.POST['comment'])
+    try:
+        comment = Comment.objects.get(pk=request.POST['comment'])
+    except Comment.DoesNotExist:
+        return JsonResponse(data={'ok':'NOT FOUND'})
     comment.accept_by_admin = (not comment.accept_by_admin)
     comment.save()
     return JsonResponse(data={'ok':'ok'})
@@ -202,7 +217,11 @@ def api_accept_comment(request):
 @login_required()
 @require_http_methods(["POST"])
 def apilikecomment(request):
-    comment = Comment.objects.get(pk=request.POST['comment'])
+    try:
+        comment = Comment.objects.get(pk=request.POST['comment'])
+    except Comment.DoesNotExist:
+        return JsonResponse(data={'ok':'NOT FOUND'})
+
     print(comment)
     try:
         like = Comment_rating.objects.get(comment=comment, user=request.user)
@@ -220,7 +239,11 @@ def apilikecomment(request):
 @login_required()
 @require_http_methods(["POST"])
 def apidislikecomment(request):
-    comment = Comment.objects.get(pk=request.POST['comment'])
+    try:
+        comment = Comment.objects.get(pk=request.POST['comment'])
+    except Comment.DoesNotExist:
+        return JsonResponse(data={'ok':'NOT FOUND'})
+
     try:
         dislike = Comment_rating.objects.get(comment=comment, user=request.user)
     except Comment_rating.DoesNotExist:
