@@ -6,6 +6,9 @@
     <title>خروج</title>
 </head>
 <body>
+    {% comment %} {% if not user.is_authenticated %} {% endcomment %}
+        {% comment %} <meta http-equiv="REFRESH" content="0; url="{% url 'login' %}"> {% endcomment %}
+    {% comment %} {% endif %} {% endcomment %}
     <p>شما با موفقیت خارج شده اید.</p>
     <p><a href="{% url 'login' %}">ورود</a></p>
 </body>
