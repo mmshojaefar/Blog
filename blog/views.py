@@ -1,7 +1,7 @@
 from django.shortcuts import render, HttpResponseRedirect, reverse, Http404
 from django.http import JsonResponse
 from blog.forms import PostForm, UserForm
-from blog.models import Post_rating, Comment_rating, Post, Comment
+from blog.models import Post_rating, Comment_rating, Post, Comment, Tag
 from tinymce.views import render_to_link_list
 from unicodedata import bidirectional
 from django.contrib.auth.decorators import login_required, permission_required
@@ -9,6 +9,7 @@ from django.views.decorators.http import require_http_methods
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import Group
+from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
 import json
 
@@ -255,3 +256,14 @@ def apidislikecomment(request):
             like.delete()
             return JsonResponse(data={'ok':'removelike'})
     return JsonResponse(data={'ok':'nothing'})
+
+
+@require_http_methods(["POST"])
+def add_tag(request):
+    print(222222222222222222222)
+    tag = request.POST['tag']
+    # result = Tag.objects.filter(name__icontains=tag).only("pk", "name")
+    result = Tag.objects.filter(name__icontains=tag)
+    print(result)
+    print(serializers.serialize("json" ,result))
+    return JsonResponse(data={'result': serializers.serialize("json" ,result)})

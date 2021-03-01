@@ -22,7 +22,9 @@
                 {{ field|bootstrap }}
             </div>
         {% endfor %}
-        
+        <input id="tag" type="search"/>
+        <div id="selectedTags"></div>
+        <div id="allTags" z-index="1000"></div>
         <input type="submit" value="ارسال" class="btn btn-primary"/>
     </form>
     <script src="{% static 'blog/lib/js/jquery-3.4.1.min.js' %}"></script>  

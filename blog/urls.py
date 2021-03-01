@@ -14,4 +14,5 @@ urlpatterns = [
     path('api/dislikecomment/', views.apidislikecomment, name='apidislikecomment'),
     path('api/acceptpost/', views.api_accept_post, name='api_accept_post'),
     path('api/acceptcomment/', views.api_accept_comment, name='api_accept_comment'),
+    path('api/addtag/', views.add_tag, name='add_tag'),
 ]
