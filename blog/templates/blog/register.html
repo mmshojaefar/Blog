@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -13,5 +15,8 @@
         </table>
         <input type="submit" value="ثبت نام">
     </form>
+    <script src="{% static 'blog/lib/js/jquery-3.4.1.min.js' %}"></script>  
+    <script src="{% static 'blog/lib/js/bootstrap.min.js' %}"></script>  
+    <script src="{% static 'blog/register.js' %}"></script>
 </body>
 </html>

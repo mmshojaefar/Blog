@@ -1,7 +1,7 @@
 from django.shortcuts import render, HttpResponseRedirect, reverse, Http404
 from django.http import JsonResponse
 from blog.forms import PostForm, UserForm
-from blog.models import Post_rating, Comment_rating, Post, Comment, Tag
+from blog.models import Post_rating, Comment_rating, Post, Comment, Tag, User
 from tinymce.views import render_to_link_list
 from unicodedata import bidirectional
 from django.contrib.auth.decorators import login_required, permission_required
@@ -11,6 +11,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import Group
 from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
+from django.core.exceptions import ValidationError
 import json
 
 
@@ -268,3 +269,17 @@ def add_tag(request):
     # print(result)
     # print(serializers.serialize("json" ,result))
     return JsonResponse(data={'result': serializers.serialize("json" ,result)})
+
+@require_http_methods(["POST"])
+def check_username(request):
+    username = request.POST['username']
+    try:
+        User.validate_username_custom(username)
+    except ValidationError:
+        return JsonResponse(data={'ok': None})
+    else:
+        num = User.objects.filter(username=username).count()
+        print(num)
+        if num == 0:
+            return JsonResponse(data={'ok': True})
+        return JsonResponse(data={'ok': False})

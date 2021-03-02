@@ -9,8 +9,21 @@ class PostForm(forms.ModelForm):
         fields = ['title', 'text', 'image', 'show_post', 'categories']
         widgets = {'text' : TinyMCE()}
 
-    def get_form(self, request):
-        pass
+    def get_form(self, obj=None, **kwargs):
+        self.cleaned_data['']
+
+    # def clean_field(self):
+    #     print(self.cleaned_data)
+    #     data = self.cleaned_data["csrfmiddlewaretoken"]
+    #     data = self.cleaned_data["title"]
+    #     data = self.cleaned_data["text"]
+    #     data = self.cleaned_data["show_post"]
+        # data = self.cleaned_data["categories"]
+        # return data
+
+    # def clean(self):
+    #     print(self.data)
+
 
 class UserForm(forms.ModelForm):
     '''

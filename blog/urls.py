@@ -15,4 +15,5 @@ urlpatterns = [
     path('api/acceptpost/', views.api_accept_post, name='api_accept_post'),
     path('api/acceptcomment/', views.api_accept_comment, name='api_accept_comment'),
     path('api/addtag/', views.add_tag, name='add_tag'),
+    path('api/checkusername/', views.check_username, name='check_username'),
 ]

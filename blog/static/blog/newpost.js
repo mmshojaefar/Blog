@@ -11,7 +11,7 @@ tinymce.init({
     toolbar: 'undo redo | bold italic | alignleft aligncenter alignright alignjustify | indent outdent | ltr rtl | code link image table | preview',
     image_title: true,
     automatic_uploads: true,
-    images_upload_url: 'http://localhost',
+    images_upload_url: 'http://127.0.0.1:8000/',
     file_picker_types: 'image',
 
     file_picker_callback: function (cb, value, meta) {
@@ -50,9 +50,25 @@ $(document).ready(function(){
     }
 );
 
+
+function addTag(){
+    $(".addTag").click(function() {
+        console.log(111111111);
+        selected = "<div class='added' style='background-color:#D3D3D3;margin:1px 3px; display:inline;'>" + $('#tag').val() + "</div>";
+        $('#selectedTags').append(selected);
+        $('#tag').val("");
+        $('#allTags').empty();
+    });
+}
+
 $("#tag").on('input' ,function() {
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     $('#allTags').empty()
+    if($("#tag").val().length > 0){
+        result = "<div class='addTag' style='background-color: gray; margin-bottom:1px'>افزودن تگ</div>"
+        $('#allTags').prepend(result)
+    }
+    addTag()
     if($("#tag").val().length > 2){
         $.post({
             url: 'http://127.0.0.1:8000/blog/api/addtag/',
@@ -63,13 +79,13 @@ $("#tag").on('input' ,function() {
             },
             function (response, status) {
                 if (status == "success") {
-                    $('#allTags').empty()
+                    // $('#allTags').empty()
                     // console.log(response["result"])
                     JSON.parse(response["result"]).forEach(
                     function myFunction(item) {
                         // console.log(item)
                         result = "<div id='result_" + item['pk'] + "' class='tagResult' style='background-color: gray;margin-bottom:1px'>" + item['fields']['name'] + "</div>"
-                        $('#allTags').prepend(result)
+                        $('#allTags').append(result)
                     });
                     divClicked()
                 } else if (status != "success") {
@@ -86,7 +102,7 @@ function divClicked(){
         id = $(this).attr('id').substring(7);
         // console.log(id);
         selected = "<div id='selected_" + id + "' style='background-color:#D3D3D3;margin:1px 3px; display:inline;'>" + $(this).html() + "</div>";
-        $('#selectedTags').prepend(selected);
+        $('#selectedTags').append(selected);
         $('#tag').val("");
         $('#allTags').empty();
     });

@@ -1,11 +1,13 @@
 from django.db import models
 from django.core.validators import RegexValidator
+from django.core.exceptions import ValidationError
 from tinymce import models as tinymce_models
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.utils.translation import ugettext_lazy
 from django.utils import timezone
 from django.contrib.auth.password_validation import validate_password
+from string import printable
 
 # Create your models here.
 class Tag(models.Model):
@@ -107,8 +109,8 @@ class Post(models.Model):
 
 class Post_tag(models.Model):
     class Meta:
-        verbose_name = 'برچسب'
-        verbose_name_plural = 'برچسب ها'
+        verbose_name = 'برچسب پست'
+        verbose_name_plural = 'برچسب های پست'
 
     post = models.ForeignKey('Post', on_delete=models.CASCADE)
     tag = models.ForeignKey('Tag', on_delete=models.CASCADE)
@@ -226,11 +228,19 @@ class User(AbstractBaseUser, PermissionsMixin):
     #     verbose_name=ugettext_lazy('رمز عبور'),
     #     max_length=128,
     # )
+    def validate_username_custom(name):
+        if not all([(lambda x: x in printable[:62])(x) for x in name]) or len(str(name)) < 4:
+            raise ValidationError(
+                ugettext_lazy('%(name)s نمی تواند یک نام کاربری باشد. نام کاربری باید حداقل 4 کاراکتر باشد و فقط می تواند شامل حروف انگلیسی و اعداد باشد.'),
+                params={'name': name},
+            )
+
     username = models.CharField(
         verbose_name='نام کاربری',
         max_length=40,
         unique=True,
         primary_key=True,
+        validators=[validate_username_custom]
     )
     first_name = models.CharField(
         verbose_name='نام',
