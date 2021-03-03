@@ -15,7 +15,7 @@
     {% if user.is_authenticated %}
         خوش آمدید {{ user }} <a href="{% url 'logout' %}">خروج</a>
     {% endif %}
-    <form method="POST" class='w-50 m-auto' enctype="multipart/form-data">
+    <form id="newPostForm" method="POST" class='w-50 m-auto' enctype="multipart/form-data">
         {% csrf_token %}
         {%for field in form %}
             <div class="control-group {%if field.errors %}text-danger{%endif%}">
@@ -24,8 +24,8 @@
         {% endfor %}
         <label for="tag">برچسب ها: </label>
         <input id="tag" type="search"/>
-        <div id="selectedTags"></div>
-        <div id="allTags" z-index="1000" style="overflow-y: scroll; max-height:125px">
+        <div name="selectedTags" id="selectedTags"></div>
+        <div id="allTags" z-index="1000" style="overflow-y: scroll; max-height:135px">
         </div>
         <input type="submit" value="ارسال" class="btn btn-primary"/>
     </form>

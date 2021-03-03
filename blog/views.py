@@ -31,6 +31,7 @@ def newpost(request, username):
         return HttpResponseRedirect(reverse('newpost', kwargs={'username':request.user.username}))
 
     if request.POST:
+        print(request.POST.getlist('tags'))
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             post = form.save(commit=False)
