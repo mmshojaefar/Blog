@@ -1,0 +1,17 @@
+{% block cg %}
+<li>
+    {% if passedCategory.category_set.all %}
+        <span class="caret">
+            {{ passedCategory.name }}
+        </span>
+        <ul class="nested">
+            {% for category in passedCategory.category_set.all %}
+                {% include "blog/categorybasetree.html" with passedCategory=category %}
+            {% endfor %}
+        </ul>
+    {% else %}
+        {{ passedCategory.name }}
+    {% endif %}
+</li>
+{% endblock %}
+

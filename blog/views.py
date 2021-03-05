@@ -1,7 +1,7 @@
 from django.shortcuts import render, HttpResponseRedirect, reverse, Http404
 from django.http import JsonResponse
 from blog.forms import PostForm, UserForm
-from blog.models import Post_rating, Comment_rating, Post, Comment, Tag, User
+from blog.models import Post_rating, Comment_rating, Post, Comment, Tag, User, Category
 from tinymce.views import render_to_link_list
 from unicodedata import bidirectional
 from django.contrib.auth.decorators import login_required, permission_required
@@ -16,6 +16,16 @@ import json
 
 
 # Create your views here.
+
+def index(request):
+    posts = Post.objects.order_by('-post_send_time').filter()[:5]
+    print(posts)
+    return render(request, 'blog/index.html', context={'posts':posts})
+
+def categorytree(request):
+    categories = Category.objects.all()
+    return render(request, 'blog/categorytree.html', context={'categories':categories})
+
 
 @login_required
 @permission_required('blog.add_post')

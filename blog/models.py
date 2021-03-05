@@ -33,7 +33,7 @@ class Category(models.Model):
         max_length=100,
     )
 
-    supercategories = models.ForeignKey(
+    supercategory = models.ForeignKey(
         'Category',
         verbose_name='سر دسته',
         on_delete=models.CASCADE,
