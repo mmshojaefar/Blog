@@ -1,8 +1,7 @@
-{% block cg %}
 <li>
     {% if passedCategory.category_set.all %}
         <span class="caret">
-            {{ passedCategory.name }}
+            <a href="{% url 'showcategory' category %}"> {{ passedCategory.name }}</a>
         </span>
         <ul class="nested">
             {% for category in passedCategory.category_set.all %}
@@ -10,8 +9,6 @@
             {% endfor %}
         </ul>
     {% else %}
-        {{ passedCategory.name }}
+        <a href="{% url 'showcategory' category %}"> {{ passedCategory.name }}</a>
     {% endif %}
 </li>
-{% endblock %}
-
