@@ -9,6 +9,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('category/', views.categorytree, name='categorytree'),
     path('category/<str:name>', views.showcategory, name='showcategory'),
+    path('tag/<str:name>', views.showtag, name='showtag'),
 
     path('api/likepost/', views.apilike, name='apilike'),
     path('api/likecomment/', views.apilikecomment, name='apilikecomment'),

@@ -29,9 +29,13 @@ def categorytree(request):
 def showcategory(request, name):
     posts = Post.objects.filter(categories__name=name)
     print(posts)
-    return render(request, 'blog/showcategory.html', context={'posts':posts})
+    return render(request, 'blog/showcategory.html', context={'posts':posts, 'category':name})
  
-
+def showtag(request, name):
+    posts = Post.objects.filter(tags__name=name)
+    print(posts)
+    return render(request, 'blog/showtag.html', context={'posts':posts, 'tag':name})
+ 
 @login_required
 @permission_required('blog.add_post')
 def newpost(request, username):
