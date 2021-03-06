@@ -293,7 +293,6 @@ def apidislikecomment(request):
 
 @require_http_methods(["POST"])
 def add_tag(request):
-    # print(222222222222222222222)
     tag = request.POST['tag']
     # result = Tag.objects.filter(name__icontains=tag).only("pk", "name")
     result = Tag.objects.filter(name__icontains=tag, accept_by_admin=True)
