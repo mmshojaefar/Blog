@@ -19,6 +19,16 @@ class Tag(models.Model):
         verbose_name='برچسب',
         max_length=100,
     )
+    accept_by_admin = models.BooleanField(
+        verbose_name='برچسب تایید شده است',
+        default=False,
+    )
+    # used_in_not_accepted_post = models.IntegerField(
+    #     verbose_name='تعداد استفاده از برچسب در پست های تایید نشده'
+    # )
+    # used_in_accepted_post = models.IntegerField(
+    #     verbose_name='تعداد استفاده از برچسب در پست های تایید شده'
+    # )
 
     def __str__(self):
         return self.name

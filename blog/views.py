@@ -1,7 +1,7 @@
 from django.shortcuts import render, HttpResponseRedirect, reverse, Http404
 from django.http import JsonResponse
 from blog.forms import PostForm, UserForm
-from blog.models import Post_rating, Comment_rating, Post, Comment, Tag, User, Category
+from blog.models import Post_rating, Comment_rating, Post, Comment, Tag, User, Category, Post_tag
 from tinymce.views import render_to_link_list
 from unicodedata import bidirectional
 from django.contrib.auth.decorators import login_required, permission_required
@@ -50,13 +50,18 @@ def newpost(request, username):
         return HttpResponseRedirect(reverse('newpost', kwargs={'username':request.user.username}))
 
     if request.POST:
-        print(request.POST.getlist('tags'))
+        print(request.POST.getlist('tags'))           
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             post = form.save(commit=False)
+            tags = request.POST.getlist('tags')
             post.post_send_time = timezone.now()
             post.user = user
             post.save()
+            for tag in set(tags):
+                # print(tag)
+                selected_tag, _ = Tag.objects.get_or_create(name=tag)
+                pt, _ = Post_tag.objects.get_or_create(tag=selected_tag, post=post)
             return HttpResponseRedirect(reverse('showpost', kwargs={'username':username, 'pk':post.pk}))
         else:
             form = PostForm(request.POST)
@@ -219,6 +224,12 @@ def api_accept_post(request):
         post = Post.objects.get(pk=request.POST['post'])
     except Post.DoesNotExist:
         return JsonResponse(data={'ok':'NOT FOUND'})
+    else:
+        if not post.accept_by_admin:
+            for ptag in Post_tag.objects.filter(post=post):
+                print(ptag.tag.accept_by_admin, ptag.tag)
+                ptag.tag.accept_by_admin = True
+                ptag.tag.save()
 
     post.accept_by_admin = (not post.accept_by_admin)
     post.save()
@@ -285,7 +296,7 @@ def add_tag(request):
     # print(222222222222222222222)
     tag = request.POST['tag']
     # result = Tag.objects.filter(name__icontains=tag).only("pk", "name")
-    result = Tag.objects.filter(name__icontains=tag)
+    result = Tag.objects.filter(name__icontains=tag, accept_by_admin=True)
     # print(result)
     # print(serializers.serialize("json" ,result))
     return JsonResponse(data={'result': serializers.serialize("json" ,result)})
