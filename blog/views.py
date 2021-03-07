@@ -62,7 +62,7 @@ def newpost(request, username):
             for tag in set(tags):
                 # print(tag)
                 selected_tag, _ = Tag.objects.get_or_create(name=tag)
-                pt, _ = Post_tag.objects.get_or_create(tag=selected_tag, post=post)
+                _, _ = Post_tag.objects.get_or_create(tag=selected_tag, post=post)
             return HttpResponseRedirect(reverse('showpost', kwargs={'username':username, 'pk':post.pk}))
         else:
             form = PostForm(request.POST)
@@ -83,16 +83,8 @@ def editpost(request, username, pk):
     user = request.user
     if not user.username == username:
         raise Http404
-    # print(request.method=='GET')
     if request.method=='GET':
         post = Post.objects.get(pk=pk)
-        # form = PostForm(initial={'title': post.title,
-        #                         'text': post.text,
-        #                         'image': post.image,
-        #                         'show_post': post.show_post,
-        #                         'categories': post.categories,
-        #                         #  'tags': post.tags,
-        #                         })
         form = PostForm(instance=post)
         return render(request, 'blog/editpost.html', context={'form':form})
     else:
@@ -109,16 +101,15 @@ def editpost(request, username, pk):
             post.accept_by_admin = False
             tags = request.POST.getlist('tags')
             for tag in set(tags):
-                # print(tag)
                 selected_tag, _ = Tag.objects.get_or_create(name=tag)
-                pt, _ = Post_tag.objects.get_or_create(tag=selected_tag, post=post)
+                _, _ = Post_tag.objects.get_or_create(tag=selected_tag, post=post)
 
-            # post.save(update_fields=['title', 'text', 'image', 'show_post', 'categories', 'tags', 'accept_by_admin'])
             post.save(update_fields=['title', 'text', 'image', 'show_post', 'categories', 'accept_by_admin'])
             return HttpResponseRedirect(reverse('showpost', kwargs={'username':post.user.username, 'pk':post.pk}))
         else:
             form = PostForm(request.POST)
-    return render(request, 'blog/editpost.html', context={})
+            return render(request, 'blog/editpost.html', context={'form':form})
+    # return render(request, 'blog/editpost.html', context={})
 
 
 def showpost(request, username, pk):
@@ -182,11 +173,6 @@ def register(request):
     form = UserForm()
     return render(request, 'blog/register.html', context={'form':form})
 
-# @csrf_exempt
-# @require_http_methods(["POST"])
-# def apilike(request):
-#     print(request.POST)
-#     return JsonResponse(data={'ok':True})
 
 @login_required()
 @require_http_methods(["POST"])
@@ -332,5 +318,4 @@ def get_tag(request):
     post = Post.objects.get(pk=id)
     tags = Post_tag.objects.values_list('id', 'tag__name').filter(post=post)
     print(list(tags))
-    # return JsonResponse(data={'tags':serializers.serialize("json" ,tags)})
     return JsonResponse(data={'tags': list(tags)})
