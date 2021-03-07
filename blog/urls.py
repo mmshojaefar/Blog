@@ -19,4 +19,5 @@ urlpatterns = [
     path('api/acceptcomment/', views.api_accept_comment, name='api_accept_comment'),
     path('api/addtag/', views.add_tag, name='add_tag'),
     path('api/checkusername/', views.check_username, name='check_username'),
+    path('api/gettag/', views.get_tag, name='get_tag'),
 ]

@@ -10,7 +10,7 @@ from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import Group
 from django.core import serializers
-from django.views.decorators.csrf import csrf_exempt
+# from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ValidationError
 import json
 
@@ -46,6 +46,7 @@ def newpost(request, username):
         see it before accepting by admin/editor. And owner can edit post before accepting by admin.
     '''
     user = request.user
+    print(user.get_user_permissions())
     if not user.username == username:
         return HttpResponseRedirect(reverse('newpost', kwargs={'username':request.user.username}))
 
@@ -76,6 +77,9 @@ def editpost(request, username, pk):
         If post accepted by admin, after editing the post, Other people cant see the post until editor/admin user accept
         the post again 
     '''
+    # post = Post.objects.filter(pk=pk)
+    # if not post.user.username == username:
+    #     return HttpResponseRedirect(reverse('editpost', kwargs={'username':post.user.username, 'pk':post.pk}))
     user = request.user
     if not user.username == username:
         raise Http404
@@ -102,8 +106,13 @@ def editpost(request, username, pk):
             post.image = edited_post.image
             post.show_post = edited_post.show_post
             post.categories = edited_post.categories
-            # post.tags = edited_post.tags
             post.accept_by_admin = False
+            tags = request.POST.getlist('tags')
+            for tag in set(tags):
+                # print(tag)
+                selected_tag, _ = Tag.objects.get_or_create(name=tag)
+                pt, _ = Post_tag.objects.get_or_create(tag=selected_tag, post=post)
+
             # post.save(update_fields=['title', 'text', 'image', 'show_post', 'categories', 'tags', 'accept_by_admin'])
             post.save(update_fields=['title', 'text', 'image', 'show_post', 'categories', 'accept_by_admin'])
             return HttpResponseRedirect(reverse('showpost', kwargs={'username':post.user.username, 'pk':post.pk}))
@@ -131,6 +140,8 @@ def showpost(request, username, pk):
         raise Http404
     if (not can_accept) and (not owner) and (not post.accept_by_admin):
         raise Http404
+    if not post.user.username == username:
+        return HttpResponseRedirect(reverse('showpost', kwargs={'username':post.user.username, 'pk':post.pk}))    
     allcomments = post.comment_set.all()
     comments = allcomments.filter(accept_by_admin=True)
     likes = Post_rating.objects.filter(positive=True, post=post).count()
@@ -313,3 +324,13 @@ def check_username(request):
         if num == 0:
             return JsonResponse(data={'ok': True})
         return JsonResponse(data={'ok': False})
+
+@require_http_methods(["POST"])
+def get_tag(request):
+    print('yesss')
+    id = request.POST.get('id')
+    post = Post.objects.get(pk=id)
+    tags = Post_tag.objects.values_list('id', 'tag__name').filter(post=post)
+    print(list(tags))
+    # return JsonResponse(data={'tags':serializers.serialize("json" ,tags)})
+    return JsonResponse(data={'tags': list(tags)})
