@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponseRedirect, reverse, Http404
 from django.http import JsonResponse
-from blog.forms import PostForm, UserForm
+from blog.forms import PostForm, UserForm, SearchForm
 from blog.models import Post_rating, Comment_rating, Post, Comment, Tag, User, Category, Post_tag
 from tinymce.views import render_to_link_list
 from unicodedata import bidirectional
@@ -10,17 +10,31 @@ from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import Group
 from django.core import serializers
-# from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ValidationError
+from django.contrib.postgres.search import TrigramSimilarity
 import json
 
 
 # Create your views here.
 
 def index(request):
-    posts = Post.objects.order_by('-post_send_time').filter()[:5]
+    '''
+        This view used for main page. It show some post in some manner:
+            - Latest posts posted
+            - Most popular posts (Determine by likes and dislikes)
+            - Most discussed (Determine by most comments)
+        The search form also placed at the above.
+    '''
+    form = SearchForm()
+    if 'search' in request.GET:
+        form = SearchForm(request.GET)
+        if form.is_valid():
+            data = form.cleaned_data['search']
+            posts = Post.objects.all().annotate(similarity=TrigramSimilarity('text', data)).filter(similarity__gt=0.3).order_by('-similarity')
+    else:
+        posts = Post.objects.order_by('-post_send_time').filter()[:5]
     print(posts)
-    return render(request, 'blog/index.html', context={'posts':posts})
+    return render(request, 'blog/index.html', context={'posts':posts, 'form':form})
 
 def categorytree(request):
     categories = Category.objects.all()
@@ -168,7 +182,7 @@ def register(request):
             # return HttpResponseRedirect(reverse('blog:profile', args=(user.username)))
             return HttpResponseRedirect(reverse('profile', args=(user.username)))
         else:
-            form = UserForm(request.POST)
+            form = UserForm(request.POST, request.FILES)
             return render(request, 'blog/register.html', context={'form':form})
     form = UserForm()
     return render(request, 'blog/register.html', context={'form':form})
@@ -266,7 +280,6 @@ def apilikecomment(request):
             return JsonResponse(data={'ok':'removedislike'})
     return JsonResponse(data={'ok':'nothing'})
 
-
 @login_required()
 @require_http_methods(["POST"])
 def apidislikecomment(request):
@@ -286,7 +299,6 @@ def apidislikecomment(request):
             like.delete()
             return JsonResponse(data={'ok':'removelike'})
     return JsonResponse(data={'ok':'nothing'})
-
 
 @require_http_methods(["POST"])
 def add_tag(request):

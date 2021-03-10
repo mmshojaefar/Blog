@@ -3,6 +3,9 @@ from tinymce.widgets import TinyMCE
 from .models import Post, User
 from django.contrib.auth.password_validation import validate_password
 
+class SearchForm(forms.Form):
+    search = forms.CharField(max_length=100)
+
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post

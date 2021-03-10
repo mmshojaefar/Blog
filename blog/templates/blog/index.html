@@ -6,6 +6,10 @@
     <title>بلاگ</title>
 </head>
 <body>
+    <form action="" method="GET">
+        {{ form }}
+        <input type="submit" value="جستجو">
+    </form>
     {% for post in posts %}
         {{ post }}
     {% endfor %}
