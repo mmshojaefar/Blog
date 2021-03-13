@@ -19,74 +19,70 @@ import json
 # Create your views here.
 
 def index(request):
-    '''
+    
+    """
+    Summary:
         This view used for main page. It show some post in some manner:
             - Latest posts posted
             - Most popular posts (Determine by likes and dislikes)
             - Most discussed (Determine by most comments)
         The search form also placed at the above.
-    '''
+
+    Args:
+        request ([class HttpRequest]): It is an HttpRequest object which is typically named request. It contains metadata 
+        about the request
+
+    Returns:
+        [class HttpResponse]: It show the main page of blog by rendering index.html
+    """
     form = SearchForm()
     if 'search' in request.GET:
         form = SearchForm(request.GET)
-        print(form)
-        posts = Post.objects.none()
         if form.is_valid():
+            posts = Post.objects.none()
             data = form.cleaned_data['search']
             adv_search = False
             if 'title' in request.GET:
-                # if 'text' in request.GET:
-                #     title_filter = Post.objects.annotate(similarity=0).filter(title__icontains=data, accept_by_admin=True)
-                # else:
                 title_filter = Post.objects.filter(title__icontains=data, accept_by_admin=True)
                 posts = (title_filter) | (posts)
-                # posts = posts.union(title_filter).order_by('post_send_time')
-                # posts = posts.union(title_filter)
                 adv_search = True
 
             if 'tag' in request.GET:
-                # if 'text' in request.GET:
-                #     tag_filter = Post.objects.annotate(similarity=0).filter(tags__name__icontains=data, accept_by_admin=True)
-                # else:
                 tag_filter = Post.objects.filter(tags__name__icontains=data, accept_by_admin=True)
                 posts = (tag_filter) | (posts)
-                # posts = posts.union(tag_filter).order_by('post_send_time')
-                # posts = posts.union(tag_filter)
                 adv_search = True
 
             if 'writer' in request.GET:
-                # if 'text' in request.GET:
-                #     writer_filter = Post.objects.annotate(similarity=0).filter(user__username__icontains=data, accept_by_admin=True)
-                # else:
                 writer_filter = Post.objects.filter(user__username__icontains=data, accept_by_admin=True)
                 posts = (writer_filter) | (posts)
-                # posts = posts.union(writer_filter).order_by('post_send_time')
-                # posts = posts.union(writer_filter)
                 adv_search = True
 
             if 'text' in request.GET:
                 text_filter = Post.objects.filter(accept_by_admin=True).annotate(similarity=TrigramSimilarity('text', data)).\
                                                     filter(similarity__gt=0.3).order_by('-similarity')
                 posts = (text_filter) | (posts)
-                # posts = posts.union(text_filter).order_by('post_send_time')
                 adv_search = True
 
             if not adv_search:
                 posts = Post.objects.filter(accept_by_admin=True).annotate(similarity=TrigramSimilarity('text', data)).\
                                             filter(similarity__gt=0.3).order_by('-similarity')
             else:
-                # print(posts.distinct())
-                # posts.union(posts)
                 posts = posts.distinct()
         else:
             return render(request, 'blog/index.html', context={'form':form})
-
     else:
         posts = Post.objects.order_by('-post_send_time').filter()[:5]
-    # print(posts)
     return render(request, 'blog/index.html', context={'posts':posts, 'form':form})
 
 def categorytree(request):
+    """[summary]
+
+    Args:
+        request ([type]): [description]
+
+    Returns:
+        [type]: [description]
+    """
     categories = Category.objects.all()
     return render(request, 'blog/categorytree.html', context={'categories':categories})
 
