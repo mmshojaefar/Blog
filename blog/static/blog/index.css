@@ -1,0 +1,12 @@
+  .advSearch {
+    display: none;
+  }
+
+/*
+#showAdvSearch:hover + .advSearch {
+  display: block;
+}
+
+.advSearch:hover {
+  display: block;
+} */

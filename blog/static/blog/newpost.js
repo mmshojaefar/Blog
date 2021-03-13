@@ -50,12 +50,12 @@ $(document).ready(function(){
     }
 );
 
-var i = 0;
+// var i = 0;
 function addTag(){
     $(".addTag").click(function() {
         console.log(111111111);
         selected = `<input name='tags' style='background-color:#D3D3D3; margin:1px 3px; display:inline; border:none;' value='${$('#tag').val()}' disabled>`;
-        i++;
+        // i++;
         $('#selectedTags').append(selected);
         // $(selected).insertAfter('#selectedTags');
         $('#tag').val("");

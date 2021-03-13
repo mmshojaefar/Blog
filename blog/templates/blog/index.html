@@ -1,17 +1,108 @@
+{% load static %}
+{% load bootstrap %}
+
 <!DOCTYPE html>
-<html lang="en" dir="rtl">
+<html lang="fa" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <link rel="stylesheet" href="{% static 'blog/lib/css/bootstrap.min.css' %}">  -->
+    <link rel="stylesheet" href="{% static 'blog/index.css' %}"> 
     <title>بلاگ</title>
 </head>
+
 <body>
     <form action="" method="GET">
-        {{ form }}
+        <div class="form-group">
+            {{ form.search.label_tag }}
+            <div>
+                {{ form.search }}
+            </div>
+            <div>
+                {% if form.search.errors %}
+                    {{ form.search.errors }}
+                {% endif %}
+            </div>
+        </div>
+        <div id="showAdvSearch" style="background-color: aqua;">جستجوی پیشرفته</div>
+        <div class="advSearch">
+            <div class="form-group">
+                {{ form.post_time_sent_from.label_tag }}
+                <div class="time">
+                    {{ form.post_time_sent_from }}
+                </div>
+                <div>
+                    {% if form.post_time_sent_from.errors %}
+                        {{ form.post_time_sent_from.errors }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-group">
+                {{ form.post_time_sent_to.label_tag }}
+                <div class="time">
+                    {{ form.post_time_sent_to }}
+                </div>
+                <div>
+                    {% if form.post_time_sent_to.errors %}
+                        {{ form.post_time_sent_to.errors }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="checkbox">
+                    {{ form.title.label_tag }}
+                    {{ form.title }}
+                </div>
+                <div>
+                    {% if form.title.errors %}
+                        {{ form.title.errors }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="checkbox">
+                    {{ form.text.label_tag }}
+                    {{ form.text }}
+                </div>
+                <div>
+                    {% if form.text.errors %}
+                        {{ form.text.errors }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="checkbox">
+                    {{ form.tag.label_tag }}
+                    {{ form.tag }}
+                </div>
+                <div>
+                    {% if form.tag.errors %}
+                        {{ form.tag.errors }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="checkbox">
+                    {{ form.writer.label_tag }}
+                    {{ form.writer }}
+                </div>
+                <div>
+                    {% if form.writer.errors %}
+                        {{ form.writer.errors }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
         <input type="submit" value="جستجو">
     </form>
     {% for post in posts %}
         {{ post }}
     {% endfor %}
+
+    <script src="{% static 'blog/lib/js/jquery-3.4.1.min.js' %}"></script>  
+    <script src="{% static 'blog/lib/js/bootstrap.min.js' %}"></script>  
+    <script src="{% static 'blog/index.js' %}"></script>
 </body>
+
 </html>

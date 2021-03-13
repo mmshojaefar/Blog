@@ -111,8 +111,8 @@ function divClicked(){
     });
 }
 
-$('#newPostForm').submit(function(){
-    $("#newPostForm :disabled").removeAttr('disabled');
+$('#editPostForm').submit(function(){
+    $("#editPostForm :disabled").removeAttr('disabled');
 });
 
 

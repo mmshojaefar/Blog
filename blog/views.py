@@ -12,6 +12,7 @@ from django.contrib.auth.models import Group
 from django.core import serializers
 from django.core.exceptions import ValidationError
 from django.contrib.postgres.search import TrigramSimilarity
+from django.db.models import Q
 import json
 
 
@@ -28,12 +29,61 @@ def index(request):
     form = SearchForm()
     if 'search' in request.GET:
         form = SearchForm(request.GET)
+        print(form)
+        posts = Post.objects.none()
         if form.is_valid():
             data = form.cleaned_data['search']
-            posts = Post.objects.all().annotate(similarity=TrigramSimilarity('text', data)).filter(similarity__gt=0.3).order_by('-similarity')
+            adv_search = False
+            if 'title' in request.GET:
+                # if 'text' in request.GET:
+                #     title_filter = Post.objects.annotate(similarity=0).filter(title__icontains=data, accept_by_admin=True)
+                # else:
+                title_filter = Post.objects.filter(title__icontains=data, accept_by_admin=True)
+                posts = (title_filter) | (posts)
+                # posts = posts.union(title_filter).order_by('post_send_time')
+                # posts = posts.union(title_filter)
+                adv_search = True
+
+            if 'tag' in request.GET:
+                # if 'text' in request.GET:
+                #     tag_filter = Post.objects.annotate(similarity=0).filter(tags__name__icontains=data, accept_by_admin=True)
+                # else:
+                tag_filter = Post.objects.filter(tags__name__icontains=data, accept_by_admin=True)
+                posts = (tag_filter) | (posts)
+                # posts = posts.union(tag_filter).order_by('post_send_time')
+                # posts = posts.union(tag_filter)
+                adv_search = True
+
+            if 'writer' in request.GET:
+                # if 'text' in request.GET:
+                #     writer_filter = Post.objects.annotate(similarity=0).filter(user__username__icontains=data, accept_by_admin=True)
+                # else:
+                writer_filter = Post.objects.filter(user__username__icontains=data, accept_by_admin=True)
+                posts = (writer_filter) | (posts)
+                # posts = posts.union(writer_filter).order_by('post_send_time')
+                # posts = posts.union(writer_filter)
+                adv_search = True
+
+            if 'text' in request.GET:
+                text_filter = Post.objects.filter(accept_by_admin=True).annotate(similarity=TrigramSimilarity('text', data)).\
+                                                    filter(similarity__gt=0.3).order_by('-similarity')
+                posts = (text_filter) | (posts)
+                # posts = posts.union(text_filter).order_by('post_send_time')
+                adv_search = True
+
+            if not adv_search:
+                posts = Post.objects.filter(accept_by_admin=True).annotate(similarity=TrigramSimilarity('text', data)).\
+                                            filter(similarity__gt=0.3).order_by('-similarity')
+            else:
+                # print(posts.distinct())
+                # posts.union(posts)
+                posts = posts.distinct()
+        else:
+            return render(request, 'blog/index.html', context={'form':form})
+
     else:
         posts = Post.objects.order_by('-post_send_time').filter()[:5]
-    print(posts)
+    # print(posts)
     return render(request, 'blog/index.html', context={'posts':posts, 'form':form})
 
 def categorytree(request):
@@ -60,7 +110,7 @@ def newpost(request, username):
         see it before accepting by admin/editor. And owner can edit post before accepting by admin.
     '''
     user = request.user
-    print(user.get_user_permissions())
+    # print(user.get_user_permissions())
     if not user.username == username:
         return HttpResponseRedirect(reverse('newpost', kwargs={'username':request.user.username}))
 

@@ -3,8 +3,37 @@ from tinymce.widgets import TinyMCE
 from .models import Post, User
 from django.contrib.auth.password_validation import validate_password
 
+
 class SearchForm(forms.Form):
-    search = forms.CharField(max_length=100)
+    search = forms.CharField(
+        max_length=100,
+        label='جستجو',
+    )
+    post_time_sent_from = forms.DateTimeField(
+        required=False,
+        label='زمان ارسال پست از',
+    )
+    post_time_sent_to = forms.DateTimeField(
+        required=False,
+        label='تا',
+    )
+    title = forms.BooleanField(
+        required=False,
+        label='عنوان',
+    )
+    text = forms.BooleanField(
+        required=False,
+        label='متن',
+    )
+    tag = forms.BooleanField(
+        required=False,
+        label='برچسب ها',
+    )
+    writer = forms.BooleanField(
+        required=False,
+        label='نویسنده',
+    )
+
 
 class PostForm(forms.ModelForm):
     class Meta:
