@@ -6,25 +6,51 @@ function check(){
     return ans
 }
 
-// check()
 
-$('#showAdvSearch').mouseenter(function() {
-    $('.advSearch').show();
+var timer;
+$('#toggleAdvSearch').mouseenter(function() {
+    clearTimeout( timer )
+    timer = window.setTimeout(function(){
+        $('.advSearch').show();
+        $('.show').addClass('d-none')
+        $('.hide').removeClass('d-none')
+    }, 1500)
 }).mouseleave(function() {
     if(!check()){
         $('.advSearch').hide();
+        $('.show').removeClass('d-none')
+        $('.hide').addClass('d-none')
     }
+    clearTimeout( timer )
 });
-
 
 $('.advSearch').mouseover(function() {
     $('.advSearch').show();
+    $('.show').addClass('d-none')
+    $('.hide').removeClass('d-none')
+    clearTimeout( timer )
 }).mouseleave(function() {
     if(!check()){
         $('.advSearch').hide();
+        $('.show').removeClass('d-none')
+        $('.hide').addClass('d-none')
     }
+    clearTimeout( timer )
 })
 
+$('.show').click(function() {
+    $('.advSearch').show();
+    $('.show').addClass('d-none')
+    $('.hide').removeClass('d-none')
+    clearTimeout( timer )
+});
+
+$('.hide').click(function() {
+    $('.advSearch').hide();
+    $('.show').removeClass('d-none')
+    $('.hide').addClass('d-none')
+    clearTimeout( timer )
+});
 
 $('#openSearch').click(function(){
     $('#searchForm').removeClass('d-none')
@@ -40,7 +66,6 @@ $('#openSearch').click(function(){
     $('#searchBtn').removeClass('d-flex')
     $('#searchBtn').addClass('d-none')
 })
-
 
 $('#closeSearch').click(function(){
     $('#searchForm').addClass('d-none')
