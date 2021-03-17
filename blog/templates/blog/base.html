@@ -1,0 +1,152 @@
+{% load static %}
+{% load bootstrap %}
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'blog/lib/css/bootstrap.min.css' %}"> 
+    <link rel="stylesheet" href="{% static 'blog/base.css' %}"> 
+    <title>{% block title %}{% endblock %}</title>
+    {% block header %}{% endblock %}
+</head>
+
+<body class="container mt-4">
+    <div class="header d-flex flex-row">
+        <h3 class="col-2">بلاگ</h3>
+        <div class="d-flex col-10">
+            <form action="{% url 'index' %}" class="d-flex ms-1 mt-2 col-10" method="GET">
+                <div class="d-flex flex-column col-12">
+                    <div class="form-group">
+                            {% comment %} {{ form.search.label_tag }} {% endcomment %}
+                        <div class="input-group-sm">
+                            {% comment %} {{ form.search }} {% endcomment %}
+                            <input type="text" name="search" maxlength="100" required id="id_search" style="width:100%;" class="form-control input-sm">
+                        </div>
+                        <div>
+                            {% if form.search.errors %}
+                                {{ form.search.errors }}
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% comment %} <div id="showAdvSearch"><i class="fas fa-chevron-down"></i></div> {% endcomment %}
+                    <div id="showAdvSearch" title="جستجوی پیشرفته"><i class="fas fa-angle-down me-1"></i></div>
+                    {% comment %} <div id="showAdvSearch"><i class="fas fa-caret-down"></i></div> {% endcomment %}
+                    <div class="advSearch" style="z-index:1000;">
+                        <div class="d-sm-flex">
+                            <label class="col-sm-4 col-lg-3">زمان ارسال پست</label>
+                            <div class="d-sm-flex col-sm-8 col-lg-9 justify-content-between">
+                                <div class="form-group col-12 col-sm-5">
+                                    {{ form.post_time_sent_from.label_tag }}
+                                    <div class="time input-group-sm">
+                                        {% comment %} {{ form.post_time_sent_from }} {% endcomment %}
+                                        <input type="date" name="post_time_sent_from" id="id_post_time_sent_from" class="form-control input-sm">
+                                    </div>
+                                    <div>
+                                        {% if form.post_time_sent_from.errors %}
+                                        {{ form.post_time_sent_from.errors }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="form-group col-12 col-sm-5">
+                                    {{ form.post_time_sent_to.label_tag }}
+                                    <div class="time input-group-sm">
+                                        {% comment %} {{ form.post_time_sent_to }} {% endcomment %}
+                                        <input type="date" name="post_time_sent_to" id="id_post_time_sent_to" class="form-control input-sm">
+                                    </div>
+                                    <div>
+                                        {% if form.post_time_sent_to.errors %}
+                                            {{ form.post_time_sent_to.errors }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-sm-flex justify-content-between">
+                            <label class="col-sm-4 col-lg-3">جستجو در</label>
+                            <div class="d-flex flex-wrap flex-lg-nowrap col-sm-8 col-lg-9 justify-content-between">
+                                <div class="form-group col-5 col-lg-2">
+                                    <div class="checkbox form-check form-switch">
+                                        {{ form.title.label_tag }}
+                                        {% comment %} {{ form.title }} {% endcomment %}
+                                        <input type="checkbox" name="title" id="id_title" class="form-check-input">
+                                    </div>
+                                    <div>
+                                        {% if form.title.errors %}
+                                            {{ form.title.errors }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="form-group col-6 col-lg-3">
+                                    <div class="checkbox form-check form-switch">
+                                        {{ form.tag.label_tag }}
+                                        {% comment %} {{ form.tag }} {% endcomment %}
+                                        <input type="checkbox" name="tag" id="id_tag" class="form-check-input">
+                                    </div>
+                                    <div>
+                                        {% if form.tag.errors %}
+                                            {{ form.tag.errors }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="form-group col-5 col-lg-2">
+                                    <div class="checkbox form-check form-switch">
+                                        {{ form.text.label_tag }}
+                                        {% comment %} {{ form.text }} {% endcomment %}
+                                        <input type="checkbox" name="text" id="id_text" class="form-check-input">
+                                    </div>
+                                    <div>
+                                        {% if form.text.errors %}
+                                            {{ form.text.errors }}
+                                        {% endif %}
+                                    </div>
+                                </div> 
+                                <div class="form-group col-6 col-lg-3">
+                                    <div class="checkbox form-check form-switch">
+                                        {{ form.writer.label_tag }}
+                                        {% comment %} {{ form.writer }} {% endcomment %}
+                                        <input type="checkbox" name="writer" id="id_writer" class="form-check-input">
+                                    </div>
+                                    <div>
+                                        {% if form.writer.errors %}
+                                            {{ form.writer.errors }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                </div>
+                <button type="submit" class="btn align-self-start ms-3">
+                    <i class="fas fa-search"></i>
+                </button>
+                {% comment %} <input type="submit" class="btn btn-primary align-self-start" value="جستجو"> {% endcomment %}
+            </form>
+            <span class="btn col-2">
+                <a class="btn btn-sm shadow-none" href="{% url 'login' %}">ورود</a>
+                <a class="btn btn-sm border-0 btn-primary shadow-none" href="{% url 'register' %}">ثبت نام</a>
+            </span>
+        </div>
+        
+    </div>
+
+    {% block body %}{% endblock %}
+
+    <script src="{% static 'blog/lib/js/jquery-3.4.1.min.js' %}"></script>  
+    <script src="{% static 'blog/lib/js/bootstrap.min.js' %}"></script>  
+    <script src="{% static 'blog/base.js' %}"></script>
+    <script src="https://kit.fontawesome.com/3ddc925580.js" crossorigin="anonymous"></script>
+    {% block script %}{% endblock %}
+</body>
+
+</html>
+
+
+{% comment %} {{ form.search.field.max_length }}
+{{ form.search.field.required }}
+{{ form.search.id_for_label }}
+{{ form.search.field.label }}
+{{ form.search.field.help_text }} {% endcomment %}

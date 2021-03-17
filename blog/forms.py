@@ -11,7 +11,7 @@ class SearchForm(forms.Form):
     )
     post_time_sent_from = forms.DateTimeField(
         required=False,
-        label='زمان ارسال پست از',
+        label='از',
     )
     post_time_sent_to = forms.DateTimeField(
         required=False,
@@ -27,7 +27,7 @@ class SearchForm(forms.Form):
     )
     tag = forms.BooleanField(
         required=False,
-        label='برچسب ها',
+        label='برچسب',
     )
     writer = forms.BooleanField(
         required=False,
