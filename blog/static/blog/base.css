@@ -10,3 +10,7 @@
 .advSearch:hover {
   display: block;
 } */
+
+a {
+  text-decoration: none;
+}

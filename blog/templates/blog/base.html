@@ -14,8 +14,8 @@
 </head>
 
 <body class="container mt-4">
-    <div class="header d-flex flex-row">
-        <h3 id="blog" class="col-2">بلاگ</h3>
+    <div class="header d-flex flex-row navbar navbar-light">
+        <h3 id="blog" class="col-2 align-self-start"><a href="{% url 'index' %}">بلاگ</a></h3>
         <div id="searchFormParent" class="d-flex col-10">
             <form id="searchForm" action="{% url 'index' %}" class="d-none d-sm-flex ms-3 mt-1 col-sm-8 col-md-9 col-xl-10" method="GET">
                 <div class="d-flex flex-column col-10 col-sm-12">
@@ -23,7 +23,7 @@
                             {% comment %} {{ form.search.label_tag }} {% endcomment %}
                         <div class="input-group-sm">
                             {% comment %} {{ form.search }} {% endcomment %}
-                            <input type="text" name="search" maxlength="100" required id="id_search" style="width:100%;" class="form-control input-sm">
+                            <input type="text" name="search" maxlength="100" required id="id_search" placeholder="جستجو" tyle="width:100%;" class="form-control input-sm">
                         </div>
                         <div>
                             {% if form.search.errors %}
@@ -134,6 +134,33 @@
             </span>
         </div> 
     </div>
+
+    <nav class="navbar navbar-expand navbar-dark bg-primary sticky-top p-0" data-spy="scroll">
+        <div class="" style="white-space: nowrap;overflow-x: auto;">
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link btn-sm" href="{% url 'index' %}">جدیدترین ها</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn-sm" href="{% url 'index' %}">جنجالی ترین ها</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn-sm" href="{% url 'index' %}">دوست داشتنی ترین ها</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn-sm" aria-current="page" href="{% url 'categorytree' %}">دسته بندی ها</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn-sm" href="{% url 'alltags' %}">برچسب ها</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn-sm" href="{% url 'alltags' %}">برچسب ها</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
     {% block body %}{% endblock %}
 

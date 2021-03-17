@@ -234,6 +234,12 @@ def register(request):
     return render(request, 'blog/register.html', context={'form':form})
 
 
+def alltags(request):
+    tags = Tag.objects.all()
+    return render(request, 'blog/alltags.html', context={'tags':tags})
+
+
+
 @login_required()
 @require_http_methods(["POST"])
 def apilike(request):
