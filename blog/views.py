@@ -18,7 +18,7 @@ import json
 
 # Create your views here.
 
-def index(request):
+def index(request, whichpost=None):
     
     """
     Summary:
@@ -36,38 +36,60 @@ def index(request):
         [class HttpResponse]: It show the main page of blog by rendering index.html
     """
     form = SearchForm()
+
+    # check search to determine show the main page or results
     if 'search' in request.GET:
         form = SearchForm(request.GET)
         if form.is_valid():
-            posts = Post.objects.none()
+            # posts = Post.objects.none()
+            allposts = Post.objects.all()
             data = form.cleaned_data['search']
+
+            # adv_search variable show we must search in anything or a specific field(it is not for search in period of time)
             adv_search = False
+            adv_posts = {}
+
+            # check for advanced search. if title, tag, writer, text or post_sent_time_from/to be in the request
+            # it means that the user use advanced search
+            if 'post_sent_time_from' in request.GET:
+                allposts = allposts.filter(post_sent_time_from__gte=post_sent_time_from)
+            
+            if 'post_sent_time_to' in request.GET:
+                allposts = allposts.filter(post_sent_time_from__lte=post_sent_time_to)
+            
             if 'title' in request.GET:
-                title_filter = Post.objects.filter(title__icontains=data, accept_by_admin=True)
-                posts = (title_filter) | (posts)
+                title_filter = allposts.filter(title__icontains=data, accept_by_admin=True)
+                # posts = (title_filter) | (posts)
+                adv_posts['title'] = title_filter
                 adv_search = True
 
             if 'tag' in request.GET:
-                tag_filter = Post.objects.filter(tags__name__icontains=data, accept_by_admin=True)
-                posts = (tag_filter) | (posts)
+                tag_filter = allposts.filter(tags__name__icontains=data, accept_by_admin=True)
+                # posts = (tag_filter) | (posts)
+                adv_posts['tag'] = tag_filter
                 adv_search = True
 
             if 'writer' in request.GET:
-                writer_filter = Post.objects.filter(user__username__icontains=data, accept_by_admin=True)
-                posts = (writer_filter) | (posts)
+                writer_filter = allposts.filter(user__username__icontains=data, accept_by_admin=True)
+                # posts = (writer_filter) | (posts)
+                adv_posts['writer'] = writer_filter
                 adv_search = True
 
             if 'text' in request.GET:
-                text_filter = Post.objects.filter(accept_by_admin=True).annotate(similarity=TrigramSimilarity('text', data)).\
+                text_filter = allposts.filter(accept_by_admin=True).annotate(similarity=TrigramSimilarity('text', data)).\
                                                     filter(similarity__gt=0.3).order_by('-similarity')
-                posts = (text_filter) | (posts)
+                # posts = (text_filter) | (posts)
+                adv_posts['text'] = text_filter
                 adv_search = True
 
             if not adv_search:
-                posts = Post.objects.filter(accept_by_admin=True).annotate(similarity=TrigramSimilarity('text', data)).\
+                posts = allposts.filter(accept_by_admin=True).annotate(similarity=TrigramSimilarity('text', data)).\
                                             filter(similarity__gt=0.3).order_by('-similarity')
+                return render(request, 'blog/index.html', context={'posts':posts, 'form':form, 'adv':False})
             else:
-                posts = posts.distinct()
+                # posts = posts.distinct()
+                # print(adv_posts)
+                return render(request, 'blog/index.html', context={'posts':adv_posts, 'form':form, 'adv':True})
         else:
             return render(request, 'blog/index.html', context={'form':form})
     else:

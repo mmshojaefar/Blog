@@ -17,7 +17,7 @@
     <div class="header d-flex flex-row navbar navbar-light">
         <h3 id="blog" class="col-2 align-self-start"><a href="{% url 'index' %}">بلاگ</a></h3>
         <div id="searchFormParent" class="d-flex col-10">
-            <form id="searchForm" action="{% url 'index' %}" class="d-none d-sm-flex ms-3 mt-1 col-sm-8 col-md-9 col-xl-10" method="GET">
+            <form id="searchForm" action="{% url 'index' %}" class="d-none d-sm-flex ms-4 mt-2 col-sm-8 col-md-9 col-xl-10" method="GET">
                 <div class="d-flex flex-column col-10 col-sm-12">
                     <div class="form-group">
                         <div class="input-group-sm">                            
@@ -29,6 +29,9 @@
                             {% endif %}
                         </div>
                     </div>
+                    {% comment %} <div class="progress" style="height: 1px;">
+                        <div class="progress-bar" role="progressbar" style="width: 1%;" aria-valuenow="1" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div> {% endcomment %}
                     <div id="toggleAdvSearch" title="جستجوی پیشرفته">
                         <i class="show fas fa-angle-down me-1"></i>
                         <i class="hide fas fa-angle-up me-1 d-none"></i>
@@ -112,7 +115,7 @@
                         </div>
                     </div>              
                 </div>
-                <button type="submit" class="btn align-self-start shadow-none">
+                <button type="submit" class="btn align-self-start shadow-none" style="margin-top:-3px; margin-right:-4px;">
                     <i class="fas fa-search"></i>
                 </button>
                 <button id="closeSearch" type="button" class="btn align-self-start d-flex d-sm-none pt-2 shadow-none">
@@ -124,13 +127,13 @@
                 <button id="openSearch" type="submit" class="btn shadow-none align-self-start d-sm-none">
                     <i class="fas fa-search"></i>
                 </button>
-                <a class="btn btn-sm shadow-none" href="{% url 'login' %}">ورود</a>
+                <a class="btn btn-sm shadow-none border-1 border-primary" href="{% url 'login' %}">ورود</a>
                 <a class="btn btn-sm btn-primary shadow-none" href="{% url 'register' %}">ثبت نام</a>
             </span>
         </div> 
     </div>
 
-    <nav class="navbar navbar-expand navbar-dark bg-primary sticky-top p-1" data-spy="scroll">
+    <nav class="navbar navbar-expand navbar-dark bg-primary sticky-top p-1 mb-1" data-spy="scroll">
         <div class="" style="white-space: nowrap;overflow-x: auto;">
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
