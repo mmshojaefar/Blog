@@ -43,7 +43,9 @@ def index(request, whichpost=None):
         if form.is_valid():
             # posts = Post.objects.none()
             allposts = Post.objects.all()
+            # print(form)
             data = form.cleaned_data['search']
+            # print(data)
 
             # adv_search variable show we must search in anything or a specific field(it is not for search in period of time)
             adv_search = False
@@ -51,11 +53,15 @@ def index(request, whichpost=None):
 
             # check for advanced search. if title, tag, writer, text or post_sent_time_from/to be in the request
             # it means that the user use advanced search
-            if 'post_sent_time_from' in request.GET:
-                allposts = allposts.filter(post_sent_time_from__gte=post_sent_time_from)
+
+            print(request.GET['post_time_sent_from'])
+            if 'post_time_sent_from' in request.GET and request.GET['post_time_sent_from']:
+                allposts = allposts.filter(post_send_time__gte=request.GET['post_time_sent_from'])
+                print(allposts)
             
-            if 'post_sent_time_to' in request.GET:
-                allposts = allposts.filter(post_sent_time_from__lte=post_sent_time_to)
+            if 'post_time_sent_to' in request.GET and request.GET['post_time_sent_to']:
+                allposts = allposts.filter(post_send_time__lte=request.GET['post_time_sent_to'])
+                print(allposts)
             
             if 'title' in request.GET:
                 title_filter = allposts.filter(title__icontains=data, accept_by_admin=True)
