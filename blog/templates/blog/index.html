@@ -21,7 +21,7 @@
                     {% endfor %}
                 </div>
             </div>
-            <div class="w-100  mt-2">
+            <div class="mt-2 contentbarResult">
                 <div class="tab-content" id="v-pills-tabContent">
                     {% for key, value in posts.items %}
                         <div class="tab-pane fade" id="v-pills-{{ key }}" role="tabpanel" aria-labelledby="v-pills-{{ key }}-tab">
@@ -30,6 +30,10 @@
                             {% else %}
                                 {% for post in value %}
                                     {{ post }}
+                                    زمان همواره در حال گذر است چه بخواهیم و چه نخواهیم خواهد گذشت بی آن‌که از ما سؤالی بپرسد یا از ما کسب تکلیف نماید ما را در سیر حوادث روزگار جلو می‌برد و ما نیز ابتدا با خوشحالی در جریان امواج آن جاری می‌شویم و تا به خود می‌آییم می‌بینیم ای وای چه قدر زود دیر شد و این بار تلاش می‌کنیم در خلاف جهت این امواج ویران کننده شنا کنیم اما افسوس که راهی برای بازگشت نمانده و تنها افسوس چاره دردهای ما است.
+                                    زمان همواره در حال گذر است چه بخواهیم و چه نخواهیم خواهد گذشت بی آن‌که از ما سؤالی بپرسد یا از ما کسب تکلیف نماید ما را در سیر حوادث روزگار جلو می‌برد و ما نیز ابتدا با خوشحالی در جریان امواج آن جاری می‌شویم و تا به خود می‌آییم می‌بینیم ای وای چه قدر زود دیر شد و این بار تلاش می‌کنیم در خلاف جهت این امواج ویران کننده شنا کنیم اما افسوس که راهی برای بازگشت نمانده و تنها افسوس چاره دردهای ما است.
+                                    زمان همواره در حال گذر است چه بخواهیم و چه نخواهیم خواهد گذشت بی آن‌که از ما سؤالی بپرسد یا از ما کسب تکلیف نماید ما را در سیر حوادث روزگار جلو می‌برد و ما نیز ابتدا با خوشحالی در جریان امواج آن جاری می‌شویم و تا به خود می‌آییم می‌بینیم ای وای چه قدر زود دیر شد و این بار تلاش می‌کنیم در خلاف جهت این امواج ویران کننده شنا کنیم اما افسوس که راهی برای بازگشت نمانده و تنها افسوس چاره دردهای ما است.
+                                    زمان همواره در حال گذر است چه بخواهیم و چه نخواهیم خواهد گذشت بی آن‌که از ما سؤالی بپرسد یا از ما کسب تکلیف نماید ما را در سیر حوادث روزگار جلو می‌برد و ما نیز ابتدا با خوشحالی در جریان امواج آن جاری می‌شویم و تا به خود می‌آییم می‌بینیم ای وای چه قدر زود دیر شد و این بار تلاش می‌کنیم در خلاف جهت این امواج ویران کننده شنا کنیم اما افسوس که راهی برای بازگشت نمانده و تنها افسوس چاره دردهای ما است.
                                 {% endfor %}
                             {% endif %}
                         </div>
@@ -57,15 +61,37 @@ $('#v-pills-tab a').on('click', function (e) {
 
 $(document).ready(function() {
     $(document).on('scroll', function() {
-        if( $(document).scrollTop() > 103 ){
+        // method 1
+        num = window.innerWidth>575 ? 103 : 92
+        if( $(document).scrollTop() > num ){
             console.log(777)
-            $('.sidebarResult').attr('style', `margin-top: ${ $(document).scrollTop()-103}px !important`);
+            // method 1
+            $('.sidebarResult').attr('style', `margin-top: ${ $(document).scrollTop()-num}px !important`);
+            // method 2
+            /*if(window.innerWidth>991){
+                $('.sidebarResult').attr('style', 'top: 53px !important; float:right !important;');
+                $('.sidebarResult').addClass('position-fixed'); 
+                $('.contentbarResult').addClass('position-relative'); 
+                $('.contentbarResult').addClass('col-10'); 
+                $($('.contentbarResult').find('div')[0]).addClass('position-relative'); 
+                $('.contentbarResult').attr('style', 'right : 150px !important;');
+            }else{ 
+                $('.sidebarResult').attr('style', 'top: 61px !important; float:right !important;');
+                $('.sidebarResult').addClass('position-fixed'); 
+                $('.contentbarResult').addClass('position-relative'); 
+                $('.contentbarResult').addClass('col-10'); 
+                $($('.contentbarResult').find('div')[0]).addClass('position-relative'); 
+                $('.contentbarResult').attr('style', 'right : 150px !important;');
+            }*/
         }
         else{
             $('.sidebarResult').removeAttr('style')
+            // only for method 2
+            /* $('.contentbarResult').removeAttr('style')
+            $('.sidebarResult').removeClass('position-fixed'); */
         }
     }).trigger('scroll');
-  });
+});
 
 </script>
 {% endblock %}
