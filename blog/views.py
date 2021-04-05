@@ -30,7 +30,7 @@ def index(request):
 
     Args:
         request ([class HttpRequest]): It is an HttpRequest object which is typically named request. It contains metadata 
-        about the request
+                                       about the request
 
     Returns:
         [class HttpResponse]: It show the main page of blog by rendering index.html
@@ -111,7 +111,7 @@ def categorytree(request):
 
     Args:
         request ([class HttpRequest]): It is an HttpRequest object which is typically named request. It contains metadata 
-        about the request
+                                       about the request
 
     Returns:
         [class HttpResponse]: It show the category tree by rendering categorytree.html
@@ -127,11 +127,11 @@ def showcategory(request, name):
 
     Args:
         request ([class HttpRequest]): It is an HttpRequest object which is typically named request. It contains metadata 
-        about the request
+                                       about the request
 
     Returns:
-        [class HttpResponse]: It show the posts of geiven category by rendering showcategory.html.
-        If there is NOT any category with given name, it return 404 not found.
+        [class HttpResponse]: It shows the posts of geiven category by rendering showcategory.html.
+                              If there is NOT any category with given name, it returns 404 not found.
     """
     get_object_or_404(Category, name=name)
     posts = Post.objects.filter(categories__name=name).order_by('-post_send_time')
@@ -142,31 +142,59 @@ def alltags(request):
     """
     Summary:
         Show all tags in beautiful manner.
+        The search form also placed at the above.
 
     Args:
         request ([class HttpRequest]): It is an HttpRequest object which is typically named request. It contains metadata 
-        about the request
+                                       about the request
 
     Returns:
         [class HttpResponse]: It show all tags by rendering alltags.html
     """
     tags = Tag.objects.all().order_by('name')
-    return render(request, 'blog/alltags.html', context={'tags':tags})
+    return render(request, 'blog/alltags.html', context={'tags':tags, 'form':SearchForm()})
 
 def showtag(request, name):
-    posts = Post.objects.filter(tags__name=name)
+    """
+    Summary:
+        This view used to show all post of a tag that sorted by their send time.
+        The search form also placed at the above.
+
+    Args:
+        request ([class HttpRequest]): It is an HttpRequest object which is typically named request. It contains metadata 
+                                       about the request
+
+    Returns:
+        [class HttpResponse]: It shows the posts of geiven tag by rendering showtag.html.
+                              If there is NOT any tag with given name, it returns 404 not found.
+    """
+    get_object_or_404(Tag, name=name)
+    posts = Post.objects.filter(tags__name=name).order_by('-post_send_time')
     print(posts)
-    return render(request, 'blog/showtag.html', context={'posts':posts, 'tag':name})
+    return render(request, 'blog/showtag.html', context={'posts':posts, 'tag':name, 'form':SearchForm()})
  
 @login_required
 @permission_required('blog.add_post')
 def newpost(request, username):
-    '''
+    print(username)
+    print(type(username))
+
+    """
+    Summary:
         This function used for create new post! writer/editor/admin can add new posts. Each user can leave post if go to 
         blog/posts/<user name>/newpost
         When post created, The page will redirect to a page to show post! The owner(Writer of post) and editor/admin can
         see it before accepting by admin/editor. And owner can edit post before accepting by admin.
-    '''
+
+    Args:
+        request ([class HttpRequest]): It is an HttpRequest object which is typically named request. It contains metadata 
+                                       about the request
+        username ([class str]): This variable represent the user's username that create a new post! 
+
+    Returns:
+        [class HttpResponse]: It shows PostForm by rendering newpost.html
+    """
+
     user = request.user
     # print(user.get_user_permissions())
     if not user.username == username:

@@ -9,6 +9,10 @@
 {% block header %} {% endblock %}
 
 {% block body %}
+    <p>
+        تمامی برچسب ها به ترتیب حروف الفبا در زیر امده اند.
+        با کلیک بر روی هر برچسب می توانید تمام پسست های این برچسب را مشاهده نمایید.
+    </p>
     <div class="d-inline">
         {% for tag in tags %}
             <a href="{% url 'showtag' tag %}">
