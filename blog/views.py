@@ -18,8 +18,8 @@ import json
 
 # Create your views here.
 
-def index(request, whichpost=None):
-    
+# def index(request, whichpost=None):
+def index(request):
     """
     Summary:
         This view used for main page. It show some post in some manner:
@@ -50,6 +50,7 @@ def index(request, whichpost=None):
             # adv_search variable show we must search in anything or a specific field(it is not for search in period of time)
             adv_search = False
             adv_posts = {}
+            
 
             # check for advanced search. if title, tag, writer, text or post_sent_time_from/to be in the request
             # it means that the user use advanced search
@@ -95,30 +96,63 @@ def index(request, whichpost=None):
             else:
                 # posts = posts.distinct()
                 # print(adv_posts)
-                return render(request, 'blog/index.html', context={'posts':adv_posts, 'form':form, 'adv':True})
+                return render(request, 'blog/index.html', context={'posts':adv_posts, 'form':form, 'adv':True, 'user':request.user})
         else:
-            return render(request, 'blog/index.html', context={'form':form})
+            return render(request, 'blog/index.html', context={'form':form, 'user':request.user})
     else:
         posts = Post.objects.order_by('-post_send_time').filter()[:5]
-    return render(request, 'blog/index.html', context={'posts':posts, 'form':form})
+    return render(request, 'blog/index.html', context={'posts':posts, 'form':form, 'user':request.user})
 
 def categorytree(request):
-    """[summary]
+    """
+    Summary:
+        This view used to show all categories in form Tree view.
+        The search form also placed at the above.
 
     Args:
-        request ([type]): [description]
+        request ([class HttpRequest]): It is an HttpRequest object which is typically named request. It contains metadata 
+        about the request
 
     Returns:
-        [type]: [description]
+        [class HttpResponse]: It show the category tree by rendering categorytree.html
     """
     categories = Category.objects.all()
-    return render(request, 'blog/categorytree.html', context={'categories':categories})
+    return render(request, 'blog/categorytree.html', context={'categories':categories, 'form':SearchForm()})
 
 def showcategory(request, name):
-    posts = Post.objects.filter(categories__name=name)
+    """
+    Summary:
+        This view used to show all post of a category that sorted by their send time.
+        The search form also placed at the above.
+
+    Args:
+        request ([class HttpRequest]): It is an HttpRequest object which is typically named request. It contains metadata 
+        about the request
+
+    Returns:
+        [class HttpResponse]: It show the posts of geiven category by rendering showcategory.html.
+        If there is NOT any category with given name, it return 404 not found.
+    """
+    get_object_or_404(Category, name=name)
+    posts = Post.objects.filter(categories__name=name).order_by('-post_send_time')
     print(posts)
-    return render(request, 'blog/showcategory.html', context={'posts':posts, 'category':name})
+    return render(request, 'blog/showcategory.html', context={'posts':posts, 'category':name, 'form':SearchForm()})
  
+def alltags(request):
+    """
+    Summary:
+        Show all tags in beautiful manner.
+
+    Args:
+        request ([class HttpRequest]): It is an HttpRequest object which is typically named request. It contains metadata 
+        about the request
+
+    Returns:
+        [class HttpResponse]: It show all tags by rendering alltags.html
+    """
+    tags = Tag.objects.all().order_by('name')
+    return render(request, 'blog/alltags.html', context={'tags':tags})
+
 def showtag(request, name):
     posts = Post.objects.filter(tags__name=name)
     print(posts)
@@ -260,11 +294,6 @@ def register(request):
             return render(request, 'blog/register.html', context={'form':form})
     form = UserForm()
     return render(request, 'blog/register.html', context={'form':form})
-
-
-def alltags(request):
-    tags = Tag.objects.all()
-    return render(request, 'blog/alltags.html', context={'tags':tags})
 
 
 

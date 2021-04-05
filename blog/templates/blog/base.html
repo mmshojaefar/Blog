@@ -20,7 +20,7 @@
             <form id="searchForm" action="{% url 'index' %}" class="d-none d-sm-flex ms-4 mt-2 col-sm-8 col-md-9 col-xl-10" method="GET">
                 <div class="d-flex flex-column col-10 col-sm-12">
                     <div class="form-group">
-                        <div class="input-group-sm">                            
+                        <div class="input-group-sm">
                             <input type="text" name="{{ form.search.name }}" maxlength="{{ form.search.field.max_length }}" required id="{{ form.search.id }}" placeholder="جستجو" style="width:100%;" class="form-control input-sm">
                         </div>
                         <div>
@@ -47,7 +47,7 @@
                                     </div>
                                     <div>
                                         {% if form.post_time_sent_from.errors %}
-                                        {{ form.post_time_sent_from.errors }}
+                                            {{ form.post_time_sent_from.errors }}
                                         {% endif %}
                                     </div>
                                 </div>
@@ -127,8 +127,12 @@
                 <button id="openSearch" type="submit" class="btn shadow-none align-self-start d-sm-none">
                     <i class="fas fa-search"></i>
                 </button>
-                <a class="btn btn-sm shadow-none border-1 border-primary" href="{% url 'login' %}">ورود</a>
-                <a class="btn btn-sm btn-primary shadow-none" href="{% url 'register' %}">ثبت نام</a>
+                {% if not user.is_authenticated %}
+                    <a class="btn btn-sm shadow-none border-1 border-primary" href="{% url 'login' %}">ورود</a>
+                    <a class="btn btn-sm btn-primary shadow-none" href="{% url 'register' %}">ثبت نام</a>                
+                {% else %}
+                    <p>سلام  {{ user.username }}</p>
+                {% endif %}
             </span>
         </div> 
     </div>

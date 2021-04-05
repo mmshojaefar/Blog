@@ -1,0 +1,6 @@
+django
+django-tinymce
+django-bootstrap-form
+djangorestframework
+psycopg2
+Pillow

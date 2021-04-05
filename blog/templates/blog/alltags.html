@@ -1,0 +1,24 @@
+{% extends 'blog/base.html' %}
+
+{% load static %}
+{% load bootstrap %}
+
+
+{% block title %}{{ category }}{% endblock %}
+
+{% block header %} {% endblock %}
+
+{% block body %}
+    <div class="d-inline">
+        {% for tag in tags %}
+            <a href="{% url 'showtag' tag %}">
+                <div class="mt-1 mb-1 pt-1 pb-1" style="display:inline-block; width: calc(20% - 8px); 
+                            text-align: center; background-color: #e9ecef; margin-left: 2px; margin-right: 2px;">
+                    <label style="color: black;">
+                        {{ tag }}
+                    </label>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+{% endblock %}

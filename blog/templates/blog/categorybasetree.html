@@ -1,6 +1,6 @@
 <li>
     {% if passedCategory.category_set.all %}
-        <span class="caret">
+        <span class="caret text-nowrap">
             <a href="{% url 'showcategory' category %}"> {{ passedCategory.name }}</a>
         </span>
         <ul class="nested">
@@ -9,6 +9,8 @@
             {% endfor %}
         </ul>
     {% else %}
-        <a href="{% url 'showcategory' category %}"> {{ passedCategory.name }}</a>
+        <div class="text-nowrap">
+            &nbsp &nbsp <a href="{% url 'showcategory' category %}"> {{ passedCategory.name }}</a>
+        </div>
     {% endif %}
 </li>

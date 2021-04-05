@@ -3,7 +3,7 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('<str:whichposts>/', views.index, name='whichpost'),
+    # path('<str:whichposts>/', views.index, name='whichpost'),
     path('posts/<str:username>/newpost/', views.newpost, name='newpost'),
     path('posts/<str:username>/<int:pk>/edit', views.editpost, name='editpost'),
     # path('profile/<str:pk>', views.profile, name='profile'), it is in account app
