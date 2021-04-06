@@ -70,13 +70,13 @@ class Post(models.Model):
         verbose_name='متن',
     )
     image = models.ImageField(
-        verbose_name='تصویر',
+        verbose_name='تصویر پست',
         blank=True,
         null=True,
         upload_to='post_imgs'
     )
     show_post = models.BooleanField(
-        verbose_name='آیا پست نمایش داده شود',
+        verbose_name='نمایش عمومی پست',
         default=True,
     )
     post_send_time = models.DateTimeField(

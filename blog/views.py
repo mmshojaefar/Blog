@@ -151,7 +151,7 @@ def alltags(request):
     Returns:
         [class HttpResponse]: It show all tags by rendering alltags.html
     """
-    tags = Tag.objects.all().order_by('name')
+    tags = Tag.objects.all().filter(accept_by_admin=True).order_by('name')
     return render(request, 'blog/alltags.html', context={'tags':tags, 'form':SearchForm()})
 
 def showtag(request, name):
@@ -176,15 +176,13 @@ def showtag(request, name):
 @login_required
 @permission_required('blog.add_post')
 def newpost(request, username):
-    print(username)
-    print(type(username))
-
     """
     Summary:
         This function used for create new post! writer/editor/admin can add new posts. Each user can leave post if go to 
         blog/posts/<user name>/newpost
         When post created, The page will redirect to a page to show post! The owner(Writer of post) and editor/admin can
         see it before accepting by admin/editor. And owner can edit post before accepting by admin.
+        The search form also placed at the above.
 
     Args:
         request ([class HttpRequest]): It is an HttpRequest object which is typically named request. It contains metadata 
@@ -196,7 +194,6 @@ def newpost(request, username):
     """
 
     user = request.user
-    # print(user.get_user_permissions())
     if not user.username == username:
         return HttpResponseRedirect(reverse('newpost', kwargs={'username':request.user.username}))
 
@@ -210,7 +207,6 @@ def newpost(request, username):
             post.user = user
             post.save()
             for tag in set(tags):
-                # print(tag)
                 selected_tag, _ = Tag.objects.get_or_create(name=tag)
                 _, _ = Post_tag.objects.get_or_create(tag=selected_tag, post=post)
             return HttpResponseRedirect(reverse('showpost', kwargs={'username':username, 'pk':post.pk}))
@@ -218,15 +214,30 @@ def newpost(request, username):
             form = PostForm(request.POST)
     else:
         form = PostForm()
-    return render(request, 'blog/newpost.html', context={'form':form})
+    return render(request, 'blog/newpost.html', context={'postForm':form, 'form':SearchForm()})
 
 @permission_required('blog.change_post')
 def editpost(request, username, pk):
-    '''
+    """
+    Summary:
         This function used for edit a post! Only owner can edit the posts.
         If post accepted by admin, after editing the post, Other people cant see the post until editor/admin user accept
-        the post again 
-    '''
+        the post again
+
+    Args:
+        request ([class HttpRequest]): It is an HttpRequest object which is typically named request. It contains metadata 
+                                       about the request
+        username ([class str]): This variable represent the user's username that create a new post! 
+        pk ([class int]): This variable represent the pk of post!
+
+    Raises:
+        Http404: [django.http.Http404]: It render 404 Not Found page. Http404 will raise when:
+                                        1- A persron except owner want to edit the post.
+
+    Returns:
+        [class HttpResponse]: If username is the owner of post with given pk, owner can edits the post of geiven pk 
+        by rendering editpost.html
+    """
     # post = Post.objects.filter(pk=pk)
     # if not post.user.username == username:
     #     return HttpResponseRedirect(reverse('editpost', kwargs={'username':post.user.username, 'pk':post.pk}))
@@ -263,7 +274,8 @@ def editpost(request, username, pk):
 
 
 def showpost(request, username, pk):
-    '''
+    """
+    Summary:
         This function used for showing post! Each post has a primary key(here is an id). Each post show in url below:
             blog/posts/post_id/
         The post show completely.
@@ -273,7 +285,22 @@ def showpost(request, username, pk):
         If the owner(writer of post) see this view, he/she see edit button and can edit post!
         Admin/editor user can see a button to accept the post/comments or reject accepted post/comments for public display
         also.
-    '''
+
+    Args:
+        request ([class HttpRequest]): It is an HttpRequest object which is typically named request. It contains metadata 
+                                       about the request
+        username ([class str]): This variable represent the user's username that create a new post! 
+        pk ([class int]): This variable represent the pk of post!
+
+    Raises:
+        Http404: [django.http.Http404]: It render 404 Not Found page. Http404 will raise when:
+                                        1- Post is Not fot public display and the request is Not from owner
+                                        2- Post is Not accepted and the request is Not from owner or editors or admins.
+
+    Returns:
+        [class HttpResponse]: If username is the owner of post with given pk, it shows the post of geiven pk 
+        by rendering showpost.html
+    """
     post = get_object_or_404(Post, pk=pk)
     can_accept =  request.user.groups.filter(name='مدیران').exists() or request.user.groups.filter(name='ویراستاران').exists()
     owner = (request.user == post.user)
@@ -282,18 +309,11 @@ def showpost(request, username, pk):
     if (not can_accept) and (not owner) and (not post.accept_by_admin):
         raise Http404
     if not post.user.username == username:
-        return HttpResponseRedirect(reverse('showpost', kwargs={'username':post.user.username, 'pk':post.pk}))    
+        return HttpResponseRedirect(reverse('showpost', kwargs={'username':post.user.username, 'pk':post.pk, 'form': SearchForm(),}))    
     allcomments = post.comment_set.all()
     comments = allcomments.filter(accept_by_admin=True)
     likes = Post_rating.objects.filter(positive=True, post=post).count()
     dislikes = Post_rating.objects.filter(positive=False, post=post).count()
-    # print('-'*50)
-    # print(likes)
-    # print(allcomments)
-    # print(comments)
-    # print(can_accept)
-    # print(owner)
-    # print('-'*50)
     return render(request, 'blog/showpost.html', context={'post':post,
                                                           'comments':comments,
                                                           'allcomments':allcomments,
@@ -301,10 +321,22 @@ def showpost(request, username, pk):
                                                           'can_accept':can_accept,
                                                           'likes':likes,
                                                           'dislikes':dislikes,
+                                                          'form': SearchForm(),
                                                           })
 
 
 def register(request):
+    """
+    Summary:
+        -----------
+
+    Args:
+        request ([class HttpRequest]): It is an HttpRequest object which is typically named request. It contains metadata 
+                                       about the request
+
+    Returns:
+        [class HttpResponse]: It render register form by rendering register.html
+    """
     if request.POST:
         form = UserForm(request.POST, request.FILES)
         if form.is_valid():

@@ -1,36 +1,42 @@
+{% extends 'blog/base.html' %}
+
 {% load static %}
 {% load bootstrap %}
 
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>پست جدید</title>
+
+{% block title %}ویرایش پست{% endblock %}
+
+{% block header %}
+
+{% endblock %}
     <link rel="stylesheet" href="{% static 'blog/lib/css/bootstrap.min.css' %}">  
     <link rel="stylesheet" href="{% static 'blog/newpost.css' %}">
     {{ form.media }}
-</head>
-<body>
-    {% if user.is_authenticated %}
+{% block body %}
+
+    {% comment %} {% if user.is_authenticated %}
         خوش آمدید {{ user }} <a href="{% url 'logout' %}">خروج</a>
-    {% endif %}
-    <form id="editPostForm" method="POST" class='w-50 m-auto' enctype="multipart/form-data">
+    {% endif %} {% endcomment %}
+    <form id="editPostForm" method="POST" class='w-100 m-auto' enctype="multipart/form-data">
         {% csrf_token %}
         {%for field in form %}
             <div class="control-group {%if field.errors %}text-danger{%endif%}">
                 {{ field|bootstrap }}
             </div>
         {% endfor %}
-        <label for="tag">برچسب ها: </label>
+        <label for="tag">برچسب ها: </label><br>
         <input id="tag" type="search"/>
-        <div name="selectedTags" id="selectedTags"></div>
+        <div name="selectedTags" id="selectedTags" class="mt-1"></div>
         <div id="allTags" z-index="1000" style="overflow-y: scroll; max-height:135px"></div>
-        <input type="submit" value="ارسال" class="btn btn-primary"/>
+        <input type="submit" value="ارسال" class="btn btn-primary mt-2"/>
     </form>
+    <br>
+{% endblock %}
+
+
+{% block script %}
     <script src="{% static 'blog/lib/js/jquery-3.4.1.min.js' %}"></script>  
     <script src="{% static 'blog/lib/js/bootstrap.min.js' %}"></script>  
     <script src="{% static 'blog/tinymce.min.js' %}"></script>
     <script src="{% static 'blog/editpost.js' %}"></script>
-</body>
-</html>
+{% endblock %}

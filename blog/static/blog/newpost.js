@@ -50,14 +50,12 @@ $(document).ready(function(){
     }
 );
 
-// var i = 0;
+
 function addTag(){
     $(".addTag").click(function() {
         console.log(111111111);
-        selected = `<input name='tags' style='background-color:#D3D3D3; margin:1px 3px; display:inline; border:none;' value='${$('#tag').val()}' disabled>`;
-        // i++;
+        selected = `<input  class="pb-2 pt-1" name='tags' style='background-color:#D3D3D3; margin:2px 3px; display:inline; border:none;' value='${$('#tag').val()}' disabled>`;
         $('#selectedTags').append(selected);
-        // $(selected).insertAfter('#selectedTags');
         $('#tag').val("");
         $('#allTags').empty();
     });
@@ -68,7 +66,7 @@ $("#tag").on('input' ,function() {
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     $('#allTags').empty()
     if($("#tag").val().length > 0){
-        result = "<div class='addTag' style='background-color:gray; margin-bottom:1px;'>افزودن تگ</div>"
+        result = "<div class='addTag pb-1 pt-1' style='background-color:gray; margin-bottom:2px;'>افزودن تگ</div>"
         $('#allTags').prepend(result)
     }
     addTag()
@@ -87,7 +85,7 @@ $("#tag").on('input' ,function() {
                     JSON.parse(response["result"]).forEach(
                     function myFunction(item) {
                         // console.log(item)
-                        result = `<div id='result_${item['pk']}' class='tagResult' style='background-color:gray; margin-bottom:1px;'>${item['fields']['name']}</div>`
+                        result = `<div id='result_${item['pk']}' class='tagResult pb-1 pt-1' style='background-color:gray; margin-bottom:2px;'>${item['fields']['name']}</div>`
                         $('#allTags').append(result)
                     });
                     divClicked()
@@ -103,7 +101,7 @@ $("#tag").on('input' ,function() {
 function divClicked(){
     $(".tagResult").click(function() {
         id = $(this).attr('id').substring(7);
-        selected = `<input name='tags' id='selected_${id}' style='background-color:#D3D3D3; margin:1px 3px; border:none;' value='${$(this).html()}' disabled>`;
+        selected = `<input name='tags' class="pb-2 pt-1" id='selected_${id}' style='background-color:#D3D3D3; margin:2px 3px; border:none;' value='${$(this).html()}' disabled>`;
         // $(selected).insertAfter('#selectedTags');
         $('#selectedTags').append(selected);
         $('#tag').val("");
@@ -114,3 +112,6 @@ function divClicked(){
 $('#newPostForm').submit(function(){
     $("#newPostForm :disabled").removeAttr('disabled');
 });
+
+$('#id_show_post').addClass('form-check-input');
+$('#id_show_post').parent().wrap('<span class="checkbox form-check form-switch"></span>');

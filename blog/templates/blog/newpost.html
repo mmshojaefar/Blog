@@ -18,18 +18,18 @@
     {% endif %} {% endcomment %}
     <form id="newPostForm" method="POST" class='w-100 m-auto' enctype="multipart/form-data">
         {% csrf_token %}
-        {%for field in form %}
-            <div class="control-group {%if field.errors %}text-danger{%endif%}">
+        {%for field in postForm %}
+            <div class="control-group {% if field.errors %}text-danger{% endif %}">
                 {{ field|bootstrap }}
             </div>
         {% endfor %}
-        <label for="tag">برچسب ها: </label>
+        <label for="tag">برچسب ها: </label><br>
         <input id="tag" type="search"/>
-        <div name="selectedTags" id="selectedTags"></div>
+        <div name="selectedTags" id="selectedTags" class="mt-1"></div>
         <div id="allTags" z-index="1000" style="overflow-y: scroll; max-height:135px"></div>
-        <input type="submit" value="ارسال" class="btn btn-primary"/>
+        <input type="submit" value="ارسال" class="btn btn-primary mt-2"/>
     </form>
-
+    <br>
 {% endblock %}
 
 {% block script %}
