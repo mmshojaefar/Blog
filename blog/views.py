@@ -335,7 +335,7 @@ def register(request):
                                        about the request
 
     Returns:
-        [class HttpResponse]: It render register form by rendering register.html
+        [class HttpResponse]: It render register form by rendering register.html ----------------
     """
     if request.POST:
         form = UserForm(request.POST, request.FILES)
