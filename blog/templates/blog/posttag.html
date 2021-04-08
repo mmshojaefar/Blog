@@ -1,0 +1,67 @@
+{% load blog_extras %}
+
+<div class="card border-0 mb-3">
+    <div class="card-header border-0 d-flex justify-content-between" style="background-color: white;">
+        <div class="d-flex">
+            <div>
+                {% if post.user.image  %}
+                <img src="/media/{{ post.user.image }}" width=38 height=38 
+                        style="border-radius: 19px; position: relative; top: 50%; transform: translateY(-50%);">
+                {% else %}
+                <img src="/media/user_imgs/DefaultUserImage.png" width=38 height=38
+                        style="border-radius: 19px; position: relative; top: 50%; transform: translateY(-50%);">
+                {% endif %}
+            </div>
+            <div class="me-3">
+                <div style="margin-bottom: -2px;">
+                    <a href="{% url 'main_profile' post.user.username %}" style=" color: #363636;">
+                        {{ post.user.username }}
+                    </a>
+                </div>
+                <div style="margin-top: -2px; color: #858585">
+                    {{ post.post_send_time|timesince }} پیش
+                </div>
+            </div>
+        </div>
+        <div>
+            <a href="{% url 'showcategory' post.categories %}" style="text-decoration: none; color: #363636;">
+                {{ post.categories }}
+            </a>
+        </div>
+    </div>
+    <div class="card-body border-0">
+        <h2 class="card-title">
+            <a href="{% url 'showpost' post.user.username post.pk %}" style="color: black;">
+                {{ post.title }} 
+            </a>
+        </h2>
+        <div class="card-image mt-3">
+            {% if post.image  %}
+                <a href="{% url 'showpost' post.user.username post.pk %}">
+                    <img src="/media/{{ post.image }}" width=100% height=225px>
+                </a>
+            {% endif %}
+        </div>
+        <p class="card-text mt-3">
+            <a href="{% url 'showpost' post.user.username post.pk %}" style="color: #858585">
+                {{ post.text|striptags|truncatewords:12 }} 
+            </a>
+        </p>
+    </div>
+    <div class="card-footer border-0 d-flex justify-content-between" style="color: #858585; background-color: white;">
+        <div class="">
+            <i class="far fa-comment fa-lg ms-1"></i>
+            {{ post|post_comments }}
+        </div>
+        <div class="d-flex">
+            <div class="ms-2">
+                <i class="far fa-thumbs-down fa-lg ms-1"></i>
+                {{ post|post_dislikes }}
+            </div>
+            <div class="me-2">
+                <i class="far fa-thumbs-up fa-lg ms-1"></i>
+                {{ post|post_likes }}
+            </div>
+        </div>
+    </div>
+</div>

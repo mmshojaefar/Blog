@@ -13,7 +13,7 @@
     {% block header %}{% endblock %}
 </head>
 
-<body class="container mt-4">
+<body class="container mt-4" style="background-color: #f5f5f5 !important">
     <div class="header d-flex flex-row navbar navbar-light">
         <h3 id="blog" class="col-2 align-self-start"><a href="{% url 'index' %}">بلاگ</a></h3>
         <div id="searchFormParent" class="d-flex col-10">
@@ -147,9 +147,9 @@
                     <li class="nav-item">
                         <a class="nav-link btn-sm" href="{% url 'index' %}">جنجالی ترین ها</a>
                     </li>
-                    <li class="nav-item">
+                    {% comment %} <li class="nav-item">
                         <a class="nav-link btn-sm" href="{% url 'index' %}">دوست داشتنی ترین ها</a>
-                    </li>
+                    </li> {% endcomment %}
                     <li class="nav-item">
                         <a class="nav-link btn-sm" aria-current="page" href="{% url 'categorytree' %}">دسته بندی ها</a>
                     </li>

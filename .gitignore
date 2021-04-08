@@ -9,4 +9,6 @@ blog/templatetags/__pycache__
 accounts/__pycache__
 accounts/migrations/__pycache__
 blog/management/commands/__pycache__
+media/user_imgs
+media/post_imgs
 

@@ -42,7 +42,7 @@ def index(request):
         form = SearchForm(request.GET)
         if form.is_valid():
             # posts = Post.objects.none()
-            allposts = Post.objects.all()
+            allposts = Post.objects.filter(accept_by_admin=True)
             # print(form)
             data = form.cleaned_data['search']
             # print(data)
@@ -100,7 +100,7 @@ def index(request):
         else:
             return render(request, 'blog/index.html', context={'form':form, 'user':request.user})
     else:
-        posts = Post.objects.order_by('-post_send_time').filter()[:5]
+        posts = Post.objects.filter(accept_by_admin=True).order_by('-post_send_time').filter()[:5]
     return render(request, 'blog/index.html', context={'posts':posts, 'form':form, 'user':request.user})
 
 def categorytree(request):
@@ -309,7 +309,7 @@ def showpost(request, username, pk):
     if (not can_accept) and (not owner) and (not post.accept_by_admin):
         raise Http404
     if not post.user.username == username:
-        return HttpResponseRedirect(reverse('showpost', kwargs={'username':post.user.username, 'pk':post.pk, 'form': SearchForm(),}))    
+        return HttpResponseRedirect(reverse('showpost', kwargs={'username':post.user.username, 'pk':post.pk}))    
     allcomments = post.comment_set.all()
     comments = allcomments.filter(accept_by_admin=True)
     likes = Post_rating.objects.filter(positive=True, post=post).count()
