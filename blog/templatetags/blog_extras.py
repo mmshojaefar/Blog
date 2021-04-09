@@ -6,6 +6,10 @@ register = template.Library()
 @register.filter(name='persian_int')
 def persian_int(english_int):
     persian_nums = {'0':'۰', '1':'۱', '2':'۲', '3':'۳', '4':'۴', '5':'۵', '6':'۶', '7':'۷', '8':'۸', '9':'۹'}
+    english_int = str(english_int).split('،')[0]    # For showing only one time
+                                                    # For example instead of showing
+                                                    # یک روز و سه ساعت
+                                                    # it shows یک روز
     number = str(english_int)
     persian_dict = number.maketrans(persian_nums)
     result = number.translate(persian_dict)
