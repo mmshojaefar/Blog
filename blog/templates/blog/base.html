@@ -138,24 +138,27 @@
         </div> 
     </div>
 
-    <nav class="navbar navbar-expand navbar-dark bg-primary sticky-top p-1 mb-1" data-spy="scroll">
+    <nav class="navbar navbar-expand bg-primary sticky-top p-1 mb-1" data-spy="scroll">
         <div class="" style="white-space: nowrap;overflow-x: auto;">
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link btn-sm" href="{% url 'index' %}">جدیدترین ها</a>
+                        <a class="nav-link btn-sm" href="{% url 'index' %}" style="color: white !important;">جدیدترین ها</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link btn-sm" href="{% url 'index' %}">محبوب ترین ها</a>
+                        <a class="nav-link btn-sm" href="{% url 'index' %}" style="color: white !important;">محبوب ترین ها</a>
                     </li>
                     {% comment %} <li class="nav-item">
-                        <a class="nav-link btn-sm" href="{% url 'index' %}">دوست داشتنی ترین ها</a>
+                        <a class="nav-link btn-sm" href="{% url 'index' %}" style="color: white !important;">دوست داشتنی ترین ها</a>
                     </li> {% endcomment %}
                     <li class="nav-item">
-                        <a class="nav-link btn-sm" aria-current="page" href="{% url 'categorytree' %}">دسته بندی ها</a>
+                        <a class="nav-link btn-sm" aria-current="page" href="{% url 'categorytree' %}" style="color: white !important;">دسته بندی ها</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link btn-sm" href="{% url 'alltags' %}">برچسب ها</a>
+                        <a class="nav-link btn-sm" href="{% url 'alltags' %}" style="color: white !important;">برچسب ها</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn-sm" href="{% url 'index' %}" style="color: white !important;">درباره بلاگ</a>
                     </li>
                 </ul>
             </div>

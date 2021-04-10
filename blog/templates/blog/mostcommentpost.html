@@ -1,0 +1,25 @@
+<div class="d-flex my-3">
+    <div>
+        <a href="{% url 'main_profile' most_comment_post.user.username %}" style="color: #363636;">
+            {% if most_comment_post.user.image  %}
+            <img src="/media/{{ most_comment_post.user.image }}" width=38 height=38 
+            style="border-radius: 19px; position: relative; top: 50%; transform: translateY(-50%);">
+            {% else %}
+            <img src="/media/user_imgs/DefaultUserImage.png" width=38 height=38
+            style="border-radius: 19px; position: relative; top: 50%; transform: translateY(-50%);">
+            {% endif %}
+        </a>
+    </div>
+    <div class="me-3">
+        <div style="margin-bottom: -2px;">
+            <a href="{% url 'showpost' most_comment_post.user.username most_comment_post.pk %}" style="color: #363636; font-weight: 700; font-size: 0.85rem;">
+                {{ most_comment_post.title }}
+            </a>
+        </div>
+        <div style="margin-top: -2px;">
+            <a href="{% url 'main_profile' most_comment_post.user.username %}" style=" color: #858585; font-weight: 400; font-size: 0.85rem;">
+                {{ most_comment_post.user.first_name }} {{ most_comment_post.user.last_name }}
+            </a>
+        </div>
+    </div>
+</div>

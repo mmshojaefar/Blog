@@ -38,7 +38,7 @@ class SearchForm(forms.Form):
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['title', 'image', 'text', 'show_post', 'categories']
+        fields = ['title', 'image', 'text', 'categories', 'show_post']
         widgets = {'text' : TinyMCE()}
 
 

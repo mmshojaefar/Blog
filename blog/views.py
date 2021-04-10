@@ -147,7 +147,8 @@ def showcategory(request, name):
     get_object_or_404(Category, name=name)
     posts = Post.objects.filter(categories__name=name).order_by('-post_send_time')
     print(posts)
-    return render(request, 'blog/showcategory.html', context={'posts':posts, 'category':name, 'form':SearchForm()})
+    return render(request, 'blog/showcategory.html', 
+                  context={'posts':posts, 'category':name, 'form':SearchForm(), 'most_comment_posts':most_comment_posts[:10]})
  
 def alltags(request):
     """
@@ -182,7 +183,8 @@ def showtag(request, name):
     get_object_or_404(Tag, name=name)
     posts = Post.objects.filter(tags__name=name).order_by('-post_send_time')
     print(posts)
-    return render(request, 'blog/showtag.html', context={'posts':posts, 'tag':name, 'form':SearchForm()})
+    return render(request, 'blog/showtag.html', 
+                  context={'posts':posts, 'tag':name, 'form':SearchForm(), 'most_comment_posts':most_comment_posts[:10]})
  
 @login_required
 @permission_required('blog.add_post')
