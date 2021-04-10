@@ -4,3 +4,4 @@ django-bootstrap-form
 djangorestframework
 psycopg2
 Pillow
+beautifulsoup4

@@ -13,6 +13,7 @@ from django.core import serializers
 from django.core.exceptions import ValidationError
 from django.contrib.postgres.search import TrigramSimilarity
 from django.db.models import Q, Count
+from bs4 import BeautifulSoup
 import json
 
 most_comment_posts = Post.objects.all() \
@@ -86,8 +87,8 @@ def index(request):
                 adv_search = True
 
             if 'text' in request.GET:
-                text_filter = allposts.filter(accept_by_admin=True).annotate(similarity=TrigramSimilarity('text', data)).\
-                                                    filter(similarity__gt=0.3).order_by('-similarity')
+                text_filter = allposts.filter(accept_by_admin=True).annotate(similarity=TrigramSimilarity('safe_text', data)).\
+                                                    filter(similarity__gt=0.1).order_by('-similarity')
                 # posts = (text_filter) | (posts)
                 adv_posts['text'] = text_filter
                 adv_search = True
@@ -95,8 +96,8 @@ def index(request):
             if not adv_search:
                 print(data)
                 print(allposts.filter(accept_by_admin=True))
-                posts = allposts.filter(accept_by_admin=True).annotate(similarity=TrigramSimilarity('text', data)).\
-                                            filter(similarity__gt=0.05).order_by('-similarity')
+                posts = allposts.filter(accept_by_admin=True).annotate(similarity=TrigramSimilarity('safe_text', data)).\
+                                            filter(similarity__gt=0.1).order_by('-similarity')
                 print(posts)
                 return render(request, 'blog/index.html', 
                               context={'posts':posts, 'form':form, 'adv':False, 'most_comment_posts':most_comment_posts[:10]})
@@ -215,6 +216,9 @@ def newpost(request, username):
             tags = request.POST.getlist('tags')
             post.post_send_time = timezone.now()
             post.user = user
+            soup = BeautifulSoup(post.text)
+            post.safe_text = soup.get_text()
+            print(safe_text)
             post.save()
             for tag in set(tags):
                 selected_tag, _ = Tag.objects.get_or_create(name=tag)

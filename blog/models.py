@@ -69,6 +69,9 @@ class Post(models.Model):
     text = tinymce_models.HTMLField(
         verbose_name='متن',
     )
+    safe_text = models.TextField(
+        verbose_name='متن بدون تگ html',
+    )
     image = models.ImageField(
         verbose_name='تصویر پست',
         blank=True,
