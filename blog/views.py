@@ -16,7 +16,7 @@ from django.db.models import Q, Count
 from bs4 import BeautifulSoup
 import json
 
-most_comment_posts = Post.objects.all() \
+most_comment_posts = Post.objects.filter(accept_by_admin=True, show_post=True) \
                 .annotate(num_comments=Count('comment')) \
                 .order_by('-num_comments')
 
@@ -46,7 +46,7 @@ def index(request):
         form = SearchForm(request.GET)
         if form.is_valid():
             # posts = Post.objects.none()
-            allposts = Post.objects.filter(accept_by_admin=True)
+            allposts = Post.objects.filter(accept_by_admin=True, show_post=True)
             # print(form)
             data = form.cleaned_data['search']
             # print(data)
@@ -95,8 +95,8 @@ def index(request):
 
             if not adv_search:
                 print(data)
-                print(allposts.filter(accept_by_admin=True))
-                posts = allposts.filter(accept_by_admin=True).annotate(similarity=TrigramSimilarity('safe_text', data)).\
+                print(allposts)
+                posts = allposts.annotate(similarity=TrigramSimilarity('safe_text', data)).\
                                             filter(similarity__gt=0.1).order_by('-similarity')
                 print(posts)
                 return render(request, 'blog/index.html', 
@@ -110,7 +110,7 @@ def index(request):
             return render(request, 'blog/index.html', 
                           context={'form':form, 'user':request.user, 'most_comment_posts':most_comment_posts[:10]})
     else:
-        posts = Post.objects.filter(accept_by_admin=True).order_by('-post_send_time').filter()[:5]
+        posts = Post.objects.filter(accept_by_admin=True, show_post=True).order_by('-post_send_time').filter()[:5]
     return render(request, 'blog/index.html', 
                   context={'posts':posts, 'form':form, 'user':request.user, 'most_comment_posts':most_comment_posts[:10]})
 
@@ -145,7 +145,7 @@ def showcategory(request, name):
                               If there is NOT any category with given name, it returns 404 not found.
     """
     get_object_or_404(Category, name=name)
-    posts = Post.objects.filter(categories__name=name).order_by('-post_send_time')
+    posts = Post.objects.filter(categories__name=name, accept_by_admin=True, show_post=True).order_by('-post_send_time')
     print(posts)
     return render(request, 'blog/showcategory.html', 
                   context={'posts':posts, 'category':name, 'form':SearchForm(), 'most_comment_posts':most_comment_posts[:10]})
@@ -163,7 +163,7 @@ def alltags(request):
     Returns:
         [class HttpResponse]: It show all tags by rendering alltags.html
     """
-    tags = Tag.objects.all().filter(accept_by_admin=True).order_by('name')
+    tags = Tag.objects.filter(accept_by_admin=True).order_by('name')
     return render(request, 'blog/alltags.html', context={'tags':tags, 'form':SearchForm()})
 
 def showtag(request, name):
@@ -181,7 +181,7 @@ def showtag(request, name):
                               If there is NOT any tag with given name, it returns 404 not found.
     """
     get_object_or_404(Tag, name=name)
-    posts = Post.objects.filter(tags__name=name).order_by('-post_send_time')
+    posts = Post.objects.filter(tags__name=name, accept_by_admin=True, show_post=True).order_by('-post_send_time')
     print(posts)
     return render(request, 'blog/showtag.html', 
                   context={'posts':posts, 'tag':name, 'form':SearchForm(), 'most_comment_posts':most_comment_posts[:10]})
@@ -218,9 +218,9 @@ def newpost(request, username):
             tags = request.POST.getlist('tags')
             post.post_send_time = timezone.now()
             post.user = user
-            soup = BeautifulSoup(post.text)
+            soup = BeautifulSoup(post.text, features="html.parser")
             post.safe_text = soup.get_text()
-            print(safe_text)
+            print(post.safe_text)
             post.save()
             for tag in set(tags):
                 selected_tag, _ = Tag.objects.get_or_create(name=tag)

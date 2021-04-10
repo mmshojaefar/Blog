@@ -23,7 +23,8 @@
                 {{ field|bootstrap }}
             </div>
         {% endfor %}
-        <label for="tag">برچسب ها: </label><br>
+        {% comment %} <p class="p-0 m-0">برای حذف هر برچسب کافی است روی ان کلیک کنید.</p> {% endcomment %}
+        <label for="tag">برچسب ها(برای حذف هر برچسب کافی است روی ان کلیک کنید) </label><br>
         <input id="tag" type="search"/>
         <div name="selectedTags" id="selectedTags" class="mt-1"></div>
         <div id="allTags" z-index="1000" style="overflow-y: scroll; max-height:135px"></div>

@@ -3,6 +3,7 @@ tinymce.init({
     branding: false,
     // directionality : 'rtl',
     // width : "200%",
+    height: "600",
     language: 'fa',
     menubar : 'format edit view',
     entity_encoding : "raw",
@@ -36,12 +37,12 @@ tinymce.init({
     content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:15px; line-height: 0.4}'
 });
 
+
 function invalid_input(){
     $('.has-error').each(function(){
         $(this).find('input').addClass('border border-danger')
     });
 }
-
 
 invalid_input()
 $(document).ready(function(){
@@ -53,20 +54,25 @@ $(document).ready(function(){
 
 function addTag(){
     $(".addTag").click(function() {
-        console.log(111111111);
-        selected = `<input  class="pb-2 pt-1" name='tags' style='background-color:#D3D3D3; margin:2px 3px; display:inline; border:none;' value='${$('#tag').val()}' disabled>`;
-        $('#selectedTags').append(selected);
+        selected = `<input class="pb-1 pt-2" name='tags' style='text-align: center; color: black; background-color:#a5a5a5; margin:2px 3px; display:inline; border:none;' value='${$('#tag').val()}' disabled>`;
+        input = $(selected)[0];
+        width = ((input.value.length+2)*8).toString() + 'px';
+        console.log(width)
+        // $('#selectedTags').append('<div class="oneTag">'+selected+'</div>');
+        $('#selectedTags').append('<div class="oneTag" style="display:inline-block; position:relative;">'+selected+'<div style="position:absolute; left:0; right:0; top:0; bottom:0;"></div></div>');
+        $('#selectedTags div input').last().css( "width", width );
+        deleteTag()
+
         $('#tag').val("");
         $('#allTags').empty();
     });
 }
 
 $("#tag").on('input' ,function() {
-    console.log(22222222222)
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     $('#allTags').empty()
     if($("#tag").val().length > 0){
-        result = "<div class='addTag pb-1 pt-1' style='background-color:gray; margin-bottom:2px;'>افزودن تگ</div>"
+        result = "<div class='addTag pb-1 pt-1' style='color: black; background-color:#a5a5a5; margin-bottom:2px;'>افزودن تگ</div>"
         $('#allTags').prepend(result)
     }
     addTag()
@@ -80,17 +86,13 @@ $("#tag").on('input' ,function() {
             },
             function (response, status) {
                 if (status == "success") {
-                    // $('#allTags').empty()
-                    // console.log(response["result"])
                     JSON.parse(response["result"]).forEach(
                     function myFunction(item) {
-                        // console.log(item)
-                        result = `<div id='result_${item['pk']}' class='tagResult pb-1 pt-1' style='background-color:gray; margin-bottom:2px;'>${item['fields']['name']}</div>`
+                        result = `<div id='result_${item['pk']}' class='tagResult pb-1 pt-1' style='color: black; background-color:#a5a5a5; margin-bottom:2px;'>${item['fields']['name']}</div>`
                         $('#allTags').append(result)
                     });
                     divClicked()
                 } else if (status != "success") {
-                    console.log(333333)
                     console.log('eerrrror')
                 }
             }
@@ -100,18 +102,34 @@ $("#tag").on('input' ,function() {
 
 function divClicked(){
     $(".tagResult").click(function() {
-        id = $(this).attr('id').substring(7);
-        selected = `<input name='tags' class="pb-2 pt-1" id='selected_${id}' style='background-color:#D3D3D3; margin:2px 3px; border:none;' value='${$(this).html()}' disabled>`;
-        // $(selected).insertAfter('#selectedTags');
-        $('#selectedTags').append(selected);
+        selected = `<input name='tags' class="pb-1 pt-2" style='text-align: center; color: black; background-color:#a5a5a5; margin:2px 3px; border:none;' value='${$(this).html()}' disabled>`;
+        input = $(selected)[0];
+        width = ((input.value.length+2)*8).toString() + 'px';
+        console.log(width)
+        $('#selectedTags').append('<div class="oneTag" style="display:inline-block; position:relative;">'+selected+'<div style="position:absolute; left:0; right:0; top:0; bottom:0;"></div></div>');
+        $('#selectedTags input').last().css( "width", width );
+        deleteTag()
+
         $('#tag').val("");
         $('#allTags').empty();
     });
 }
 
+
+function deleteTag(){
+    console.log(1111111)
+    $('.oneTag').click(function(){
+        console.log(this)
+        $(this).remove()
+    })
+}
+
+deleteTag()
+    
 $('#newPostForm').submit(function(){
     $("#newPostForm :disabled").removeAttr('disabled');
 });
 
+$('#id_show_post').parent().addClass("mt-3 mb-1");
 $('#id_show_post').addClass('form-check-input');
 $('#id_show_post').parent().wrap('<span class="checkbox form-check form-switch"></span>');
