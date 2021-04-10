@@ -12,9 +12,12 @@ from django.contrib.auth.models import Group
 from django.core import serializers
 from django.core.exceptions import ValidationError
 from django.contrib.postgres.search import TrigramSimilarity
-from django.db.models import Q
+from django.db.models import Q, Count
 import json
 
+most_comment_posts = Post.objects.all() \
+                .annotate(num_comments=Count('comment')) \
+                .order_by('-num_comments')
 
 # Create your views here.
 
@@ -90,18 +93,25 @@ def index(request):
                 adv_search = True
 
             if not adv_search:
+                print(data)
+                print(allposts.filter(accept_by_admin=True))
                 posts = allposts.filter(accept_by_admin=True).annotate(similarity=TrigramSimilarity('text', data)).\
-                                            filter(similarity__gt=0.3).order_by('-similarity')
-                return render(request, 'blog/index.html', context={'posts':posts, 'form':form, 'adv':False})
+                                            filter(similarity__gt=0.05).order_by('-similarity')
+                print(posts)
+                return render(request, 'blog/index.html', 
+                              context={'posts':posts, 'form':form, 'adv':False, 'most_comment_posts':most_comment_posts[:10]})
             else:
                 # posts = posts.distinct()
                 # print(adv_posts)
-                return render(request, 'blog/index.html', context={'posts':adv_posts, 'form':form, 'adv':True, 'user':request.user})
+                return render(request, 'blog/index.html', 
+                              context={'posts':adv_posts, 'form':form, 'adv':True, 'user':request.user, 'most_comment_posts':most_comment_posts[:10]})
         else:
-            return render(request, 'blog/index.html', context={'form':form, 'user':request.user})
+            return render(request, 'blog/index.html', 
+                          context={'form':form, 'user':request.user, 'most_comment_posts':most_comment_posts[:10]})
     else:
         posts = Post.objects.filter(accept_by_admin=True).order_by('-post_send_time').filter()[:5]
-    return render(request, 'blog/index.html', context={'posts':posts, 'form':form, 'user':request.user})
+    return render(request, 'blog/index.html', 
+                  context={'posts':posts, 'form':form, 'user':request.user, 'most_comment_posts':most_comment_posts[:10]})
 
 def categorytree(request):
     """
@@ -272,7 +282,6 @@ def editpost(request, username, pk):
             return render(request, 'blog/editpost.html', context={'form':form})
     # return render(request, 'blog/editpost.html', context={})
 
-
 def showpost(request, username, pk):
     """
     Summary:
@@ -323,7 +332,6 @@ def showpost(request, username, pk):
                                                           'dislikes':dislikes,
                                                           'form': SearchForm(),
                                                           })
-
 
 def register(request):
     """

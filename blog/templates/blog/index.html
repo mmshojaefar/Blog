@@ -11,46 +11,106 @@
 
 {% block body %}
     {% if adv %}
-        <div class="d-flex mt-2">
-            <div class="ms-5 sidebarResult">
-                <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                    {% for key, value in posts.items %}
-                        <a class="nav-link text-center" id="v-pills-{{ key }}-tab" data-toggle="pill" href="#v-pills-{{ key }}" role="tab" aria-controls="v-pills-{{ key }}" aria-selected="false">
-                            {{ key|localTranslate }}
-                        </a>
-                    {% endfor %}
+    <div class="d-flex d-wrap">
+        <div class="col-12 col-lg-8">
+            <div class="d-flex mt-2">
+                <div class="ms-5 sidebarResult">
+                    <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                        {% for key, value in posts.items %}
+                            <a class="nav-link text-center" id="v-pills-{{ key }}-tab" style="min-width: 100px;" data-toggle="pill" href="#v-pills-{{ key }}" role="tab" aria-controls="v-pills-{{ key }}" aria-selected="false">
+                                {{ key|localTranslate }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="mt-2 contentbarResult" style="width: 100%;">
+                    <div class="tab-content" id="v-pills-tabContent">
+                        {% for key, value in posts.items %}
+                            <div class="tab-pane fade" id="v-pills-{{ key }}" role="tabpanel" aria-labelledby="v-pills-{{ key }}-tab">
+                                {% if not value %}
+                                    <p>نتیجه ای یافت نشد.</p>
+                                {% else %}
+                                    {% for post in value %}
+                                        <!-- {{ post }} -->
+                                        {% include "blog/posttag.html" with post=post %}
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
-            <div class="mt-2 contentbarResult">
-                <div class="tab-content" id="v-pills-tabContent">
-                    {% for key, value in posts.items %}
-                        <div class="tab-pane fade" id="v-pills-{{ key }}" role="tabpanel" aria-labelledby="v-pills-{{ key }}-tab">
-                            {% if not value %}
-                                <p>نتیجه ای یافت نشد.</p>
+        </div>
+        <div class="mostCommentPosts mt-3 px-2 d-none d-lg-block col-lg-4 me-3">
+            <p style="font-weight: 700;">جنجالی ترین های بلاگ</p>
+            {% for most_comment_post in most_comment_posts %}
+                <div class="d-flex my-3">
+                    <div>
+                        <a href="{% url 'main_profile' most_comment_post.user.username %}" style="color: #363636;">
+                            {% if most_comment_post.user.image  %}
+                            <img src="/media/{{ most_comment_post.user.image }}" width=38 height=38 
+                            style="border-radius: 19px; position: relative; top: 50%; transform: translateY(-50%);">
                             {% else %}
-                                {% for post in value %}
-                                    {{ post }}
-                                    زمان همواره در حال گذر است چه بخواهیم و چه نخواهیم خواهد گذشت بی آن‌که از ما سؤالی بپرسد یا از ما کسب تکلیف نماید ما را در سیر حوادث روزگار جلو می‌برد و ما نیز ابتدا با خوشحالی در جریان امواج آن جاری می‌شویم و تا به خود می‌آییم می‌بینیم ای وای چه قدر زود دیر شد و این بار تلاش می‌کنیم در خلاف جهت این امواج ویران کننده شنا کنیم اما افسوس که راهی برای بازگشت نمانده و تنها افسوس چاره دردهای ما است.
-                                    زمان همواره در حال گذر است چه بخواهیم و چه نخواهیم خواهد گذشت بی آن‌که از ما سؤالی بپرسد یا از ما کسب تکلیف نماید ما را در سیر حوادث روزگار جلو می‌برد و ما نیز ابتدا با خوشحالی در جریان امواج آن جاری می‌شویم و تا به خود می‌آییم می‌بینیم ای وای چه قدر زود دیر شد و این بار تلاش می‌کنیم در خلاف جهت این امواج ویران کننده شنا کنیم اما افسوس که راهی برای بازگشت نمانده و تنها افسوس چاره دردهای ما است.
-                                    زمان همواره در حال گذر است چه بخواهیم و چه نخواهیم خواهد گذشت بی آن‌که از ما سؤالی بپرسد یا از ما کسب تکلیف نماید ما را در سیر حوادث روزگار جلو می‌برد و ما نیز ابتدا با خوشحالی در جریان امواج آن جاری می‌شویم و تا به خود می‌آییم می‌بینیم ای وای چه قدر زود دیر شد و این بار تلاش می‌کنیم در خلاف جهت این امواج ویران کننده شنا کنیم اما افسوس که راهی برای بازگشت نمانده و تنها افسوس چاره دردهای ما است.
-                                    زمان همواره در حال گذر است چه بخواهیم و چه نخواهیم خواهد گذشت بی آن‌که از ما سؤالی بپرسد یا از ما کسب تکلیف نماید ما را در سیر حوادث روزگار جلو می‌برد و ما نیز ابتدا با خوشحالی در جریان امواج آن جاری می‌شویم و تا به خود می‌آییم می‌بینیم ای وای چه قدر زود دیر شد و این بار تلاش می‌کنیم در خلاف جهت این امواج ویران کننده شنا کنیم اما افسوس که راهی برای بازگشت نمانده و تنها افسوس چاره دردهای ما است.
-                                {% endfor %}
+                            <img src="/media/user_imgs/DefaultUserImage.png" width=38 height=38
+                            style="border-radius: 19px; position: relative; top: 50%; transform: translateY(-50%);">
                             {% endif %}
+                        </a>
+                    </div>
+                    <div class="me-3">
+                        <div style="margin-bottom: -2px;">
+                            <a href="{% url 'showpost' most_comment_post.user.username most_comment_post.pk %}" style="color: #363636; font-weight: 700; font-size: 0.85rem;">
+                                {{ most_comment_post.title }}
+                            </a>
                         </div>
-                    {% endfor %}
-                </div>
-            </div>
+                        <div style="margin-top: -2px;">
+                            <a href="{% url 'main_profile' most_comment_post.user.username %}" style=" color: #858585; font-weight: 400; font-size: 0.85rem;">
+                                {{ most_comment_post.user.first_name }} {{ most_comment_post.user.last_name }}
+                            </a>
+                        </div>
+                    </div>
+                </div> 
+            {% endfor %}
+        </div>
+    </div>
     {% else %}
         <div class="d-flex">
-            <div class="mt-3 px-2 col-8">
+            <div class="mt-3 px-2 col-12 col-lg-8">
                 {% for post in posts %}
                 <div>
                     {% include "blog/posttag.html" with post=post %}
                 </div>
                 {% endfor %}
             </div>
-            <div class="mt-3 px-2 col-4">
-                
+            <div class="mostCommentPosts mt-3 px-2 d-none d-lg-block col-lg-4 me-3">
+                <p style="font-weight: 700;">جنجالی ترین های بلاگ</p>
+                {% for most_comment_post in most_comment_posts %}
+                    <div class="d-flex my-3">
+                        <div>
+                            <a href="{% url 'main_profile' most_comment_post.user.username %}" style="color: #363636;">
+                                {% if most_comment_post.user.image  %}
+                                <img src="/media/{{ most_comment_post.user.image }}" width=38 height=38 
+                                style="border-radius: 19px; position: relative; top: 50%; transform: translateY(-50%);">
+                                {% else %}
+                                <img src="/media/user_imgs/DefaultUserImage.png" width=38 height=38
+                                style="border-radius: 19px; position: relative; top: 50%; transform: translateY(-50%);">
+                                {% endif %}
+                            </a>
+                        </div>
+                        <div class="me-3">
+                            <div style="margin-bottom: -2px;">
+                                <a href="{% url 'showpost' most_comment_post.user.username most_comment_post.pk %}" style="color: #363636; font-weight: 700; font-size: 0.85rem;">
+                                    {{ most_comment_post.title }}
+                                </a>
+                            </div>
+                            <div style="margin-top: -2px;">
+                                <a href="{% url 'main_profile' most_comment_post.user.username %}" style=" color: #858585; font-weight: 400; font-size: 0.85rem;">
+                                    {{ most_comment_post.user.first_name }} {{ most_comment_post.user.last_name }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                {% endfor %}
             </div>
         </div>
     {% endif %}
@@ -98,6 +158,20 @@ $(document).ready(function() {
             // only for method 2
             /* $('.contentbarResult').removeAttr('style')
             $('.sidebarResult').removeClass('position-fixed'); */
+        }
+    }).trigger('scroll');
+});
+
+
+$(document).ready(function() {
+    $(document).on('scroll', function() {
+        num = window.innerWidth>575 ? 103 : 92
+        if( $(document).scrollTop() > num ){
+            console.log(888)
+            $('.mostCommentPosts').attr('style', `margin-top: ${ $(document).scrollTop()-num}px !important`);
+        }
+        else{
+            $('.mostCommentPosts').removeAttr('style')
         }
     }).trigger('scroll');
 });
