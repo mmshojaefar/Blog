@@ -5,8 +5,8 @@ tinymce.init({
     // width : "200%",
     height: "600",
     language: 'fa',
-    menubar : 'format edit view',
-    entity_encoding : "raw",
+    menubar: 'format edit view',
+    entity_encoding: "raw",
     elementpath: false,
     plugins: 'formattingcode  link image alignment directionality preview code table',
     toolbar: 'undo redo | bold italic | alignleft aligncenter alignright alignjustify | indent outdent | ltr rtl | code link image table | preview',
@@ -24,13 +24,13 @@ tinymce.init({
             var reader = new FileReader();
             reader.onload = function () {
                 var id = 'blobid' + (new Date()).getTime();
-                var blobCache =  tinymce.activeEditor.editorUpload.blobCache;
+                var blobCache = tinymce.activeEditor.editorUpload.blobCache;
                 var base64 = reader.result.split(',')[1];
                 var blobInfo = blobCache.create(id, file, base64);
                 blobCache.add(blobInfo);
                 cb(blobInfo.blobUri(), { title: file.name });
             };
-        reader.readAsDataURL(file);
+            reader.readAsDataURL(file);
         };
         input.click();
     },
@@ -38,45 +38,44 @@ tinymce.init({
 });
 
 
-function invalid_input(){
-    $('.has-error').each(function(){
+function invalid_input() {
+    $('.has-error').each(function () {
         $(this).find('input').addClass('border border-danger')
     });
 }
 
 invalid_input()
-$(document).ready(function(){
-    setTimeout(function() {
-        $('.has-error').find('.tox').addClass('border border-danger');}, 10000);
-    }
+$(document).ready(function () {
+    setTimeout(function () {
+        $('.has-error').find('.tox').addClass('border border-danger');
+    }, 10000);
+}
 );
 
 
-function addTag(){
-    $(".addTag").click(function() {
+function addTag() {
+    $(".addTag").click(function () {
         selected = `<input class="pb-1 pt-2" name='tags' style='text-align: center; color: black; background-color:#a5a5a5; margin:2px 3px; display:inline; border:none;' value='${$('#tag').val()}' disabled>`;
         input = $(selected)[0];
-        width = ((input.value.length+2)*8).toString() + 'px';
-        console.log(width)
-        // $('#selectedTags').append('<div class="oneTag">'+selected+'</div>');
-        $('#selectedTags').append('<div class="oneTag" style="display:inline-block; position:relative;">'+selected+'<div style="position:absolute; left:0; right:0; top:0; bottom:0;"></div></div>');
-        $('#selectedTags div input').last().css( "width", width );
-        deleteTag()
+        width = ((input.value.length + 2) * 8).toString() + 'px';
+        $('#selectedTags').append('<div class="oneTag" style="display:inline-block; position:relative;">' + selected + '<div style="position:absolute; left:0; right:0; top:0; bottom:0;"></div></div>');
+        $('#selectedTags div input').last().css("width", width);
+        deleteTag();
 
         $('#tag').val("");
         $('#allTags').empty();
     });
 }
 
-$("#tag").on('input' ,function() {
+$("#tag").on('input', function () {
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     $('#allTags').empty()
-    if($("#tag").val().length > 0){
-        result = "<div class='addTag pb-1 pt-1' style='color: black; background-color:#a5a5a5; margin-bottom:2px;'>افزودن تگ</div>"
-        $('#allTags').prepend(result)
+    if ($("#tag").val().length > 0) {
+        result = "<div class='addTag pb-1 pt-1' style='color: black; background-color:#a5a5a5; margin-bottom:2px;'>افزودن تگ</div>";
+        $('#allTags').prepend(result);
     }
-    addTag()
-    if($("#tag").val().length > 2){
+    addTag();
+    if ($("#tag").val().length > 2) {
         $.post({
             url: 'http://127.0.0.1:8000/blog/api/addtag/',
             headers: { 'X-CSRFToken': csrftoken }
@@ -87,10 +86,10 @@ $("#tag").on('input' ,function() {
             function (response, status) {
                 if (status == "success") {
                     JSON.parse(response["result"]).forEach(
-                    function myFunction(item) {
-                        result = `<div id='result_${item['pk']}' class='tagResult pb-1 pt-1' style='color: black; background-color:#a5a5a5; margin-bottom:2px;'>${item['fields']['name']}</div>`
-                        $('#allTags').append(result)
-                    });
+                        function myFunction(item) {
+                            result = `<div id='result_${item['pk']}' class='tagResult pb-1 pt-1' style='color: black; background-color:#a5a5a5; margin-bottom:2px;'>${item['fields']['name']}</div>`;
+                            $('#allTags').append(result);
+                        });
                     divClicked()
                 } else if (status != "success") {
                     console.log('eerrrror')
@@ -100,15 +99,14 @@ $("#tag").on('input' ,function() {
     }
 });
 
-function divClicked(){
-    $(".tagResult").click(function() {
+function divClicked() {
+    $(".tagResult").click(function () {
         selected = `<input name='tags' class="pb-1 pt-2" style='text-align: center; color: black; background-color:#a5a5a5; margin:2px 3px; border:none;' value='${$(this).html()}' disabled>`;
         input = $(selected)[0];
-        width = ((input.value.length+2)*8).toString() + 'px';
-        console.log(width)
-        $('#selectedTags').append('<div class="oneTag" style="display:inline-block; position:relative;">'+selected+'<div style="position:absolute; left:0; right:0; top:0; bottom:0;"></div></div>');
-        $('#selectedTags input').last().css( "width", width );
-        deleteTag()
+        width = ((input.value.length + 2) * 8).toString() + 'px';
+        $('#selectedTags').append('<div class="oneTag" style="display:inline-block; position:relative;">' + selected + '<div style="position:absolute; left:0; right:0; top:0; bottom:0;"></div></div>');
+        $('#selectedTags input').last().css("width", width);
+        deleteTag();
 
         $('#tag').val("");
         $('#allTags').empty();
@@ -116,17 +114,16 @@ function divClicked(){
 }
 
 
-function deleteTag(){
-    console.log(1111111)
-    $('.oneTag').click(function(){
-        console.log(this)
-        $(this).remove()
+function deleteTag() {
+    $('.oneTag').click(function () {
+        console.log(this);
+        $(this).remove();
     })
 }
 
-deleteTag()
-    
-$('#newPostForm').submit(function(){
+deleteTag();
+
+$('#newPostForm').submit(function () {
     $("#newPostForm :disabled").removeAttr('disabled');
 });
 

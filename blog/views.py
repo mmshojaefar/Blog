@@ -146,7 +146,7 @@ def showcategory(request, name):
     """
     get_object_or_404(Category, name=name)
     posts = Post.objects.filter(categories__name=name, accept_by_admin=True, show_post=True).order_by('-post_send_time')
-    print(posts)
+    # print(posts)
     return render(request, 'blog/showcategory.html', 
                   context={'posts':posts, 'category':name, 'form':SearchForm(), 'most_comment_posts':most_comment_posts[:10]})
  
@@ -182,7 +182,7 @@ def showtag(request, name):
     """
     get_object_or_404(Tag, name=name)
     posts = Post.objects.filter(tags__name=name, accept_by_admin=True, show_post=True).order_by('-post_send_time')
-    print(posts)
+    # print(posts)
     return render(request, 'blog/showtag.html', 
                   context={'posts':posts, 'tag':name, 'form':SearchForm(), 'most_comment_posts':most_comment_posts[:10]})
  
@@ -265,7 +265,7 @@ def editpost(request, username, pk):
         form = PostForm(instance=post)
         return render(request, 'blog/editpost.html', context={'form':form})
     else:
-        print(request.POST)
+        # print(request.POST)
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             post = Post.objects.get(pk=pk)
@@ -277,6 +277,7 @@ def editpost(request, username, pk):
             post.categories = edited_post.categories
             post.accept_by_admin = False
             tags = request.POST.getlist('tags')
+            Post_tag.objects.filter(post=post).delete();
             for tag in set(tags):
                 selected_tag, _ = Tag.objects.get_or_create(name=tag)
                 _, _ = Post_tag.objects.get_or_create(tag=selected_tag, post=post)

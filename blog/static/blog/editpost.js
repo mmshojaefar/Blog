@@ -3,9 +3,10 @@ tinymce.init({
     branding: false,
     // directionality : 'rtl',
     // width : "200%",
+    height: "600",
     language: 'fa',
-    menubar : 'format edit view',
-    entity_encoding : "raw",
+    menubar: 'format edit view',
+    entity_encoding: "raw",
     elementpath: false,
     plugins: 'formattingcode  link image alignment directionality preview code table',
     toolbar: 'undo redo | bold italic | alignleft aligncenter alignright alignjustify | indent outdent | ltr rtl | code link image table | preview',
@@ -23,53 +24,56 @@ tinymce.init({
             var reader = new FileReader();
             reader.onload = function () {
                 var id = 'blobid' + (new Date()).getTime();
-                var blobCache =  tinymce.activeEditor.editorUpload.blobCache;
+                var blobCache = tinymce.activeEditor.editorUpload.blobCache;
                 var base64 = reader.result.split(',')[1];
                 var blobInfo = blobCache.create(id, file, base64);
                 blobCache.add(blobInfo);
                 cb(blobInfo.blobUri(), { title: file.name });
             };
-        reader.readAsDataURL(file);
+            reader.readAsDataURL(file);
         };
         input.click();
     },
     content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:15px; line-height: 0.4}'
 });
 
-function invalid_input(){
-    $('.has-error').each(function(){
+function invalid_input() {
+    $('.has-error').each(function () {
         $(this).find('input').addClass('border border-danger')
     });
 }
 
-
 invalid_input()
-$(document).ready(function(){
-    setTimeout(function() {
-        $('.has-error').find('.tox').addClass('border border-danger');}, 10000);
-    }
+$(document).ready(function () {
+    setTimeout(function () {
+        $('.has-error').find('.tox').addClass('border border-danger');
+    }, 10000);
+}
 );
 
-function addTag(){
-    $(".addTag").click(function() {
-        console.log(111111111);
-        selected = `<input name='tags' class="pb-2 pt-1"  style='background-color:#D3D3D3; margin:2px 3px; display:inline; border:none;' value='${$('#tag').val()}' disabled>`;
-        $('#selectedTags').append(selected);
+function addTag() {
+    $(".addTag").click(function () {
+        selected = `<input class="pb-1 pt-2" name='tags' style='text-align: center; color: black; background-color:#a5a5a5; margin:2px 3px; display:inline; border:none;' value='${$('#tag').val()}' disabled>`;
+        input = $(selected)[0];
+        width = ((input.value.length + 2) * 8).toString() + 'px';
+        $('#selectedTags').append('<div class="oneTag" style="display:inline-block; position:relative;">' + selected + '<div style="position:absolute; left:0; right:0; top:0; bottom:0;"></div></div>');
+        $('#selectedTags div input').last().css("width", width);
+        deleteTag();
+
         $('#tag').val("");
         $('#allTags').empty();
     });
 }
 
-$("#tag").on('input' ,function() {
-    console.log(22222222222)
+$("#tag").on('input', function () {
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     $('#allTags').empty()
-    if($("#tag").val().length > 0){
-        result = "<div class='addTag pb-1 pt-1' style='background-color:gray; margin-bottom:2px;'>افزودن تگ</div>"
-        $('#allTags').prepend(result)
+    if ($("#tag").val().length > 0) {
+        result = "<div class='addTag pb-1 pt-1' style='color: black; background-color:#a5a5a5; margin-bottom:2px;'>افزودن تگ</div>";
+        $('#allTags').prepend(result);
     }
-    addTag()
-    if($("#tag").val().length > 2){
+    addTag();
+    if ($("#tag").val().length > 2) {
         $.post({
             url: 'http://127.0.0.1:8000/blog/api/addtag/',
             headers: { 'X-CSRFToken': csrftoken }
@@ -79,17 +83,13 @@ $("#tag").on('input' ,function() {
             },
             function (response, status) {
                 if (status == "success") {
-                    // $('#allTags').empty()
-                    // console.log(response["result"])
                     JSON.parse(response["result"]).forEach(
-                    function myFunction(item) {
-                        // console.log(item)
-                        result = `<div id='result_${item['pk']}' class='tagResult pb-1 pt-1' style='background-color:gray; margin-bottom:2px;'>${item['fields']['name']}</div>`
-                        $('#allTags').append(result)
-                    });
+                        function myFunction(item) {
+                            result = `<div id='result_${item['pk']}' class='tagResult pb-1 pt-1' style='color: black; background-color:#a5a5a5; margin-bottom:2px;'>${item['fields']['name']}</div>`;
+                            $('#allTags').append(result);
+                        });
                     divClicked()
                 } else if (status != "success") {
-                    console.log(333333)
                     console.log('eerrrror')
                 }
             }
@@ -97,27 +97,35 @@ $("#tag").on('input' ,function() {
     }
 });
 
-function divClicked(){
-    $(".tagResult").click(function() {
-        id = $(this).attr('id').substring(7);
-        selected = `<input name='tags' class="pb-2 pt-1" id='selected_${id}' style='background-color:#D3D3D3; margin:2px 3px; border:none;' value='${$(this).html()}' disabled>`;
-        // $(selected).insertAfter('#selectedTags');
-        $('#selectedTags').append(selected);
+function divClicked() {
+    $(".tagResult").click(function () {
+        selected = `<input name='tags' class="pb-1 pt-2" style='text-align: center; color: black; background-color:#a5a5a5; margin:2px 3px; border:none;' value='${$(this).html()}' disabled>`;
+        input = $(selected)[0];
+        width = ((input.value.length + 2) * 8).toString() + 'px';
+        $('#selectedTags').append('<div class="oneTag" style="display:inline-block; position:relative;">' + selected + '<div style="position:absolute; left:0; right:0; top:0; bottom:0;"></div></div>');
+        $('#selectedTags input').last().css("width", width);
+        deleteTag();
+
         $('#tag').val("");
         $('#allTags').empty();
     });
 }
 
-$('#editPostForm').submit(function(){
+$('#editPostForm').submit(function () {
     $("#editPostForm :disabled").removeAttr('disabled');
 });
 
+function deleteTag() {
+    $('.oneTag').click(function () {
+        console.log(this);
+        $(this).remove();
+    })
+}
+deleteTag();
 
-console.log(11111112)
-
-function start(){
+function start() {
     arr = window.location.href.split('/').filter(function (i) { return i })
-    postId = arr[arr.length-2]
+    postId = arr[arr.length - 2]
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     console.log(1111111)
     $.post({
@@ -125,7 +133,7 @@ function start(){
         headers: { 'X-CSRFToken': csrftoken }
     },
         {
-            'id':postId
+            'id': postId
         },
         function (response, status) {
             if (status == "success") {
@@ -133,10 +141,19 @@ function start(){
                 // console.log(response['tags'])
                 response['tags'].forEach(
                     function myFunction(item) {
-                    console.log(item)
-                    result = `<input id='result_${item[0]}' class='tagResult pb-2 pt-1' style='color:black; background-color:gray; margin:2px 3px;' value='${item[1]}' disabled>`
-                    $('#selectedTags').append(result);
-                });
+                        console.log(item)
+
+                        selected = `<input class="pb-1 pt-2" name='tags' style='text-align: center; color: black; background-color:#a5a5a5; margin:2px 3px; display:inline; border:none;' value='${item[1]}' disabled>`;
+                        input = $(selected)[0];
+                        width = ((input.value.length + 2) * 8).toString() + 'px';
+                        $('#selectedTags').append('<div class="oneTag" style="display:inline-block; position:relative;">' + selected + '<div style="position:absolute; left:0; right:0; top:0; bottom:0;"></div></div>');
+                        $('#selectedTags div input').last().css("width", width);
+                        deleteTag();
+
+
+                        // result = `<input id='result_${item[0]}' class='tagResult pb-2 pt-1' style='color:black; background-color:gray; margin:2px 3px;' value='${item[1]}' disabled>`
+                        // $('#selectedTags').append(result);
+                    });
                 // divClicked()
             } else if (status != "success") {
                 console.log(333333)
