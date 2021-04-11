@@ -1,0 +1,58 @@
+{% load blog_extras %}
+
+<div class="card border-0 mb-3 comment" id="cm{{comment.pk}}">
+    <div class="card-header border-0 d-flex" style="background-color: white;">
+        <div class="d-flex">
+            <div>
+                <a href="{% url 'main_profile' comment.user.username %}" style=" color: #363636; text-decoration: none;">
+                    {% if post.user.image  %}
+                    <img src="/media/{{ comment.user.image }}" width=38 height=38 
+                    style="border-radius: 19px; position: relative; top: 50%; transform: translateY(-50%);">
+                    {% else %}
+                    <img src="/media/user_imgs/DefaultUserImage.png" width=38 height=38
+                    style="border-radius: 19px; position: relative; top: 50%; transform: translateY(-50%);">
+                    {% endif %}
+                </a>
+            </div>
+            <div class="me-3">
+                <div style="margin-bottom: -2px;">
+                    <a href="{% url 'main_profile' comment.user.username %}" style=" color: #363636; text-decoration: none;">
+                        {{ comment.user.username }}
+                    </a>
+                </div>
+                <div style="margin-top: -2px; color: #858585; ">
+                    {{ comment.comment_send_time|timesince|persian_int }} پیش
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0">
+        <p class="card-text mt-3">
+                {{ comment.text|striptags|truncatewords:12|safe }} 
+        </p>
+    </div>
+    <hr class="mx-3 my-1" />
+    <div class="card-footer border-0 d-flex justify-content-between" style="color: #858585; background-color: white;">
+        <div class="pt-0 mt-0">
+            {% if can_accept %}
+                {% if comment.accept_by_admin %}
+                    <input class='accept_comment btn' type='button' value='عدم تایید'>
+                {% else %}
+                    <input class='accept_comment btn' type='button' value='تایید'>
+                {% endif %}
+            {% endif %}
+        </div>
+        <div class="d-flex pt-2 mt-1">
+            <div class="ms-2 d-flex">
+                <i class="far fa-thumbs-up fa-lg ms-2 like_comment_btn"></i>
+                <div class="like_comment">{{ comment|comment_likes|persian_int }}</div>
+                <div class="d-none">{{ comment|comment_likes }}</div>
+            </div>
+            <div class="me-2 d-flex">
+                <i class="far fa-thumbs-down fa-lg ms-2 dislike_comment_btn"></i>
+                <div class="dislike_comment">{{ comment|comment_dislikes|persian_int }}</div>
+                <div class="d-none">{{ comment|comment_dislikes }}</div>
+            </div>
+        </div>
+    </div>
+</div>

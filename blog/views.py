@@ -302,6 +302,7 @@ def showpost(request, username, pk):
         If the owner(writer of post) see this view, he/she see edit button and can edit post!
         Admin/editor user can see a button to accept the post/comments or reject accepted post/comments for public display
         also.
+        The search form also placed at the above.
 
     Args:
         request ([class HttpRequest]): It is an HttpRequest object which is typically named request. It contains metadata 
@@ -328,16 +329,12 @@ def showpost(request, username, pk):
     if not post.user.username == username:
         return HttpResponseRedirect(reverse('showpost', kwargs={'username':post.user.username, 'pk':post.pk}))    
     allcomments = post.comment_set.all()
-    comments = allcomments.filter(accept_by_admin=True)
-    likes = Post_rating.objects.filter(positive=True, post=post).count()
-    dislikes = Post_rating.objects.filter(positive=False, post=post).count()
+    tags = post.tags.all()
     return render(request, 'blog/showpost.html', context={'post':post,
-                                                          'comments':comments,
                                                           'allcomments':allcomments,
                                                           'owner':owner,
                                                           'can_accept':can_accept,
-                                                          'likes':likes,
-                                                          'dislikes':dislikes,
+                                                          'tags' : tags,
                                                           'form': SearchForm(),
                                                           })
 

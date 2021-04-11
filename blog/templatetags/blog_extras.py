@@ -15,12 +15,12 @@ def persian_int(english_int):
     result = number.translate(persian_dict)
     return result
 
-@register.filter(name='likes')
-def likes(cm):
+@register.filter(name='comment_likes')
+def comment_likes(cm):
     return Comment_rating.objects.filter(positive=True, comment=cm).count()
 
-@register.filter(name='dislikes')
-def dislikes(cm):
+@register.filter(name='comment_dislikes')
+def comment_dislikes(cm):
     return Comment_rating.objects.filter(positive=False, comment=cm).count()
 
 @register.filter(name='post_likes')

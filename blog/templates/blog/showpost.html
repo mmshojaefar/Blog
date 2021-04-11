@@ -15,63 +15,129 @@
 
 {% block body %}
 
-    {% comment %} <p>{{ post.user.username }}</p> {% endcomment %}
-    <table>
-        <tr>
-            <td><h3>{{ post.title }}<h3></td>
-        </tr>
-        {% if post.image %}
-            <tr>
-                <td>
-                    <img src="{{ post.image.url }}" width=500 height=500 >
-                </td>
-            </tr>
-        {% endif %}
-        <tr>
-            <td>{{ post.text|safe }}</td>
-        </tr>
-    </table>
-    <input id="like" class="btn" type='button' value='{{ likes }}'>
-    <input id="dislike" class="btn" type='button' value='{{ dislikes }}'>
-    {% if can_accept %}
-        {% if post.accept_by_admin %}
-            <input id='accept_post' class="btn" type='button' value='عدم تایید'>
-        {% else %}
-            <input id='accept_post' class="btn" type='button' value='تایید'>
-        {% endif %}
-    {% endif %}
-    {% if owner %}        
-        <a href="{% url 'editpost' post.user.username post.pk%}"><button class="btn btn-outline-primary shadow-none" >ویرایش</button></a>
-    {% endif %}
-    {% if can_accept %}
-        <table>
-            {% for comment in allcomments %}
-            <tr id="comment_{{ comment.pk }}">
-                <td>{{ comment.user }}</td>
-                <td>{{ comment.text }}</td>
-                <td><input class="like_comment" type='button' value='{{ comment|likes }}'></td>
-                <td><input class="dislike_comment" type='button' value='{{ comment|dislikes }}'></td>
-                {% if comment.accept_by_admin %}
-                    <td><input class='accept_comment btn' type='button' value='عدم تایید'></td>
+<div class="mx-md-4">
+    <br>
+    <div class="d-flex">
+        <div>
+            <a href="{% url 'main_profile' post.user.username %}" style=" color: #363636;">
+                {% if post.user.image  %}
+                <img src="/media/{{ post.user.image }}" width=80 height=80 
+                style="border-radius: 40px; position: relative; top: 50%; transform: translateY(-50%);">
                 {% else %}
-                    <td><input class='accept_comment btn' type='button' value='تایید'></td>
+                <img src="/media/user_imgs/DefaultUserImage.png" width=80 height=80
+                style="border-radius: 40px; position: relative; top: 50%; transform: translateY(-50%);">
                 {% endif %}
-            </tr>
-            {% endfor %}
-        </table>
-    {% else %}
-        <table>
-            {% for comment in comments %}
-            <tr id="comment_{{ comment.pk }}">
-                <td>{{ comment.user }}</td>
-                <td>{{ comment.text }}</td>
-                <td><input class="like_comment btn" type='button' value='{{ comment|likes }}'></td>
-                <td><input class="dislike_comment btn" type='button' value='{{ comment|dislikes }}'></td>
-            </tr>
-            {% endfor %}
-        </table>
-    {% endif %}
+            </a>
+        </div>
+        <div class="me-3">
+            <div class="mb-2 mt-2 pt-1">
+                <a href="{% url 'main_profile' post.user.username %}" style=" color: #363636; text-decoration: none;">
+                    {{ post.user.username }}
+                </a>
+            </div>
+            <div class="mb-2" style="color: #858585; ">
+                {{ post.post_send_time|timesince|persian_int }} پیش
+            </div>
+        </div>
+    </div>
+
+    <br>
+    <h1>{{ post.title }}</h1>
+
+    <br>
+    <div>
+        {% if post.image  %}
+            <a href="{% url 'showpost' post.user.username post.pk %}">
+                <img src="/media/{{ post.image }}" width=100% height=100%>
+            </a>
+        {% endif %}
+    </div>
+    <br><br>
+
+    <div style="font-size: 1.1rem;">
+        {{ post.text|safe }}
+    </div>
+
+    {% for tag in tags %}
+        <input class="pb-1 pt-2" name='tag' style='text-align: center; color: black; background-color:#a5a5a5; margin:2px 3px; display:inline; border:none;' value='{{tag.name}}' disabled>
+    {% endfor %}
+    
+    <br><br>
+
+
+    <div class="d-flex justify-content-between">
+        <div class="d-flex">
+            <div class="d-flex">
+                <button class="btn shadow-none">
+                    <i class="far fa-comment fa-lg"></i>
+                </button>
+                <p class="d-none">{{ post|post_comments }}</p>
+                <p class="mt-2">{{ post|post_comments|persian_int }}</p>
+            </div>
+
+            <div class="d-flex pb-1">
+                {% if can_accept %}
+                    {% if post.accept_by_admin %}
+                        <input id='accept_post' class="btn" type='button' value='عدم تایید'>
+                    {% else %}
+                        <input id='accept_post' class="btn" type='button' value='تایید'>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="d-flex">
+            <div class="d-flex">
+                {% if owner %}        
+                    <button class="btn shadow-none" >
+                        <a href="{% url 'editpost' post.user.username post.pk%}" style="color: #212529;">
+                            <i class="far fa-edit fa-lg"></i>
+                        </a>
+                    </button>
+                {% endif %}        
+            </div>
+
+            <div class="d-flex">
+                <button id="like" class="btn shadow-none">
+                    <i class="far fa-thumbs-up fa-lg"></i>
+                </button>
+                <p class="d-none">{{ post|post_likes }}</p>
+                <p class="mt-2">{{ post|post_likes|persian_int }}</p>
+            </div>
+
+            <div class="d-flex">
+                <button id="dislike" class="btn shadow-none">
+                    <i class="far fa-thumbs-down fa-lg"></i>
+                </button>
+                <p class="d-none">{{ post|post_dislikes }}</p>
+                <p class="mt-2">{{ post|post_dislikes|persian_int }}</p>
+            </div>
+        </div>
+        
+    </div>
+    <br><br>
+
+</div>
+
+<div class="mx-md-4">
+    <p>نظرات</p>
+
+    {% for comment in allcomments %}
+
+        {% if comment.accept_by_admin %}
+            {% include "blog/commenttag.html" with comment=comment %}
+        {% endif %}
+
+        {% if not comment.accept_by_admin and can_accept %}
+            {% include "blog/commenttag.html" with comment=comment %}
+        {% endif %}
+
+    {% endfor %}
+        
     {% csrf_token %}
+    <br>
+
+</div>
 
 {% endblock %}
 

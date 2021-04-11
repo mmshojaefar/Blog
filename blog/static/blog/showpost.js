@@ -1,77 +1,31 @@
-// tinymce.init({
-//     selector: 'textarea',
-//     branding: false,
-//     // directionality : 'rtl',
-//     // width : "200%",
-//     language: 'fa',
-//     menubar : 'format edit view',
-//     entity_encoding : "raw",
-//     elementpath: false,
-//     plugins: 'formattingcode  link image alignment directionality preview code table',
-//     toolbar: 'undo redo | bold italic | alignleft aligncenter alignright alignjustify | indent outdent | ltr rtl | code link image table | preview',
-//     image_title: true,
-//     automatic_uploads: true,
-//     images_upload_url: 'http://localhost',
-//     file_picker_types: 'image',
-
-//     file_picker_callback: function (cb, value, meta) {
-//         var input = document.createElement('input');
-//         input.setAttribute('type', 'file');
-//         input.setAttribute('accept', 'image/*');
-//         input.onchange = function () {
-//             var file = this.files[0];
-//             var reader = new FileReader();
-//             reader.onload = function () {
-//                 var id = 'blobid' + (new Date()).getTime();
-//                 var blobCache =  tinymce.activeEditor.editorUpload.blobCache;
-//                 var base64 = reader.result.split(',')[1];
-//                 var blobInfo = blobCache.create(id, file, base64);
-//                 blobCache.add(blobInfo);
-//                 cb(blobInfo.blobUri(), { title: file.name });
-//             };
-//         reader.readAsDataURL(file);
-//         };
-//         input.click();
-//     },
-//     content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:15px; line-height: 0.4}'
-// });
-
-// function invalid_input(){
-//     $('.has-error').each(function(){
-//         $(this).find('input').addClass('border border-danger')
-//     });
-// }
-
-
-// invalid_input()
-// $(document).ready(function(){
-//     setTimeout(function() {
-//         $('.has-error').find('.tox').addClass('border border-danger');}, 10000);
-//     }
-// );
-
-
 function likePost() {
     $("#like").click(function () {
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
         $postId = window.location.href.split('/').filter(function (i) { return i }).pop();
-        // $userName = $('#username').html();
         $.post({
             url: 'http://127.0.0.1:8000/blog/api/likepost/',
             headers: { 'X-CSRFToken': csrftoken }
         },
             {
                 'post': $postId,
-                // 'user': $userName,
             },
             function (response, status) {
-                likesNumber = parseInt($('#like').val())
-                dislikesNumber = parseInt($('#dislike').val())
+                likesNumber = parseInt($('#like').next().text())
+                dislikesNumber = parseInt($('#dislike').next().text())
+
+                console.log(likesNumber)
+                console.log(dislikesNumber)
+                
                 if (status == "success" && response["ok"] == "like") {
-                    $('#like').val(likesNumber + 1)
-                    // $('#like').css('fontWeight', 'bold')
+                    $like = $('#like').next().next();
+                    $like.text(toFarsiNumber(likesNumber + 1));
+                    $('#like').next().text(likesNumber + 1);
+
                 } else if (status == "success" && response["ok"] == "removedislike") {
-                    $('#dislike').val(dislikesNumber - 1)
+                    $dislike = $('#dislike').next().next();
+                    $('#dislike').next().text(dislikesNumber - 1);
+                    $dislike.text(toFarsiNumber(dislikesNumber - 1));
+
                 } else if (status != "success") {
                     console.log(333333)
                     console.log('eerrrror')
@@ -98,12 +52,19 @@ function dislikePost() {
                 'post': $postId,
             },
             function (response, status) {
-                likesNumber = parseInt($('#like').val())
-                dislikesNumber = parseInt($('#dislike').val())
+                likesNumber = parseInt($('#like').next().text())
+                dislikesNumber = parseInt($('#dislike').next().text())   
+
                 if (status == "success" && response["ok"] == "dislike") {
-                    $('#dislike').val(dislikesNumber + 1)
+                    $dislike = $('#dislike').next().next();
+                    $dislike.text(toFarsiNumber(dislikesNumber + 1));
+                    $('#dislike').next().text(dislikesNumber + 1);
+                    
                 } else if (status == "success" && response["ok"] == "removelike") {
-                    $('#like').val(likesNumber - 1)
+                    $like = $('#like').next().next();
+                    $like.text(toFarsiNumber(likesNumber - 1));
+                    $('#like').next().text(likesNumber - 1);
+
                 } else if (status != "success") {
                     console.log(333333)
                     console.log('eerrrror')
@@ -142,7 +103,7 @@ function acceptComment() {
     $(".accept_comment").click(function () {
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
         $comment = $(this)
-        $commentId = $comment.closest('tr').attr('id').substring(8)
+        $commentId = $comment.closest('.comment').attr('id').substring(2)
         $.post({
             url: 'http://127.0.0.1:8000/blog/api/acceptcomment/',
             headers: { 'X-CSRFToken': csrftoken }
@@ -164,14 +125,15 @@ function acceptComment() {
 
 
 function likeComment() {
-    $(".like_comment").click(function () {
+    $(".like_comment_btn").click(function () {
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-        $comment = $(this).closest('tr')
+        $comment = $(this).closest('.comment')
         $like = $comment.find('.like_comment')
         $dislike = $comment.find('.dislike_comment')
-        likesNumber = parseInt($like.val())
-        dislikesNumber = parseInt($dislike.val())
-        $commentId = $comment.attr('id').substring(8)
+        likesNumber = parseInt($like.next().html())
+        dislikesNumber = parseInt($dislike.next().html())
+        $commentId = $comment.attr('id').substring(2)
+
         $.post({
             url: 'http://127.0.0.1:8000/blog/api/likecomment/',
             headers: { 'X-CSRFToken': csrftoken }
@@ -181,9 +143,13 @@ function likeComment() {
             },
             function (response, status) {
                 if (status == "success" && response["ok"] == "like") {
-                    $like.val(likesNumber + 1)
+                    $like.html(toFarsiNumber(likesNumber + 1))
+                    $like.next().html(likesNumber + 1)
+
                 } else if (status == "success" && response["ok"] == "removedislike") {
-                    $dislike.val(dislikesNumber - 1)
+                    $dislike.html(toFarsiNumber(dislikesNumber - 1))
+                    $dislike.next().html(dislikesNumber - 1)
+
                 } else if (status != "success") {
                     console.log(333333)
                     console.log('eerrrror')
@@ -195,14 +161,15 @@ function likeComment() {
 
 
 function dislikeComment() {
-    $(".dislike_comment").click(function () {
+    $(".dislike_comment_btn").click(function () {
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-        $comment = $(this).closest('tr')
+        $comment = $(this).closest('.comment')
         $like = $comment.find('.like_comment')
         $dislike = $comment.find('.dislike_comment')
-        likesNumber = parseInt($like.val())
-        dislikesNumber = parseInt($dislike.val())
-        $commentId = $comment.attr('id').substring(8)
+        likesNumber = parseInt($like.next().html())
+        dislikesNumber = parseInt($dislike.next().html())
+        $commentId = $comment.attr('id').substring(2)
+
         $.post({
             url: 'http://127.0.0.1:8000/blog/api/dislikecomment/',
             headers: { 'X-CSRFToken': csrftoken }
@@ -212,9 +179,13 @@ function dislikeComment() {
             },
             function (response, status) {
                 if (status == "success" && response["ok"] == "dislike") {
-                    $dislike.val(dislikesNumber + 1)
+                    $dislike.html(toFarsiNumber(dislikesNumber + 1))
+                    $dislike.next().html(dislikesNumber + 1)
+
                 } else if (status == "success" && response["ok"] == "removelike") {
-                    $like.val(likesNumber - 1)
+                    $like.html(toFarsiNumber(likesNumber - 1))
+                    $like.next().html(likesNumber - 1)
+
                 } else if (status != "success") {
                     console.log(333333)
                     console.log('eerrrror')
@@ -231,3 +202,54 @@ acceptPost()
 likeComment()
 dislikeComment()
 acceptComment()
+
+$('[name=tag]').each(
+    function myFunction(tag) {
+        width = ((this.value.length + 2) * 8).toString() + 'px';
+        $(this).css("width", width);
+    })
+
+function toFarsiNumber(n) {
+    const farsiDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+
+    return n
+        .toString()
+        .replace(/\d/g, x => farsiDigits[x]);
+}
+        
+
+// persian={0:'۰',1:'۱',2:'۲',3:'۳',4:'۴',5:'۵',6:'۶',7:'۷',8:'۸',9:'۹'};
+
+// persianNumbers = [/۰/g, /۱/g, /۲/g, /۳/g, /۴/g, /۵/g, /۶/g, /۷/g, /۸/g, /۹/g],
+// // arabicNumbers  = [/٠/g, /١/g, /٢/g, /٣/g, /٤/g, /٥/g, /٦/g, /٧/g, /٨/g, /٩/g],
+// fixNumbers = function (str)
+// {
+//     console.log(str)
+//     console.log(typeof str)
+//   if(typeof str === 'string')
+//   {
+//       console.log(555555)
+//     for(var i=0; i<10; i++)
+//     {
+//       str = str.replace(persianNumbers[i], i);
+//     }
+//   }
+// console.log(str)
+//   return str;
+// };
+/*
+String.prototype.toPersianDigits = function(){
+    var id= ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+    ans = "";
+    for (let index = 0; index < this.length; index++) {
+        ans+= id[ans[index]-'0'];
+        
+    }
+    console.log(ans);
+    return ans;
+    // console.log(this)
+    // return this.replace(/[0-9]/g, function(w){
+    //     console.log(w)
+    //     return id[+w]
+    // });
+}*/
