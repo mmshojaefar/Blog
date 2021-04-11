@@ -238,7 +238,8 @@ def editpost(request, username, pk):
     Summary:
         This function used for edit a post! Only owner can edit the posts.
         If post accepted by admin, after editing the post, Other people cant see the post until editor/admin user accept
-        the post again
+        the post again.
+        The search form also placed at the above.
 
     Args:
         request ([class HttpRequest]): It is an HttpRequest object which is typically named request. It contains metadata 
@@ -263,7 +264,7 @@ def editpost(request, username, pk):
     if request.method=='GET':
         post = Post.objects.get(pk=pk)
         form = PostForm(instance=post)
-        return render(request, 'blog/editpost.html', context={'form':form})
+        return render(request, 'blog/editpost.html', context={'editform':form, 'form':SearchForm()})
     else:
         # print(request.POST)
         form = PostForm(request.POST, request.FILES)

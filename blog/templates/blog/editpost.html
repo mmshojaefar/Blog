@@ -11,7 +11,7 @@
 {% endblock %}
     <link rel="stylesheet" href="{% static 'blog/lib/css/bootstrap.min.css' %}">  
     <link rel="stylesheet" href="{% static 'blog/newpost.css' %}">
-    {{ form.media }}
+    {{ editform.media }}
 {% block body %}
 
     {% comment %} {% if user.is_authenticated %}
@@ -19,7 +19,7 @@
     {% endif %} {% endcomment %}
     <form id="editPostForm" method="POST" class='w-100 m-auto' enctype="multipart/form-data">
         {% csrf_token %}
-        {%for field in form %}
+        {%for field in editform %}
             <div class="control-group {%if field.errors %}text-danger{%endif%}">
                 {{ field|bootstrap }}
             </div>
