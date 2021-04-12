@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="{% static 'blog/lib/css/bootstrap.min.css' %}"> 
     <link rel="stylesheet" href="{% static 'blog/base.css' %}">
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v28.0.0/dist/font-face.css" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="{% static 'blog/newpost.css' %}">
+    <link rel="stylesheet" href="{% static 'blog/showpost.css' %}">
     {{ post.media }}
     <title>{{ post.title }}</title>
 </head>
@@ -134,7 +134,23 @@
                     <a class="btn btn-sm shadow-none border-1 border-primary" href="{% url 'login' %}">ورود</a>
                     <a class="btn btn-sm btn-primary shadow-none" href="{% url 'register' %}">ثبت نام</a>                
                 {% else %}
-                    <p>سلام  {{ user.username }}</p>
+                    <div class="dropdown px-2">
+                        <a class="dropdown-toggle" role="button" dir="ltr" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                            {% if post.user.image  %}
+                                <img src="/media/{{ post.user.image }}" width=40 height=40 
+                                style="border-radius: 20px;">
+                            {% else %}
+                                <img src="/media/user_imgs/DefaultUserImage.png" width=40 height=40
+                                style="border-radius: 20px;">
+                            {% endif %}
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink" style="text-align:right;">
+                            <li><a class="dropdown-item" href="{% url 'main_profile' user.username %}">پروفایل</a></li>
+                            <li><a class="dropdown-item" href="{% url 'password_change' %}">تغییر گذرواژه</a></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}">خروج</a></li>
+                        </ul>
+                    </div>
+
                 {% endif %}
             </span>
         </div> 
@@ -226,7 +242,12 @@
                     </button>
                     <p class="d-none">{{ post|post_likes }}</p>
 
-                    {% is_liked_post_by_user post user 'like' as is_liked_post %}
+                    {% if user.is_authenticated %}
+                        {% is_liked_post_by_user post user 'like' as is_liked_post %}
+                    {% else %}
+                        {% is_liked_post_by_user post none 'like' as is_liked_post %}
+                    {% endif %}
+
                     {% if is_liked_post %}
                         <p class="mt-2" style="font-weight: 900;">{{ post|post_likes|persian_int }}</p>
                     {% else %}
@@ -240,8 +261,13 @@
                         <i class="far fa-thumbs-down fa-lg" style="color: red;"></i>
                     </button>
                     <p class="d-none">{{ post|post_dislikes }}</p>
-        
-                    {% is_liked_post_by_user post user 'dislike' as is_disliked_post %}
+                    
+                    {% if user.is_authenticated %}
+                        {% is_liked_post_by_user post user 'dislike' as is_disliked_post %}
+                    {% else %}
+                        {% is_liked_post_by_user post none 'dislike' as is_disliked_post %}
+                    {% endif %}
+
                     {% if is_disliked_post %}
                         <p class="mt-2" style="font-weight: 900">{{ post|post_dislikes|persian_int }}</p>
                     {% else %}

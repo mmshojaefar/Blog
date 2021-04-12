@@ -1,0 +1,9 @@
+.dropdown-menu{
+    margin-left: 33px; 
+}
+
+@media (max-width: 575px){ 
+    .dropdown-menu{
+        margin-left: 5px; 
+    }
+}

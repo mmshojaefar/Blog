@@ -60,7 +60,10 @@ def is_liked_post_by_user(post, user, rate):
         positive = True
     elif rate == 'dislike':
         positive = False
-    result = Post_rating.objects.filter(post=post, user=user, positive=positive)
+    if user == None:
+        return False
+    result = Post_rating.objects.filter(
+        post=post, user=user, positive=positive)
     return bool(result)
 
 
@@ -70,5 +73,8 @@ def is_liked_comment_by_user(comment, user, rate):
         positive = True
     elif rate == 'dislike':
         positive = False
-    result = Comment_rating.objects.filter(comment=comment, user=user, positive=positive)
+    if user == None:
+        return False
+    result = Comment_rating.objects.filter(
+        comment=comment, user=user, positive=positive)
     return bool(result)

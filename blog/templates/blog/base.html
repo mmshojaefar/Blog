@@ -132,13 +132,30 @@
                     <a class="btn btn-sm shadow-none border-1 border-primary" href="{% url 'login' %}">ورود</a>
                     <a class="btn btn-sm btn-primary shadow-none" href="{% url 'register' %}">ثبت نام</a>                
                 {% else %}
-                    <p>سلام  {{ user.username }}</p>
+
+                    <div class="dropdown px-2">
+                        <a class="dropdown-toggle" role="button" dir="ltr" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                            {% if post.user.image  %}
+                                <img src="/media/{{ post.user.image }}" width=40 height=40 
+                                style="border-radius: 20px;">
+                            {% else %}
+                                <img src="/media/user_imgs/DefaultUserImage.png" width=40 height=40
+                                style="border-radius: 20px;">
+                            {% endif %}
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink" style="text-align:right;">
+                            <li><a class="dropdown-item" href="{% url 'main_profile' user.username %}">پروفایل</a></li>
+                            <li><a class="dropdown-item" href="{% url 'password_change' %}">تغییر گذرواژه</a></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}">خروج</a></li>
+                        </ul>
+                    </div>
+
                 {% endif %}
             </span>
         </div> 
     </div>
 
-    <nav class="navbar navbar-expand bg-primary sticky-top p-1 mb-1" data-spy="scroll">
+    <nav class="navbar navbar-expand bg-primary sticky-top p-1 mb-1" data-spy="scroll" style="z-index: 0;">
         <div class="" style="white-space: nowrap;overflow-x: auto;">
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
