@@ -44,12 +44,12 @@
         </div>
         <div class="d-flex pt-2 mt-1">
             <div class="ms-2 d-flex">
-                <i class="far fa-thumbs-up fa-lg ms-2 like_comment_btn"></i>
+                <i class="far fa-thumbs-up fa-lg ms-2 like_comment_btn" style="color: green;"></i>
                 <div class="like_comment">{{ comment|comment_likes|persian_int }}</div>
                 <div class="d-none">{{ comment|comment_likes }}</div>
             </div>
             <div class="me-2 d-flex">
-                <i class="far fa-thumbs-down fa-lg ms-2 dislike_comment_btn"></i>
+                <i class="far fa-thumbs-down fa-lg ms-2 dislike_comment_btn" style="color: red;"></i>
                 <div class="dislike_comment">{{ comment|comment_dislikes|persian_int }}</div>
                 <div class="d-none">{{ comment|comment_dislikes }}</div>
             </div>
