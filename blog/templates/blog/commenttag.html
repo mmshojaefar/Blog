@@ -36,21 +36,35 @@
         <div class="pt-0 mt-0">
             {% if can_accept %}
                 {% if comment.accept_by_admin %}
-                    <input class='accept_comment btn' type='button' value='عدم تایید'>
+                    <input class='accept_comment btn bg-primary shadow-none px-1' type='button' value='عدم تایید نظر'>
                 {% else %}
-                    <input class='accept_comment btn' type='button' value='تایید'>
+                    <input class='accept_comment btn bg-primary shadow-none px-1' type='button' value='تایید نظر'>
                 {% endif %}
             {% endif %}
         </div>
         <div class="d-flex pt-2 mt-1">
             <div class="ms-2 d-flex">
                 <i class="far fa-thumbs-up fa-lg ms-2 like_comment_btn" style="color: green;"></i>
-                <div class="like_comment">{{ comment|comment_likes|persian_int }}</div>
+                
+                {% is_liked_comment_by_user comment user 'like' as is_liked_comment %}
+                {% if is_liked_comment %}
+                    <div class="like_comment" style="font-weight: 900;">{{ comment|comment_likes|persian_int }}</div>
+                {% else %}
+                    <div class="like_comment">{{ comment|comment_likes|persian_int }}</div>
+                {% endif %}
+                
                 <div class="d-none">{{ comment|comment_likes }}</div>
             </div>
             <div class="me-2 d-flex">
                 <i class="far fa-thumbs-down fa-lg ms-2 dislike_comment_btn" style="color: red;"></i>
-                <div class="dislike_comment">{{ comment|comment_dislikes|persian_int }}</div>
+
+                {% is_liked_comment_by_user comment user 'dislike' as is_disliked_comment %}
+                {% if is_disliked_comment %}
+                    <div class="dislike_comment" style="font-weight: 900;">{{ comment|comment_dislikes|persian_int }}</div>
+                {% else %}
+                    <div class="dislike_comment">{{ comment|comment_dislikes|persian_int }}</div>
+                {% endif %}
+                
                 <div class="d-none">{{ comment|comment_dislikes }}</div>
             </div>
         </div>

@@ -140,7 +140,7 @@
         </div> 
     </div>
 
-    <div class="mx-md-5 px-md-5">
+    <div class="mx-md-5 px-md-4 py-3" style="background-color: white">
         <br>
         <div class="d-flex">
             <div>
@@ -177,8 +177,8 @@
                 </a>
             {% endif %}
         </div>
+        
         <br><br>
-
         <div style="font-size: 1.1rem;">
             {{ post.text|safe }}
         </div>
@@ -188,8 +188,6 @@
         {% endfor %}
         
         <br><br>
-
-
         <div class="d-flex justify-content-between">
             <div class="d-flex">
                 <div class="d-flex">
@@ -203,9 +201,9 @@
                 <div class="d-flex pb-1">
                     {% if can_accept %}
                         {% if post.accept_by_admin %}
-                            <input id='accept_post' class="btn" type='button' value='عدم تایید'>
+                            <input id='accept_post' class="btn shadow-none bg-primary me-2 px-1" type='button' value='عدم تایید پست'>
                         {% else %}
-                            <input id='accept_post' class="btn" type='button' value='تایید'>
+                            <input id='accept_post' class="btn shadow-none bg-primary me-2 px-1" type='button' value='تایید پست'>
                         {% endif %}
                     {% endif %}
                 </div>
@@ -214,7 +212,7 @@
             <div class="d-flex">
                 <div class="d-flex">
                     {% if owner %}        
-                        <button class="btn shadow-none" >
+                        <button class="btn shadow-none mx-0 px-0 px-sm-2">
                             <a href="{% url 'editpost' post.user.username post.pk%}" style="color: black;">
                                 <i class="far fa-edit fa-lg"></i>
                             </a>
@@ -227,7 +225,13 @@
                         <i class="far fa-thumbs-up fa-lg" style="color: green;"></i>
                     </button>
                     <p class="d-none">{{ post|post_likes }}</p>
-                    <p class="mt-2">{{ post|post_likes|persian_int }}</p>
+
+                    {% is_liked_post_by_user post user 'like' as is_liked_post %}
+                    {% if is_liked_post %}
+                        <p class="mt-2" style="font-weight: 900;">{{ post|post_likes|persian_int }}</p>
+                    {% else %}
+                        <p class="mt-2">{{ post|post_likes|persian_int }}</p>
+                    {% endif %}
                     
                 </div>
 
@@ -236,16 +240,21 @@
                         <i class="far fa-thumbs-down fa-lg" style="color: red;"></i>
                     </button>
                     <p class="d-none">{{ post|post_dislikes }}</p>
-                    <p class="mt-2">{{ post|post_dislikes|persian_int }}</p>
+        
+                    {% is_liked_post_by_user post user 'dislike' as is_disliked_post %}
+                    {% if is_disliked_post %}
+                        <p class="mt-2" style="font-weight: 900">{{ post|post_dislikes|persian_int }}</p>
+                    {% else %}
+                        <p class="mt-2">{{ post|post_dislikes|persian_int }}</p>
+                    {% endif %}
                 </div>
-            </div>
-            
+            </div>   
         </div>
-        <br><br>
 
     </div>
 
-    <div class="mx-md-5 px-md-5">
+    <br><br>
+    <div class="mx-md-5 px-md-4">
         <p>نظرات</p>
 
         {% for comment in allcomments %}

@@ -19,12 +19,14 @@ function likePost() {
                 if (status == "success" && response["ok"] == "like") {
                     $like = $('#like').next().next();
                     $like.text(toFarsiNumber(likesNumber + 1));
+                    $like.css('font-weight', '900');
                     $('#like').next().text(likesNumber + 1);
 
                 } else if (status == "success" && response["ok"] == "removedislike") {
                     $dislike = $('#dislike').next().next();
-                    $('#dislike').next().text(dislikesNumber - 1);
                     $dislike.text(toFarsiNumber(dislikesNumber - 1));
+                    $dislike.css('font-weight', 'normal');
+                    $('#dislike').next().text(dislikesNumber - 1);
 
                 } else if (status != "success") {
                     console.log(333333)
@@ -58,11 +60,13 @@ function dislikePost() {
                 if (status == "success" && response["ok"] == "dislike") {
                     $dislike = $('#dislike').next().next();
                     $dislike.text(toFarsiNumber(dislikesNumber + 1));
+                    $dislike.css('font-weight', '900');
                     $('#dislike').next().text(dislikesNumber + 1);
                     
                 } else if (status == "success" && response["ok"] == "removelike") {
                     $like = $('#like').next().next();
                     $like.text(toFarsiNumber(likesNumber - 1));
+                    $like.css('font-weight', 'normal');
                     $('#like').next().text(likesNumber - 1);
 
                 } else if (status != "success") {
@@ -88,7 +92,7 @@ function acceptPost() {
             },
             function (response, status) {
                 if (status == "success" && response["ok"] == "ok") {
-                    $('#accept_post').val($('#accept_post').val() == 'تایید' ? 'عدم تایید' : 'تایید')
+                    $('#accept_post').val($('#accept_post').val() == 'تایید پست' ? 'عدم تایید پست' : 'تایید پست')
                 } else if (status != "success") {
                     console.log(333333)
                     console.log('eerrrror')
@@ -113,7 +117,7 @@ function acceptComment() {
             },
             function (response, status) {
                 if (status == "success" && response["ok"] == "ok") {
-                    $comment.val($comment.val() == 'تایید' ? 'عدم تایید' : 'تایید')
+                    $comment.val($comment.val() == 'تایید نظر' ? 'عدم تایید نظر' : 'تایید نظر')
                 } else if (status != "success") {
                     console.log(333333)
                     console.log('eerrrror')
@@ -144,10 +148,12 @@ function likeComment() {
             function (response, status) {
                 if (status == "success" && response["ok"] == "like") {
                     $like.html(toFarsiNumber(likesNumber + 1))
+                    $like.css('font-weight', '900');
                     $like.next().html(likesNumber + 1)
 
                 } else if (status == "success" && response["ok"] == "removedislike") {
                     $dislike.html(toFarsiNumber(dislikesNumber - 1))
+                    $dislike.css('font-weight', 'normal');
                     $dislike.next().html(dislikesNumber - 1)
 
                 } else if (status != "success") {
@@ -180,10 +186,12 @@ function dislikeComment() {
             function (response, status) {
                 if (status == "success" && response["ok"] == "dislike") {
                     $dislike.html(toFarsiNumber(dislikesNumber + 1))
+                    $dislike.css('font-weight', '900');
                     $dislike.next().html(dislikesNumber + 1)
 
                 } else if (status == "success" && response["ok"] == "removelike") {
                     $like.html(toFarsiNumber(likesNumber - 1))
+                    $like.css('font-weight', 'normal');
                     $like.next().html(likesNumber - 1)
 
                 } else if (status != "success") {
