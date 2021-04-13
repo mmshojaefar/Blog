@@ -92,7 +92,7 @@ function acceptPost() {
             },
             function (response, status) {
                 if (status == "success" && response["ok"] == "ok") {
-                    $('#accept_post').val($('#accept_post').val() == 'تایید پست' ? 'عدم تایید پست' : 'تایید پست')
+                    $('#accept_post').val($('#accept_post').val() == 'تایید پست' ? 'حذف تایید پست' : 'تایید پست')
                 } else if (status != "success") {
                     console.log(333333)
                     console.log('eerrrror')
@@ -117,7 +117,7 @@ function acceptComment() {
             },
             function (response, status) {
                 if (status == "success" && response["ok"] == "ok") {
-                    $comment.val($comment.val() == 'تایید نظر' ? 'عدم تایید نظر' : 'تایید نظر')
+                    $comment.val($comment.val() == 'تایید نظر' ? 'حذف تایید نظر' : 'تایید نظر')
                 } else if (status != "success") {
                     console.log(333333)
                     console.log('eerrrror')

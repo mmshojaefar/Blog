@@ -134,7 +134,7 @@
                 {% else %}
 
                     <div class="dropdown px-2">
-                        <a class="dropdown-toggle" role="button" dir="ltr" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="dropdown-toggle" role="button" dir="ltr" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false" style="color:black;">
                             {% if post.user.image  %}
                                 <img src="/media/{{ post.user.image }}" width=40 height=40 
                                 style="border-radius: 20px;">
@@ -163,11 +163,8 @@
                         <a class="nav-link btn-sm" href="{% url 'index' %}" style="color: white !important;">جدیدترین ها</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link btn-sm" href="{% url 'index' %}" style="color: white !important;">محبوب ترین ها</a>
+                        <a class="nav-link btn-sm" href="{% url 'popular' %}" style="color: white !important;">محبوب ترین ها</a>
                     </li>
-                    {% comment %} <li class="nav-item">
-                        <a class="nav-link btn-sm" href="{% url 'index' %}" style="color: white !important;">دوست داشتنی ترین ها</a>
-                    </li> {% endcomment %}
                     <li class="nav-item">
                         <a class="nav-link btn-sm" aria-current="page" href="{% url 'categorytree' %}" style="color: white !important;">دسته بندی ها</a>
                     </li>

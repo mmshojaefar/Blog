@@ -137,8 +137,6 @@ function start() {
         },
         function (response, status) {
             if (status == "success") {
-                // console.log(JSON.parse(response['tags']))
-                // console.log(response['tags'])
                 response['tags'].forEach(
                     function myFunction(item) {
                         console.log(item)
@@ -150,11 +148,7 @@ function start() {
                         $('#selectedTags div input').last().css("width", width);
                         deleteTag();
 
-
-                        // result = `<input id='result_${item[0]}' class='tagResult pb-2 pt-1' style='color:black; background-color:gray; margin:2px 3px;' value='${item[1]}' disabled>`
-                        // $('#selectedTags').append(result);
                     });
-                // divClicked()
             } else if (status != "success") {
                 console.log(333333)
                 console.log('eerrrror')

@@ -12,7 +12,7 @@ from django.contrib.auth.models import Group
 from django.core import serializers
 from django.core.exceptions import ValidationError
 from django.contrib.postgres.search import TrigramSimilarity
-from django.db.models import Q, Count
+from django.db.models import Q, Count, Subquery, OuterRef
 from bs4 import BeautifulSoup
 import json
 
@@ -28,8 +28,7 @@ def index(request):
     Summary:
         This view used for main page. It show some post in some manner:
             - Latest posts posted
-            - Most popular posts (Determine by likes and dislikes)
-            - Most discussed (Determine by most comments)
+            - Most discussed post(Determine by most comments) in sidebar
         The search form also placed at the above.
 
     Args:
@@ -110,9 +109,42 @@ def index(request):
             return render(request, 'blog/index.html', 
                           context={'form':form, 'user':request.user, 'most_comment_posts':most_comment_posts[:10]})
     else:
-        posts = Post.objects.filter(accept_by_admin=True, show_post=True).order_by('-post_send_time').filter()[:5]
+        posts = Post.objects.filter(accept_by_admin=True, show_post=True).order_by('-post_send_time').filter()[:10]
     return render(request, 'blog/index.html', 
                   context={'posts':posts, 'form':form, 'user':request.user, 'most_comment_posts':most_comment_posts[:10]})
+
+def popular(request):
+    """
+    Summary:
+        This view used for main page. It show some post in some manner:
+            - Most popular posts (Determine by likes)
+            - Most discussed post(Determine by most comments) in sidebar
+        The search form also placed at the above.
+
+    Args:
+        request ([class HttpRequest]): It is an HttpRequest object which is typically named request. It contains metadata 
+                                       about the request
+
+    Returns:
+        [class HttpResponse]: It show the main page of blog by rendering index.html
+    """
+    form = SearchForm()
+    # get post with most likes in descending order.
+    allposts = Post_rating.objects.filter(post__accept_by_admin=True, post__show_post=True)
+    most_liked_post = allposts.filter(positive=True).values('post').annotate(count=Count('post')).order_by('-count')[:10]
+
+    # store the pk of this posts in posts_pk list
+    posts_pk = []
+    for post in most_liked_post:
+        posts_pk.append(post['post'])
+    unordered_posts = Post.objects.filter(pk__in=posts_pk)
+    
+    # sort the posts by number of likes!
+    posts = sorted(unordered_posts, key=lambda post: posts_pk.index(post.pk) )
+
+    return render(request, 'blog/index.html', 
+                  context={'posts':posts, 'form':form, 'user':request.user, 'most_comment_posts':most_comment_posts[:10]})
+
 
 def categorytree(request):
     """

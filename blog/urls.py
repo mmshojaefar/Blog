@@ -4,6 +4,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
+    path('popular/', views.popular, name='popular'),
     path('', views.index, name='index'),
     # path('<str:whichposts>/', views.index, name='whichpost'),
     path('<str:username>/newpost/', views.newpost, name='newpost'),
