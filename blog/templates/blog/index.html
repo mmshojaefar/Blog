@@ -31,7 +31,6 @@
                                     <p>نتیجه ای یافت نشد.</p>
                                 {% else %}
                                     {% for post in value %}
-                                        <!-- {{ post }} -->
                                         {% include "blog/posttag.html" with post=post %}
                                     {% endfor %}
                                 {% endif %}
@@ -69,63 +68,45 @@
     
     
 {% endblock %}
+
+
 {% block script %}
+
 <script>
-$($('#v-pills-tabContent').children()[0]).addClass('show active')
-$($('#v-pills-tab').children()[0]).addClass('active')
 
-$('#v-pills-tab a').on('click', function (e) {
-  e.preventDefault()
-  $(this).tab('show')
-})
+    $($('#v-pills-tabContent').children()[0]).addClass('show active')
+    $($('#v-pills-tab').children()[0]).addClass('active')
 
-$(document).ready(function() {
-    $(document).on('scroll', function() {
-        // method 1
-        num = window.innerWidth>575 ? 103 : 92
-        if( $(document).scrollTop() > num ){
-            console.log(777)
-            // method 1
-            $('.sidebarResult').attr('style', `margin-top: ${ $(document).scrollTop()-num}px !important`);
-            // method 2
-            /*if(window.innerWidth>991){
-                $('.sidebarResult').attr('style', 'top: 53px !important; float:right !important;');
-                $('.sidebarResult').addClass('position-fixed'); 
-                $('.contentbarResult').addClass('position-relative'); 
-                $('.contentbarResult').addClass('col-10'); 
-                $($('.contentbarResult').find('div')[0]).addClass('position-relative'); 
-                $('.contentbarResult').attr('style', 'right : 150px !important;');
-            }else{ 
-                $('.sidebarResult').attr('style', 'top: 61px !important; float:right !important;');
-                $('.sidebarResult').addClass('position-fixed'); 
-                $('.contentbarResult').addClass('position-relative'); 
-                $('.contentbarResult').addClass('col-10'); 
-                $($('.contentbarResult').find('div')[0]).addClass('position-relative'); 
-                $('.contentbarResult').attr('style', 'right : 150px !important;');
-            }*/
-        }
-        else{
-            $('.sidebarResult').removeAttr('style')
-            // only for method 2
-            /* $('.contentbarResult').removeAttr('style')
-            $('.sidebarResult').removeClass('position-fixed'); */
-        }
-    }).trigger('scroll');
-});
+    $('#v-pills-tab a').on('click', function (e) {
+    e.preventDefault()
+    $(this).tab('show')
+    })
+
+    $(document).ready(function() {
+        $(document).on('scroll', function() {
+            num = window.innerWidth>575 ? 103 : 92
+            if( $(document).scrollTop() > num ){
+                $('.sidebarResult').attr('style', `margin-top: ${ $(document).scrollTop()-num}px !important`);
+            }
+            else{
+                $('.sidebarResult').removeAttr('style')
+            }
+        }).trigger('scroll');
+    });
 
 
-$(document).ready(function() {
-    $(document).on('scroll', function() {
-        num = window.innerWidth>575 ? 103 : 92
-        if( $(document).scrollTop() > num ){
-            console.log(888)
-            $('.mostCommentPosts').attr('style', `margin-top: ${ $(document).scrollTop()-num}px !important`);
-        }
-        else{
-            $('.mostCommentPosts').removeAttr('style')
-        }
-    }).trigger('scroll');
-});
+    $(document).ready(function() {
+        $(document).on('scroll', function() {
+            num = window.innerWidth>575 ? 103 : 92
+            if( $(document).scrollTop() > num ){
+                $('.mostCommentPosts').attr('style', `margin-top: ${ $(document).scrollTop()-num}px !important`);
+            }
+            else{
+                $('.mostCommentPosts').removeAttr('style')
+            }
+        }).trigger('scroll');
+    });
 
 </script>
+
 {% endblock %}

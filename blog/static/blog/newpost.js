@@ -1,8 +1,6 @@
 tinymce.init({
     selector: 'textarea',
     branding: false,
-    // directionality : 'rtl',
-    // width : "200%",
     height: "600",
     language: 'fa',
     menubar: 'format edit view',
@@ -116,7 +114,6 @@ function divClicked() {
 
 function deleteTag() {
     $('.oneTag').click(function () {
-        console.log(this);
         $(this).remove();
     })
 }

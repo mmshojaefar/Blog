@@ -22,7 +22,6 @@ most_comment_posts = Post.objects.filter(accept_by_admin=True, show_post=True) \
 
 # Create your views here.
 
-# def index(request, whichpost=None):
 def index(request):
     """
     Summary:
@@ -44,65 +43,48 @@ def index(request):
     if 'search' in request.GET:
         form = SearchForm(request.GET)
         if form.is_valid():
-            # posts = Post.objects.none()
             allposts = Post.objects.filter(accept_by_admin=True, show_post=True)
-            # print(form)
             data = form.cleaned_data['search']
-            # print(data)
 
             # adv_search variable show we must search in anything or a specific field(it is not for search in period of time)
             adv_search = False
-            adv_posts = {}
-            
+            adv_posts = {}            
 
             # check for advanced search. if title, tag, writer, text or post_sent_time_from/to be in the request
             # it means that the user use advanced search
-
-            print(request.GET['post_time_sent_from'])
             if 'post_time_sent_from' in request.GET and request.GET['post_time_sent_from']:
                 allposts = allposts.filter(post_send_time__gte=request.GET['post_time_sent_from'])
-                print(allposts)
             
             if 'post_time_sent_to' in request.GET and request.GET['post_time_sent_to']:
                 allposts = allposts.filter(post_send_time__lte=request.GET['post_time_sent_to'])
-                print(allposts)
             
             if 'title' in request.GET:
                 title_filter = allposts.filter(title__icontains=data, accept_by_admin=True)
-                # posts = (title_filter) | (posts)
                 adv_posts['title'] = title_filter
                 adv_search = True
 
             if 'tag' in request.GET:
                 tag_filter = allposts.filter(tags__name__icontains=data, accept_by_admin=True)
-                # posts = (tag_filter) | (posts)
                 adv_posts['tag'] = tag_filter
                 adv_search = True
 
             if 'writer' in request.GET:
                 writer_filter = allposts.filter(user__username__icontains=data, accept_by_admin=True)
-                # posts = (writer_filter) | (posts)
                 adv_posts['writer'] = writer_filter
                 adv_search = True
 
             if 'text' in request.GET:
                 text_filter = allposts.filter(accept_by_admin=True).annotate(similarity=TrigramSimilarity('safe_text', data)).\
                                                     filter(similarity__gt=0.1).order_by('-similarity')
-                # posts = (text_filter) | (posts)
                 adv_posts['text'] = text_filter
                 adv_search = True
 
             if not adv_search:
-                print(data)
-                print(allposts)
                 posts = allposts.annotate(similarity=TrigramSimilarity('safe_text', data)).\
                                             filter(similarity__gt=0.1).order_by('-similarity')
-                print(posts)
                 return render(request, 'blog/index.html', 
                               context={'posts':posts, 'form':form, 'adv':False, 'most_comment_posts':most_comment_posts[:10]})
             else:
-                # posts = posts.distinct()
-                # print(adv_posts)
                 return render(request, 'blog/index.html', 
                               context={'posts':adv_posts, 'form':form, 'adv':True, 'user':request.user, 'most_comment_posts':most_comment_posts[:10]})
         else:
@@ -145,7 +127,6 @@ def popular(request):
     return render(request, 'blog/index.html', 
                   context={'posts':posts, 'form':form, 'user':request.user, 'most_comment_posts':most_comment_posts[:10]})
 
-
 def categorytree(request):
     """
     Summary:
@@ -178,7 +159,6 @@ def showcategory(request, name):
     """
     get_object_or_404(Category, name=name)
     posts = Post.objects.filter(categories__name=name, accept_by_admin=True, show_post=True).order_by('-post_send_time')
-    # print(posts)
     return render(request, 'blog/showcategory.html', 
                   context={'posts':posts, 'category':name, 'form':SearchForm(), 'most_comment_posts':most_comment_posts[:10]})
  
@@ -214,7 +194,6 @@ def showtag(request, name):
     """
     get_object_or_404(Tag, name=name)
     posts = Post.objects.filter(tags__name=name, accept_by_admin=True, show_post=True).order_by('-post_send_time')
-    # print(posts)
     return render(request, 'blog/showtag.html', 
                   context={'posts':posts, 'tag':name, 'form':SearchForm(), 'most_comment_posts':most_comment_posts[:10]})
  
@@ -243,7 +222,6 @@ def newpost(request, username):
         return HttpResponseRedirect(reverse('newpost', kwargs={'username':request.user.username}))
 
     if request.POST:
-        print(request.POST.getlist('tags'))           
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             post = form.save(commit=False)
@@ -252,7 +230,6 @@ def newpost(request, username):
             post.user = user
             soup = BeautifulSoup(post.text, features="html.parser")
             post.safe_text = soup.get_text()
-            print(post.safe_text)
             post.save()
             for tag in set(tags):
                 selected_tag, _ = Tag.objects.get_or_create(name=tag)
@@ -287,9 +264,6 @@ def editpost(request, username, pk):
         [class HttpResponse]: If username is the owner of post with given pk, owner can edits the post of geiven pk 
         by rendering editpost.html
     """
-    # post = Post.objects.filter(pk=pk)
-    # if not post.user.username == username:
-    #     return HttpResponseRedirect(reverse('editpost', kwargs={'username':post.user.username, 'pk':post.pk}))
     user = request.user
     if not user.username == username:
         raise Http404
@@ -298,7 +272,6 @@ def editpost(request, username, pk):
         form = PostForm(instance=post)
         return render(request, 'blog/editpost.html', context={'editform':form, 'form':SearchForm()})
     else:
-        # print(request.POST)
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             post = Post.objects.get(pk=pk)
@@ -320,7 +293,6 @@ def editpost(request, username, pk):
         else:
             form = PostForm(request.POST)
             return render(request, 'blog/editpost.html', context={'form':form})
-    # return render(request, 'blog/editpost.html', context={})
 
 def showpost(request, username, pk):
     """

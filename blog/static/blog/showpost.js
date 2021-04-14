@@ -13,8 +13,6 @@ function likePost() {
                 likesNumber = parseInt($('#like').next().text())
                 dislikesNumber = parseInt($('#dislike').next().text())
 
-                console.log(likesNumber)
-                console.log(dislikesNumber)
                 
                 if (status == "success" && response["ok"] == "like") {
                     $like = $('#like').next().next();
@@ -29,8 +27,6 @@ function likePost() {
                     $('#dislike').next().text(dislikesNumber - 1);
 
                 } else if (status != "success") {
-                    console.log(333333)
-                    console.log('eerrrror')
                     // $("#editFinalError").html(
                     //     "ارتباط با سرور قطع شده است. لطفا مجددا تلاش کنید"
                     // );
@@ -70,7 +66,6 @@ function dislikePost() {
                     $('#like').next().text(likesNumber - 1);
 
                 } else if (status != "success") {
-                    console.log(333333)
                     console.log('eerrrror')
                 }
             }
@@ -94,7 +89,6 @@ function acceptPost() {
                 if (status == "success" && response["ok"] == "ok") {
                     $('#accept_post').val($('#accept_post').val() == 'تایید پست' ? 'حذف تایید پست' : 'تایید پست')
                 } else if (status != "success") {
-                    console.log(333333)
                     console.log('eerrrror')
                 }
             }
@@ -119,7 +113,6 @@ function acceptComment() {
                 if (status == "success" && response["ok"] == "ok") {
                     $comment.val($comment.val() == 'تایید نظر' ? 'حذف تایید نظر' : 'تایید نظر')
                 } else if (status != "success") {
-                    console.log(333333)
                     console.log('eerrrror')
                 }
             }
@@ -157,7 +150,6 @@ function likeComment() {
                     $dislike.next().html(dislikesNumber - 1)
 
                 } else if (status != "success") {
-                    console.log(333333)
                     console.log('eerrrror')
                 }
             }
@@ -195,7 +187,6 @@ function dislikeComment() {
                     $like.next().html(likesNumber - 1)
 
                 } else if (status != "success") {
-                    console.log(333333)
                     console.log('eerrrror')
                 }
             }
@@ -224,40 +215,3 @@ function toFarsiNumber(n) {
         .toString()
         .replace(/\d/g, x => farsiDigits[x]);
 }
-        
-
-// persian={0:'۰',1:'۱',2:'۲',3:'۳',4:'۴',5:'۵',6:'۶',7:'۷',8:'۸',9:'۹'};
-
-// persianNumbers = [/۰/g, /۱/g, /۲/g, /۳/g, /۴/g, /۵/g, /۶/g, /۷/g, /۸/g, /۹/g],
-// // arabicNumbers  = [/٠/g, /١/g, /٢/g, /٣/g, /٤/g, /٥/g, /٦/g, /٧/g, /٨/g, /٩/g],
-// fixNumbers = function (str)
-// {
-//     console.log(str)
-//     console.log(typeof str)
-//   if(typeof str === 'string')
-//   {
-//       console.log(555555)
-//     for(var i=0; i<10; i++)
-//     {
-//       str = str.replace(persianNumbers[i], i);
-//     }
-//   }
-// console.log(str)
-//   return str;
-// };
-/*
-String.prototype.toPersianDigits = function(){
-    var id= ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
-    ans = "";
-    for (let index = 0; index < this.length; index++) {
-        ans+= id[ans[index]-'0'];
-        
-    }
-    console.log(ans);
-    return ans;
-    // console.log(this)
-    // return this.replace(/[0-9]/g, function(w){
-    //     console.log(w)
-    //     return id[+w]
-    // });
-}*/

@@ -1,8 +1,6 @@
 tinymce.init({
     selector: 'textarea',
     branding: false,
-    // directionality : 'rtl',
-    // width : "200%",
     height: "600",
     language: 'fa',
     menubar: 'format edit view',
@@ -117,17 +115,16 @@ $('#editPostForm').submit(function () {
 
 function deleteTag() {
     $('.oneTag').click(function () {
-        console.log(this);
         $(this).remove();
     })
 }
+
 deleteTag();
 
 function start() {
     arr = window.location.href.split('/').filter(function (i) { return i })
     postId = arr[arr.length - 2]
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-    console.log(1111111)
     $.post({
         url: 'http://127.0.0.1:8000/blog/api/gettag/',
         headers: { 'X-CSRFToken': csrftoken }
@@ -139,7 +136,6 @@ function start() {
             if (status == "success") {
                 response['tags'].forEach(
                     function myFunction(item) {
-                        console.log(item)
 
                         selected = `<input class="pb-1 pt-2" name='tags' style='text-align: center; color: black; background-color:#a5a5a5; margin:2px 3px; display:inline; border:none;' value='${item[1]}' disabled>`;
                         input = $(selected)[0];
@@ -150,7 +146,6 @@ function start() {
 
                     });
             } else if (status != "success") {
-                console.log(333333)
                 console.log('eerrrror')
             }
         }

@@ -6,10 +6,8 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('popular/', views.popular, name='popular'),
     path('', views.index, name='index'),
-    # path('<str:whichposts>/', views.index, name='whichpost'),
     path('<str:username>/newpost/', views.newpost, name='newpost'),
     path('<str:username>/<int:pk>/edit/', views.editpost, name='editpost'),
-    # path('profile/<str:pk>', views.profile, name='profile'), it is in account app
     path('<str:username>/<int:pk>/', views.showpost, name='showpost'),
     path('category/', views.categorytree, name='categorytree'),
     path('category/<str:name>', views.showcategory, name='showcategory'),

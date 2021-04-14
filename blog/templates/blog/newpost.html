@@ -13,9 +13,6 @@
 {% endblock %}
 
 {% block body %}
-    {% comment %} {% if user.is_authenticated %}
-        خوش آمدید {{ user }} <a href="{% url 'logout' %}">خروج</a>
-    {% endif %} {% endcomment %}
     <form id="newPostForm" method="POST" class='w-100 m-auto' enctype="multipart/form-data">
         {% csrf_token %}
         {%for field in postForm %}
@@ -23,7 +20,6 @@
                 {{ field|bootstrap }}
             </div>
         {% endfor %}
-        {% comment %} <p class="p-0 m-0">برای حذف هر برچسب کافی است روی ان کلیک کنید.</p> {% endcomment %}
         <label for="tag">برچسب ها(برای حذف هر برچسب کافی است روی ان کلیک کنید) </label><br>
         <input id="tag" type="search"/>
         <div id="allTags" z-index="1000" class="mt-1" style="overflow-y: scroll; max-height:135px"></div>

@@ -14,9 +14,6 @@
     {{ editform.media }}
 {% block body %}
 
-    {% comment %} {% if user.is_authenticated %}
-        خوش آمدید {{ user }} <a href="{% url 'logout' %}">خروج</a>
-    {% endif %} {% endcomment %}
     <form id="editPostForm" method="POST" class='w-100 m-auto' enctype="multipart/form-data">
         {% csrf_token %}
         {%for field in editform %}

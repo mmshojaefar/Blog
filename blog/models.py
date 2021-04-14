@@ -23,13 +23,7 @@ class Tag(models.Model):
         verbose_name='برچسب تایید شده است',
         default=False,
     )
-    # used_in_not_accepted_post = models.IntegerField(
-    #     verbose_name='تعداد استفاده از برچسب در پست های تایید نشده'
-    # )
-    # used_in_accepted_post = models.IntegerField(
-    #     verbose_name='تعداد استفاده از برچسب در پست های تایید شده'
-    # )
-
+    
     def __str__(self):
         return self.name
 
@@ -89,10 +83,6 @@ class Post(models.Model):
         verbose_name='پست تایید شده است',
         default=False,
     )
-    # checked_by_admin = models.BooleanField(
-    #     verbose_name='پست برای تایید دیده شده است',
-    #     default=False,
-    # )
     tags = models.ManyToManyField(
         Tag,
         verbose_name='برچسب ها',
@@ -148,7 +138,6 @@ class Comment(models.Model):
         verbose_name_plural = 'نظرات'
         permissions = [
             ('accept_comment', 'تایید کردن نظر'),
-            # ('rate_comment', 'پسندیدن/نپسندیدن نظر'),
         ]
         ordering = ['-comment_send_time']
     
@@ -160,10 +149,6 @@ class Comment(models.Model):
         verbose_name='کامنت تایید شده است',
         default=False,
     )
-    # checked_by_admin = models.BooleanField(
-    #     verbose_name='نظر برای تایید دیده شده است',
-    #     default=False,
-    # )
     comment_send_time = models.DateTimeField(
         verbose_name='زمان ارسال نظر',
     )
@@ -237,10 +222,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name = 'کاربر'
         verbose_name_plural = 'کاربران'
 
-    # password = models.CharField(
-    #     verbose_name=ugettext_lazy('رمز عبور'),
-    #     max_length=128,
-    # )
     def validate_username_custom(name):
         if not all([(lambda x: x in printable[:62])(x) for x in name]) or len(str(name)) < 4:
             raise ValidationError(
@@ -294,11 +275,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         blank=True,
         default=timezone.now,
     )
-    # lastseen_time = models.DateTimeField(
-    #     verbose_name='اخرین بازدید',
-    #     blank=True,
-    #     null=True,
-    # )
     is_staff = models.BooleanField(
         verbose_name='کارمند است؟',
         default=False,
@@ -318,7 +294,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         through='Follow',
     )
     USERNAME_FIELD = 'username'
-    # REQUIRED_FIELDS = []
 
     objects = CustomUserManager()
 

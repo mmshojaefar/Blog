@@ -12,15 +12,6 @@
   display: none;
 }
 
-/*
-#showAdvSearch:hover + .advSearch {
-  display: block;
-}
-
-.advSearch:hover {
-  display: block;
-} */
-
 a {
   text-decoration: none;
 }
@@ -90,4 +81,3 @@ a {
   font-weight: 100;
   font-style: normal;
 }
-

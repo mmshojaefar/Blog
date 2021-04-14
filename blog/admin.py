@@ -16,42 +16,7 @@ admin.site.register(Comment)
 admin.site.register(Comment_rating)
 admin.site.register(Post_rating)
 admin.site.register(Post_tag)
-
-# class CommentsInline(admin.TabularInline):
-#     model = Comment
-#     extra = 1
-#     fieldsets = [
-#         (None, {'fields': ['user', 'text', 'comment_send_time', 'accept_by_admin']}),
-#     ]
-
-#     readonly_fields = ['user', 'comment_send_time']
-
-
-# class PostAdmin(admin.ModelAdmin):
-
-#     fieldsets = [
-#         (None, {'fields': ['user', 'title', 'text', 'image', 'show_post']}),
-#         # ('طبقه بندی', {'fields': ['tags', 'categories']}),
-#         # ('نظرات و امتیازات', {'fields': ['post_likes',]}),
-#     ]
-
-#     def get_form(self, request, obj=None, **kwargs):
-#         form = super(PostAdmin, self).get_form(request, obj, **kwargs)
-#         # form.base_fields['user'].initial = request.user
-#         return form
-    
-#     inlines = [CommentsInline]
-#     readonly_fields = ['post_send_time', 'post_likes', 'user']
-
-#     def save_model(self, request, obj, form, change):
-#         obj.user = request.user
-#         obj.post_send_time = timezone.now()
-#         super(PostAdmin, self).save_model(request, obj, form, change)
-
-    
-# admin.site.register(Post, PostAdmin)
 admin.site.register(Post)
-
 
 class UserCreationForm(forms.ModelForm):
     '''
@@ -123,8 +88,3 @@ class UserAdmin(BaseUserAdmin, admin.ModelAdmin):
 
 # Now register the new UserAdmin...
 admin.site.register(User, UserAdmin)
-# ... and, since we're not using Django's built-in permissions,
-# unregister the Group model from admin.
-
-
-# admin.site.unregister(Group)

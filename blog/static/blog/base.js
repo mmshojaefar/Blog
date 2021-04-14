@@ -9,23 +9,11 @@ function check() {
 
 var timer;
 var counterBack;
-var delay=1500;
+var delay = 1500;
 
 var i = 1;
 $('#toggleAdvSearch').mouseenter(function () {
     clearTimeout(timer)
-    // counterBack = setInterval(function () {
-    //     console.log(i);
-    //     if (i > 0 && i < 102) {
-    //         i+=12;
-    //         $('.progress-bar').css('width', i + '%');
-    //     } else {
-    //         // $('.progress-bar').css('width', 1 + '%');
-    //         // counterBack.stop
-    //         // clearInterval(counterBack);
-    //         // i=1;
-    //     }
-    // }, delay/15);
     timer = window.setTimeout(function () {
         $('.advSearch').show();
         $('.show').addClass('d-none')
@@ -38,10 +26,6 @@ $('#toggleAdvSearch').mouseenter(function () {
         $('.hide').addClass('d-none')
     }
     clearTimeout(timer)
-    // i=1;
-    // $('.progress-bar').css('width', i + '%');
-    // counterBack.stop
-    // clearInterval(counterBack);
 });
 
 
@@ -49,10 +33,6 @@ $('.advSearch').mouseover(function () {
     $('.advSearch').show();
     $('.show').addClass('d-none')
     $('.hide').removeClass('d-none')
-    // clearTimeout(timer)
-    // i=1;
-    // $('.progress-bar').css('width', i + '%');
-    // clearInterval(counterBack);
 }).mouseleave(function () {
     if (!check()) {
         $('.advSearch').hide();
@@ -60,10 +40,6 @@ $('.advSearch').mouseover(function () {
         $('.hide').addClass('d-none')
     }
     clearTimeout(timer)
-    // i=1;
-    // $('.progress-bar').css('width', i + '%');
-    // counterBack.stop
-    // clearInterval(counterBack);
 })
 
 
@@ -72,10 +48,6 @@ $('.show').click(function () {
     $('.show').addClass('d-none')
     $('.hide').removeClass('d-none')
     clearTimeout(timer)
-    // i=1;
-    // $('.progress-bar').css('width', i + '%');
-    // counterBack.stop
-    // clearInterval(counterBack);
 });
 
 
@@ -84,10 +56,6 @@ $('.hide').click(function () {
     $('.show').removeClass('d-none')
     $('.hide').addClass('d-none')
     clearTimeout(timer)
-    // i=1;
-    // $('.progress-bar').css('width', i + '%');
-    // counterBack.stop
-    // clearInterval(counterBack);
 });
 
 
