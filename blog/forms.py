@@ -47,11 +47,11 @@ class UserForm(forms.ModelForm):
     This form created for registering to the blog and each user is member of std_user group at first
     '''
     password=forms.CharField(
-        label='رمزعبور',
+        label='گذرواژه',
         widget=forms.PasswordInput(),
     )
     confirm_password=forms.CharField(
-        label='تکرار رمزعبور',
+        label='تکرار گذرواژه',
         widget=forms.PasswordInput(),
     )
 
@@ -66,5 +66,5 @@ class UserForm(forms.ModelForm):
 
         # Here we checked password and confirm password to be same and then do some validation to get strong password
         if password and confirm_password and password != confirm_password:
-            raise forms.ValidationError("رمزعبور و تکرار آن مطابقت ندارند.")
+            raise forms.ValidationError("گذرواژه و تکرار آن مطابقت ندارند.")
         validate_password(password)

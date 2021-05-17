@@ -4,6 +4,7 @@
 from blog.models import Post, User
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
+from blog.views import most_comment_posts
 
 def profile(request, username=None):
     # print(type(request)) #class 'django.core.handlers.wsgi.WSGIRequest'
@@ -19,4 +20,5 @@ def profile(request, username=None):
     return render(request, 'registration/profile.html', context={'username':username,
                                                                  'can_accept':can_accept,
                                                                  'posts':posts,
-                                                                  })
+                                                                 'most_comment_posts' : most_comment_posts,
+                                                                })
