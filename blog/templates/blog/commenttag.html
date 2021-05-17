@@ -5,7 +5,7 @@
         <div class="d-flex">
             <div>
                 <a href="{% url 'main_profile' comment.user.username %}" style=" color: #363636; text-decoration: none;">
-                    {% if post.user.image  %}
+                    {% if comment.user.image  %}
                     <img src="/media/{{ comment.user.image }}" width=38 height=38 
                     style="border-radius: 19px; position: relative; top: 50%; transform: translateY(-50%);">
                     {% else %}
@@ -27,7 +27,7 @@
         </div>
     </div>
     <div class="card-body border-0">
-        <p class="card-text mt-3">
+        <p class="card-text mt-0">
                 {{ comment.text|striptags|truncatewords:12|safe }} 
         </p>
     </div>

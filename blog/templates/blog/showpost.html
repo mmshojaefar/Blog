@@ -288,14 +288,62 @@
     <br><br>
     <div class="mx-md-5 px-md-4">
         <p>نظرات</p>
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <p {% if message.tags %} class="bg-{{ message.tags }} py-2 bg-gradient px-1"{% endif %}>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if user.is_authenticated %}
+            <form id="newCommentForm" method="POST">
+                {% csrf_token %}
+                <div class="card border-0 mb-3 comment">
+                    <div class="card-header border-0 d-flex" style="background-color: white;">
+                        <div class="d-flex">
+                            <div>
+                                <a href="{% url 'main_profile' user.username %}" style=" color: #363636; text-decoration: none;">
+                                    {% if user.image  %}
+                                        <img src="/media/{{ user.image }}" width=38 height=38 
+                                        style="border-radius: 19px; position: relative; top: 50%; transform: translateY(-50%);">
+                                    {% else %}
+                                        <img src="/media/user_imgs/DefaultUserImage.png" width=38 height=38
+                                        style="border-radius: 19px; position: relative; top: 50%; transform: translateY(-50%);">
+                                    {% endif %}
+                                </a>
+                            </div>
+                            <div class="me-3">
+                                <div style="margin-bottom: -2px;">
+                                    <a href="{% url 'main_profile' user.username %}" style=" color: #363636; text-decoration: none;">
+                                        {{ user.username }}
+                                    </a>
+                                </div>
+                                <div style="margin-top: -2px; color: #858585; ">
+                                    الآن
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body border-0">
+                        <textarea id="newComment" name="newComment" class="form-control card-text mt-0" rows="5" max_length="500"></textarea>
+                    </div>
+                    <div class="card-footer border-0 d-flex justify-content-end" style="color: #858585; background-color: white;">
+                        <div class="pt-0 mt-0">
+                            <input class='accept_comment btn bg-primary shadow-none px-1' type='submit' value='ارسال نظر'>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        {% endif %}
 
         {% for comment in allcomments %}
 
             {% if comment.accept_by_admin %}
                 {% include "blog/commenttag.html" with comment=comment %}
-            {% endif %}
-
-            {% if not comment.accept_by_admin and can_accept %}
+            {% elif not comment.accept_by_admin and can_accept %}
+                {% include "blog/commenttag.html" with comment=comment %}
+            {% elif comment.user == user %}
                 {% include "blog/commenttag.html" with comment=comment %}
             {% endif %}
 

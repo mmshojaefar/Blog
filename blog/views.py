@@ -1,4 +1,5 @@
-from django.shortcuts import render, HttpResponseRedirect, reverse, Http404
+from datetime import datetime
+from django.shortcuts import redirect, render, HttpResponseRedirect, reverse, Http404
 from django.http import JsonResponse
 from blog.forms import PostForm, UserForm, SearchForm
 from blog.models import Post_rating, Comment_rating, Post, Comment, Tag, User, Category, Post_tag
@@ -12,6 +13,7 @@ from django.contrib.auth.models import Group
 from django.core import serializers
 from django.core.exceptions import ValidationError
 from django.contrib.postgres.search import TrigramSimilarity
+from django.contrib import messages
 from django.db.models import Q, Count, Subquery, OuterRef
 from bs4 import BeautifulSoup
 import json
@@ -301,6 +303,7 @@ def showpost(request, username, pk):
             blog/posts/post_id/
         The post show completely.
         Also all comments show in this page view.
+        If someone try to submit comment, the comment text will send to this function. It will save after validating test.
         Each user (logged in or not) can see the post and comments(If the owner(writer of post) did not archive the post)
         but only logged in user can like/dislike post/comments.
         If the owner(writer of post) see this view, he/she see edit button and can edit post!
@@ -322,7 +325,7 @@ def showpost(request, username, pk):
     Returns:
         [class HttpResponse]: If username is the owner of post with given pk, it shows the post of geiven pk 
         by rendering showpost.html
-    """
+    """    
     post = get_object_or_404(Post, pk=pk)
     can_accept =  request.user.groups.filter(name='مدیران').exists() or request.user.groups.filter(name='ویراستاران').exists()
     owner = (request.user == post.user)
@@ -331,16 +334,31 @@ def showpost(request, username, pk):
     if (not can_accept) and (not owner) and (not post.accept_by_admin):
         raise Http404
     if not post.user.username == username:
-        return HttpResponseRedirect(reverse('showpost', kwargs={'username':post.user.username, 'pk':post.pk}))    
+        return HttpResponseRedirect(reverse('showpost', kwargs={'username':post.user.username, 'pk':post.pk}))
     allcomments = post.comment_set.all()
     tags = post.tags.all()
-    return render(request, 'blog/showpost.html', context={'post':post,
-                                                          'allcomments':allcomments,
-                                                          'owner':owner,
-                                                          'can_accept':can_accept,
-                                                          'tags' : tags,
-                                                          'form': SearchForm(),
-                                                          })
+    context = {
+        'post':post,
+        'allcomments':allcomments,
+        'owner':owner,
+        'can_accept':can_accept,
+        'tags' : tags,
+        'form': SearchForm(),
+    }
+    if request.POST:
+        text = request.POST['newComment']
+        if len(text)>500:
+            messages.error(request, 'نظر باید حداکثر 500 کاراکتر باشد.', extra_tags='danger')
+        else:
+            comment_send_time = datetime.now()
+            user = request.user
+            Comment.objects.create(text=text,
+                                   comment_send_time=comment_send_time,
+                                   post=post,
+                                   user=user)
+    
+        return HttpResponseRedirect(reverse('showpost', kwargs={'username':post.user.username, 'pk':post.pk}))
+    return render(request ,'blog/showpost.html', context=context)
 
 def register(request):
     """
