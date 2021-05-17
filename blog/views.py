@@ -2,8 +2,8 @@ from django.shortcuts import render, HttpResponseRedirect, reverse, Http404
 from django.http import JsonResponse
 from blog.forms import PostForm, UserForm, SearchForm
 from blog.models import Post_rating, Comment_rating, Post, Comment, Tag, User, Category, Post_tag
-from tinymce.views import render_to_link_list
-from unicodedata import bidirectional
+# from tinymce.views import render_to_link_list
+# from unicodedata import bidirectional
 from django.contrib.auth.decorators import login_required, permission_required
 from django.views.decorators.http import require_http_methods
 from django.utils import timezone
@@ -345,7 +345,7 @@ def showpost(request, username, pk):
 def register(request):
     """
     Summary:
-        -----------
+        This function used for registering in the weblog and createing Standard User.
 
     Args:
         request ([class HttpRequest]): It is an HttpRequest object which is typically named request. It contains metadata 
@@ -371,7 +371,6 @@ def register(request):
             return render(request, 'blog/register.html', context={'form':form})
     form = UserForm()
     return render(request, 'blog/register.html', context={'form':form})
-
 
 
 @login_required()
