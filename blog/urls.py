@@ -13,6 +13,7 @@ urlpatterns = [
     path('category/<str:name>', views.showcategory, name='showcategory'),
     path('tag/<str:name>/', views.showtag, name='showtag'),
     path('tags/', views.alltags, name='alltags'),
+    path('about/', views.aboutus, name='aboutus'),
 
     path('api/likepost/', views.apilike, name='apilike'),
     path('api/likecomment/', views.apilikecomment, name='apilikecomment'),

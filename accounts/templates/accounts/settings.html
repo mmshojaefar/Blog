@@ -1,0 +1,142 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="{% static 'accounts/lib/css/bootstrap.min.css' %}">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v28.0.0/dist/font-face.css" rel="stylesheet" type="text/css" />
+    <title>حساب کاربری</title>
+</head>
+<body style="background-color: #f8f9fd; font-family: 'Vazir', sans-serif;">
+
+	<section style="padding: 7em 0;">
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-md-7 col-lg-5" style="background-color:white; border-radius: 10px; box-shadow: 0px 10px 34px -15px rgba(0,0,0,0.24);">
+					<div class="p-4 p-md-5">
+						<div class="icon d-flex align-items-center justify-content-center" style="width: 80px;height: 80px;background: #1089ff ;border-radius: 50%;font-size: 30px;margin: 0 auto;margin-bottom: 10px;">
+							<i class="fa fa-user-o" style="color: white;"></i>
+						</div>
+						<div class="icon d-flex align-items-center justify-content-center">
+							<h2 style="font-size: 28px; color: black; margin-bottom: 1em;"> تعییر اطلاعات کاربری</h2>
+						</div>
+						<div>
+                            {% if messages %}
+                            <div class="messages">
+                                {% for message in messages %}
+                                <p{% if message.tags %} class="bg-{{ message.tags }} py-2 bg-gradient px-1"{% endif %}>{{ message }}</p>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+
+						</div>
+
+						<form method="POST" enctype="multipart/form-data">
+							{% csrf_token %}
+							<div class="my-2"> 
+                                <label>{{ form.first_name.label }}:</label>
+								<input type="text" id="{{ form.first_name.id_for_label }}" name="{{ form.first_name.name }}" 
+										class="form-control rounded-left" value="{{ form.first_name.value }}" max_length="{{ form.first_name.max_length }}" required>
+								<div>
+									{% if form.first_name.errors %}
+										{% for error in form.first_name.errors %}
+											<p class="my-0">{{ error }}</p>
+										{% endfor %}
+									{% endif %}
+								</div>
+							</div>
+							<div class="my-2">
+                                <label>{{ form.last_name.label }}:</label>
+								<input type="text" id="{{ form.last_name.id_for_label }}" name="{{ form.last_name.name }}" 
+										class="form-control rounded-left" value="{{ form.last_name.value }}" max_length="{{ form.last_name.max_length }}" required>
+								<div>
+									{% if form.last_name.errors %}
+										{% for error in form.last_name.errors %}
+											<p class="my-0">{{ error }}</p>
+										{% endfor %}
+									{% endif %}
+								</div>
+							</div>
+                            <div class="my-2">
+                                <label>{{ form.phone.label }}:</label>
+								<input type="text" id="{{ form.phone.id_for_label }}" name="{{ form.phone.name }}" 
+										class="form-control rounded-left" value="{% if form.phone.value %}{{ form.phone.value }}{% endif %}" max_length="{{ form.phone.max_length }}" required>
+								<div>
+									{% if form.phone.errors %}
+										{% for error in form.phone.errors %}
+											<p class="my-0">{{ error }}</p>
+										{% endfor %}
+									{% endif %}
+								</div>
+							</div>
+                            <div class="my-2">
+                                <label>{{ form.email.label }}:</label>
+								<input type="email" id="{{ form.email.id_for_label }}" name="{{ form.email.name }}" 
+										class="form-control rounded-left" value="{{ form.email.value }}" max_length="{{ form.email.max_length }}" required>
+								<div>
+									{% if form.email.errors %}
+										{% for error in form.email.errors %}
+											<p class="my-0">{{ error }}</p>
+										{% endfor %}
+									{% endif %}
+								</div>
+							</div>
+                            <div class="my-2">
+                                <label>{{ form.birth_day.label }}:</label>
+								<input type="date" id="{{ form.birth_day.id_for_label }}" name="{{ form.birth_day.name }}" 
+										class="form-control rounded-left" value="{% if form.birth_day.value %}{{ form.birth_day.value }}{% endif %}">
+								<div>
+									{% if form.birth_day.errors %}
+										{% for error in form.birth_day.errors %}
+											<p class="my-0">{{ error }}</p>
+										{% endfor %}
+									{% endif %}
+								</div>
+							</div>
+                            <div class="my-2">
+                                <label>{{ form.image.label }}:</label>
+								<input type="file" id="{{ form.image.id_for_label }}" name="{{ form.image.name }}" 
+										class="form-control rounded-left" accept="image/*" value="/media/{{ form.image.value }}">
+								<div>
+									{% if form.image.errors %}
+										{% for error in form.image.errors %}
+											<p class="my-0">{{ error }}</p>
+										{% endfor %}
+									{% endif %}
+								</div>
+							</div>
+							<div class="my-3">
+								<button type="submit" class="form-control btn btn-primary rounded submit px-3">تایید</button>
+							</div>
+							<input type="hidden" name="next" value="{{ next }}">
+                            <div class="d-flex justify-content-between">
+                                <p class="text-md-right">
+                                    <a href="{% url 'password_change' %}"" style="text-decoration: none;">تغییر گذرواژه</a>
+                                </p>
+                                <p class="text-md-right">
+                                    <a href="{% url 'index' %}"" style="text-decoration: none;">صفحه اصلی</a>
+                                </p>
+                            </div>
+						</form>
+						<div>
+							{% if form.non_field_errors %}
+								{% for error in form.non_field_errors %}	
+									<p class="my-0">{{ error }}</p>
+								{% endfor %}
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>	
+		</div>
+	</section>
+
+	<script src="{% static 'accounts/lib/js/jquery-3.4.1.min.js' %}"></script>
+    <script src="{% static 'accounts/lib/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'blog/register.js' %}"></script>
+    <script src="https://kit.fontawesome.com/3ddc925580.js" crossorigin="anonymous"></script>
+
+</body>
+</html>

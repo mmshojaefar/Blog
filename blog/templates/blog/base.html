@@ -143,8 +143,9 @@
                             {% endif %}
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink" style="text-align:right;">
-                            <li><a class="dropdown-item" href="{% url 'main_profile' user.username %}">پروفایل</a></li>
-                            <li><a class="dropdown-item" href="{% url 'password_change' %}">تغییر گذرواژه</a></li>
+                            <li><a class="dropdown-item" href="{% url 'main_profile' user.username %}">پست ها</a></li>
+                            <li><a class="dropdown-item" href="{% url 'newpost' user.username %}">ارسال پست</a></li>
+                            <li><a class="dropdown-item" href="{% url 'settings' %}">حساب کاربری</a></li>
                             <li><a class="dropdown-item" href="{% url 'logout' %}">خروج</a></li>
                         </ul>
                     </div>
@@ -171,7 +172,7 @@
                         <a class="nav-link btn-sm" href="{% url 'alltags' %}" style="color: white !important;">برچسب ها</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link btn-sm" href="{% url 'index' %}" style="color: white !important;">درباره بلاگ</a>
+                        <a class="nav-link btn-sm" href="{% url 'aboutus' %}" style="color: white !important;">درباره بلاگ</a>
                     </li>
                 </ul>
             </div>

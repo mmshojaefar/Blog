@@ -391,6 +391,9 @@ def register(request):
     return render(request, 'blog/register.html', context={'form':form})
 
 
+def aboutus(request):
+    return render(request, 'blog/aboutus.html')
+
 @login_required()
 @require_http_methods(["POST"])
 def apilike(request):
@@ -441,7 +444,7 @@ def api_accept_post(request):
     else:
         if not post.accept_by_admin:
             for ptag in Post_tag.objects.filter(post=post):
-                print(ptag.tag.accept_by_admin, ptag.tag)
+                # print(ptag.tag.accept_by_admin, ptag.tag)
                 ptag.tag.accept_by_admin = True
                 ptag.tag.save()
 
@@ -470,7 +473,7 @@ def apilikecomment(request):
     except Comment.DoesNotExist:
         return JsonResponse(data={'ok':'NOT FOUND'})
 
-    print(comment)
+    # print(comment)
     try:
         like = Comment_rating.objects.get(comment=comment, user=request.user)
     except Comment_rating.DoesNotExist:
@@ -521,7 +524,7 @@ def check_username(request):
         return JsonResponse(data={'ok': None})
     else:
         num = User.objects.filter(username=username).count()
-        print(num)
+        # print(num)
         if num == 0:
             return JsonResponse(data={'ok': True})
         return JsonResponse(data={'ok': False})
@@ -529,8 +532,8 @@ def check_username(request):
 @require_http_methods(["POST"])
 def get_tag(request):
     print('yesss')
-    id = request.POST.get('id')
+    # id = request.POST.get('id')
     post = Post.objects.get(pk=id)
     tags = Post_tag.objects.values_list('id', 'tag__name').filter(post=post)
-    print(list(tags))
+    # print(list(tags))
     return JsonResponse(data={'tags': list(tags)})
