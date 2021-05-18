@@ -22,8 +22,8 @@ class UserCreationForm(forms.ModelForm):
     '''
     A form for creating new users. Includes all the required fields, plus a repeated password.
     '''
-    password1 = forms.CharField(label='رمز عبور', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='تکرار رمز عبور', widget=forms.PasswordInput)
+    password1 = forms.CharField(label='گذرواژه', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='تکرار گذرواژه', widget=forms.PasswordInput)
 
     class Meta:
         model = User
@@ -34,7 +34,7 @@ class UserCreationForm(forms.ModelForm):
         password1 = self.cleaned_data.get("password1")
         password2 = self.cleaned_data.get("password2")
         if password1 and password2 and password1 != password2:
-            raise ValidationError("رمزعبور و تکرار آن مطابقت ندارند ")
+            raise ValidationError("گذرواژه و تکرار آن مطابقت ندارند ")
         validate_password(password1)
         return password2
 
