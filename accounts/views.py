@@ -1,10 +1,13 @@
-# from django import forms
 from blog.models import Post, User
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponseRedirect, reverse
 from django.shortcuts import get_object_or_404
 from blog.views import get_most_comment_posts
 from .forms import settingsForm
+from blog.forms import UserForm
 from django.contrib import messages
+from django.utils import timezone
+from django.contrib.auth.models import Group
+
 
 def profile(request, username=None):
     if username == None:
@@ -32,3 +35,34 @@ def settings(request):
     else:
         form = settingsForm(instance=request.user)
     return render(request, 'accounts/settings.html', context={'form':form})
+
+def register(request):
+    """
+    Summary:
+        This function used for registering in the weblog and createing Standard User.
+
+    Args:
+        request ([class HttpRequest]): It is an HttpRequest object which is typically named request. It contains metadata 
+                                       about the request
+
+    Returns:
+        [class HttpResponse]: It render register form by rendering register.html
+    """
+    if request.POST:
+        form = UserForm(request.POST, request.FILES)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.date_joined = timezone.now()
+            password = form.cleaned_data.get('password')
+            user.set_password(password)
+            user.save()
+            std_user = Group.objects.get(name='کاربران عادی')
+            std_user.user_set.add(user)
+            print(user.username)
+            # return HttpResponseRedirect(reverse('main_profile', kwargs={'username':user.username}))
+            return HttpResponseRedirect(reverse('login'))
+        else:
+            form = UserForm(request.POST, request.FILES)
+            return render(request, 'accounts/register.html', context={'form':form})
+    form = UserForm()
+    return render(request, 'accounts/register.html', context={'form':form})
