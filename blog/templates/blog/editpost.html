@@ -9,8 +9,6 @@
 {% block header %}
 
 {% endblock %}
-    <link rel="stylesheet" href="{% static 'blog/lib/css/bootstrap.min.css' %}">  
-    <link rel="stylesheet" href="{% static 'blog/newpost.css' %}">
     {{ editform.media }}
 {% block body %}
 
@@ -32,8 +30,6 @@
 
 
 {% block script %}
-    <script src="{% static 'blog/lib/js/jquery-3.4.1.min.js' %}"></script>  
-    <script src="{% static 'blog/lib/js/bootstrap.min.js' %}"></script>  
     <script src="{% static 'blog/tinymce.min.js' %}"></script>
     <script src="{% static 'blog/editpost.js' %}"></script>
 {% endblock %}

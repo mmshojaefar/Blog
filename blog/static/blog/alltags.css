@@ -1,0 +1,12 @@
+#eachTag{
+    display:inline-block;
+    width: calc(20% - 8px);
+    text-align: center;
+    background-color: #e9ecef;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+#eachTag label{
+    color: black;
+}

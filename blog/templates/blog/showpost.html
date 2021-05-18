@@ -9,16 +9,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'blog/lib/css/bootstrap.min.css' %}"> 
-    <link rel="stylesheet" href="{% static 'blog/base.css' %}">
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v28.0.0/dist/font-face.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="{% static 'blog/showpost.css' %}">
     {{ post.media }}
     <title>{{ post.title }}</title>
 </head>
 
-<body class="container mt-4" style="background-color: #f5f5f5 !important; font-family: 'Vazir', sans-serif;">
+<body class="container mt-4">
     <div class="header d-flex flex-row navbar navbar-light">
-        <h3 id="blog" class="col-2 align-self-start"><a href="{% url 'index' %}" style="text-decoration: none;">بلاگ</a></h3>
+        <h3 id="blog" class="col-2 align-self-start"><a href="{% url 'index' %}">بلاگ</a></h3>
         <div id="searchFormParent" class="d-flex col-10">
             <form id="searchForm" action="{% url 'index' %}" class="d-none d-sm-flex ms-4 mt-2 col-sm-8 col-md-9 col-xl-10" method="GET">
                 <div class="d-flex flex-column col-10 col-sm-12">
@@ -32,9 +31,6 @@
                             {% endif %}
                         </div>
                     </div>
-                    {% comment %} <div class="progress" style="height: 1px;">
-                        <div class="progress-bar" role="progressbar" style="width: 1%;" aria-valuenow="1" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div> {% endcomment %}
                     <div id="toggleAdvSearch" title="جستجوی پیشرفته">
                         <i class="show fas fa-angle-down me-1"></i>
                         <i class="hide fas fa-angle-up me-1 d-none"></i>
@@ -118,13 +114,12 @@
                         </div>
                     </div>              
                 </div>
-                <button type="submit" class="btn align-self-start shadow-none" style="margin-top:-3px; margin-right:-4px;">
+                <button id="submitFormBtn" type="submit" class="btn align-self-start shadow-none">
                     <i class="fas fa-search"></i>
                 </button>
                 <button id="closeSearch" type="button" class="btn align-self-start d-flex d-sm-none pt-2 shadow-none">
                     <i class="fas fa-times"></i>
                 </button>
-                {% comment %} <input type="submit" class="btn btn-primary align-self-start" value="جستجو"> {% endcomment %}
             </form>
             <span id="searchBtn" class="btn col-12 col-sm-4 col-md-3 col-xl-2 d-flex justify-content-end d-sm-block">
                 <button id="openSearch" type="submit" class="btn shadow-none align-self-start d-sm-none">
@@ -161,19 +156,17 @@
         <br>
         <div class="d-flex">
             <div>
-                <a href="{% url 'main_profile' post.user.username %}" style=" color: #363636;">
+                <a id="postUserImage" href="{% url 'main_profile' post.user.username %}" style=" color: #363636;">
                     {% if post.user.image  %}
-                    <img src="/media/{{ post.user.image }}" width=80 height=80 
-                    style="border-radius: 40px; position: relative; top: 50%; transform: translateY(-50%);">
+                        <img src="/media/{{ post.user.image }}" width=80 height=80 >
                     {% else %}
-                    <img src="/media/user_imgs/DefaultUserImage.png" width=80 height=80
-                    style="border-radius: 40px; position: relative; top: 50%; transform: translateY(-50%);">
+                        <img src="/media/user_imgs/DefaultUserImage.png" width=80 height=80>
                     {% endif %}
                 </a>
             </div>
             <div class="me-3">
                 <div class="mb-2 mt-2 pt-1">
-                    <a href="{% url 'main_profile' post.user.username %}" style=" color: #363636; text-decoration: none;">
+                    <a href="{% url 'main_profile' post.user.username %}" style=" color: #363636;">
                         {{ post.user.username }}
                     </a>
                 </div>
@@ -202,10 +195,9 @@
 
         {% for tag in tags %}
             <a href="{% url 'showtag' tag %}">
-                <div class="oneTag" style="display:inline-block; position:relative;">
-                    <input class="pb-1 pt-2" name='tag' style='text-align: center; color: black; 
-                    background-color:#a5a5a5; margin:2px 3px; display:inline; border:none;' value='{{tag.name}}' disabled>
-                    <div style="position:absolute; left:0; right:0; top:0; bottom:0;"></div>
+                <div id="eachTag" class="oneTag" style="display:inline-block; position:relative;">
+                    <input class="pb-1 pt-2" name='tag' value='{{tag.name}}' disabled>
+                    <div></div>
                 </div>
             </a>
         {% endfor %}
@@ -300,23 +292,21 @@
         {% if user.is_authenticated %}
             <form id="newCommentForm" method="POST">
                 {% csrf_token %}
-                <div class="card border-0 mb-3 comment">
+                <div id="addNewComment" class="card border-0 mb-3 comment">
                     <div class="card-header border-0 d-flex" style="background-color: white;">
                         <div class="d-flex">
                             <div>
-                                <a href="{% url 'main_profile' user.username %}" style=" color: #363636; text-decoration: none;">
+                                <a href="{% url 'main_profile' user.username %}" style=" color: #363636;">
                                     {% if user.image  %}
-                                        <img src="/media/{{ user.image }}" width=38 height=38 
-                                        style="border-radius: 19px; position: relative; top: 50%; transform: translateY(-50%);">
+                                        <img src="/media/{{ user.image }}" width=38 height=38>
                                     {% else %}
-                                        <img src="/media/user_imgs/DefaultUserImage.png" width=38 height=38
-                                        style="border-radius: 19px; position: relative; top: 50%; transform: translateY(-50%);">
+                                        <img src="/media/user_imgs/DefaultUserImage.png" width=38 height=38>
                                     {% endif %}
                                 </a>
                             </div>
                             <div class="me-3">
                                 <div style="margin-bottom: -2px;">
-                                    <a href="{% url 'main_profile' user.username %}" style=" color: #363636; text-decoration: none;">
+                                    <a href="{% url 'main_profile' user.username %}" style=" color: #363636;">
                                         {{ user.username }}
                                     </a>
                                 </div>
@@ -358,8 +348,8 @@
     <script src="{% static 'blog/lib/js/jquery-3.4.1.min.js' %}"></script>  
     <script src="{% static 'blog/lib/js/bootstrap.min.js' %}"></script>  
     <script src="{% static 'blog/base.js' %}"></script>
-    <script src="https://kit.fontawesome.com/3ddc925580.js" crossorigin="anonymous"></script>
     <script src="{% static 'blog/showpost.js' %}"></script>
+    <script src="https://kit.fontawesome.com/3ddc925580.js" crossorigin="anonymous"></script>
 
 </body>
 

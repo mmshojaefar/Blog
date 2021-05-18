@@ -14,9 +14,13 @@
     {% block header %}{% endblock %}
 </head>
 
-<body class="container mt-4" style="background-color: #f5f5f5 !important; font-family: 'Vazir', sans-serif;">
+<body class="container mt-4">
+
+    <!-- search form and profile dropdown -->
     <div class="header d-flex flex-row navbar navbar-light">
-        <h3 id="blog" class="col-2 align-self-start"><a href="{% url 'index' %}" style="text-decoration: none;">بلاگ</a></h3>
+        <h3 id="blog" class="col-2 align-self-start">
+            <a href="{% url 'index' %}">بلاگ</a>
+        </h3>
         <div id="searchFormParent" class="d-flex col-10">
             <form id="searchForm" action="{% url 'index' %}" class="d-none d-sm-flex ms-4 mt-2 col-sm-8 col-md-9 col-xl-10" method="GET">
                 <div class="d-flex flex-column col-10 col-sm-12">
@@ -30,9 +34,6 @@
                             {% endif %}
                         </div>
                     </div>
-                    {% comment %} <div class="progress" style="height: 1px;">
-                        <div class="progress-bar" role="progressbar" style="width: 1%;" aria-valuenow="1" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div> {% endcomment %}
                     <div id="toggleAdvSearch" title="جستجوی پیشرفته">
                         <i class="show fas fa-angle-down me-1"></i>
                         <i class="hide fas fa-angle-up me-1 d-none"></i>
@@ -116,7 +117,7 @@
                         </div>
                     </div>              
                 </div>
-                <button type="submit" class="btn align-self-start shadow-none" style="margin-top:-3px; margin-right:-4px;">
+                <button id="submitFormBtn" type="submit" class="btn align-self-start shadow-none">
                     <i class="fas fa-search"></i>
                 </button>
                 <button id="closeSearch" type="button" class="btn align-self-start d-flex d-sm-none pt-2 shadow-none">
@@ -131,7 +132,6 @@
                     <a class="btn btn-sm shadow-none border-1 border-primary" href="{% url 'login' %}">ورود</a>
                     <a class="btn btn-sm btn-primary shadow-none" href="{% url 'register' %}">ثبت نام</a>                
                 {% else %}
-
                     <div class="dropdown px-2">
                         <a class="dropdown-toggle" role="button" dir="ltr" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false" style="color:black;">
                             {% if user.image  %}
@@ -149,30 +149,30 @@
                             <li><a class="dropdown-item" href="{% url 'logout' %}">خروج</a></li>
                         </ul>
                     </div>
-
                 {% endif %}
             </span>
         </div> 
     </div>
 
+    <!-- navbar -->
     <nav class="navbar navbar-expand bg-primary sticky-top p-1 mb-1" data-spy="scroll" style="z-index:100;">
-        <div class="" style="white-space: nowrap;overflow-x: auto;">
+        <div id="navbarContent">
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link btn-sm" href="{% url 'index' %}" style="color: white !important;">جدیدترین ها</a>
+                        <a class="nav-link btn-sm" href="{% url 'index' %}">جدیدترین ها</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link btn-sm" href="{% url 'popular' %}" style="color: white !important;">محبوب ترین ها</a>
+                        <a class="nav-link btn-sm" href="{% url 'popular' %}">محبوب ترین ها</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link btn-sm" aria-current="page" href="{% url 'categorytree' %}" style="color: white !important;">دسته بندی ها</a>
+                        <a class="nav-link btn-sm" aria-current="page" href="{% url 'categorytree' %}">دسته بندی ها</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link btn-sm" href="{% url 'alltags' %}" style="color: white !important;">برچسب ها</a>
+                        <a class="nav-link btn-sm" href="{% url 'alltags' %}">برچسب ها</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link btn-sm" href="{% url 'aboutus' %}" style="color: white !important;">درباره بلاگ</a>
+                        <a class="nav-link btn-sm" href="{% url 'aboutus' %}">درباره بلاگ</a>
                     </li>
                 </ul>
             </div>

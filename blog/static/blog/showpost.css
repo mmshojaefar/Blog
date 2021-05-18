@@ -1,3 +1,52 @@
+body{
+    background-color: #f5f5f5 !important;
+    font-family: 'Vazir', sans-serif;
+}
+
+#submitFormBtn{
+    margin-top:-3px;
+    margin-right:-4px;
+}
+
+#postUserImage img{
+    border-radius: 40px;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+#eachTag input{
+    text-align: center;
+    color: black;
+    background-color:#a5a5a5;
+    margin:2px 3px;
+    display:inline;
+    border:none;
+}
+
+#eachTag div{
+    position:absolute;
+    left:0;
+    right:0;
+    top:0;
+    bottom:0;
+}
+
+#addNewComment div div div a img{
+    border-radius: 19px;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+a{
+    text-decoration: none;
+}
+
+.advSearch {
+    display: none;
+}
+
 .dropdown-menu{
     margin-left: 33px; 
 }

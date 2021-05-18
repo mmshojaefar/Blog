@@ -7,8 +7,6 @@
 {% block title %}پست جدید{% endblock %}
 
 {% block header %}
-    <link rel="stylesheet" href="{% static 'blog/lib/css/bootstrap.min.css' %}">  
-    <link rel="stylesheet" href="{% static 'blog/newpost.css' %}">
     {{ postForm.media }}
 {% endblock %}
 
@@ -30,8 +28,6 @@
 {% endblock %}
 
 {% block script %}
-    <script src="{% static 'blog/lib/js/jquery-3.4.1.min.js' %}"></script>  
-    <script src="{% static 'blog/lib/js/bootstrap.min.js' %}"></script>  
     <script src="{% static 'blog/tinymce.min.js' %}"></script>
     <script src="{% static 'blog/newpost.js' %}"></script>
 {% endblock %}

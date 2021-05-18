@@ -6,7 +6,9 @@
 
 {% block title %}{{ category }}{% endblock %}
 
-{% block header %} {% endblock %}
+{% block header %}
+    <link rel="stylesheet" href="{% static 'blog/alltags.css' %}">
+{% endblock %}
 
 {% block body %}
     <p>
@@ -16,9 +18,8 @@
     <div class="d-inline">
         {% for tag in tags %}
             <a href="{% url 'showtag' tag %}">
-                <div class="mt-1 mb-1 pt-1 pb-1" style="display:inline-block; width: calc(20% - 8px); 
-                            text-align: center; background-color: #e9ecef; margin-left: 2px; margin-right: 2px;">
-                    <label style="color: black;">
+                <div id="eachTag" class="mt-1 mb-1 pt-1 pb-1">
+                    <label>
                         {{ tag }}
                     </label>
                 </div>
