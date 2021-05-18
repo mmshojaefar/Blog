@@ -10,9 +10,8 @@ tinymce.init({
     toolbar: 'undo redo | bold italic | alignleft aligncenter alignright alignjustify | indent outdent | ltr rtl | code link image table | preview',
     image_title: true,
     automatic_uploads: true,
-    images_upload_url: 'http://127.0.0.1:8000/',
+    images_upload_url: 'http://127.0.0.1:8000/blog/api/getimage/',
     file_picker_types: 'image',
-
     file_picker_callback: function (cb, value, meta) {
         var input = document.createElement('input');
         input.setAttribute('type', 'file');
@@ -20,6 +19,8 @@ tinymce.init({
         input.onchange = function () {
             var file = this.files[0];
             var reader = new FileReader();
+            var token = ($('[name="csrfmiddlewaretoken"]')[0]).value;
+            reader.setRequestHeader("X-CSRF-Token", token);
             reader.onload = function () {
                 var id = 'blobid' + (new Date()).getTime();
                 var blobCache = tinymce.activeEditor.editorUpload.blobCache;
@@ -32,6 +33,7 @@ tinymce.init({
         };
         input.click();
     },
+    images_upload_handler: 
     content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:15px; line-height: 0.4}'
 });
 

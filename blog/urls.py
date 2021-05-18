@@ -24,4 +24,5 @@ urlpatterns = [
     path('api/addtag/', views.add_tag, name='add_tag'),
     path('api/checkusername/', views.check_username, name='check_username'),
     path('api/gettag/', views.get_tag, name='get_tag'),
+    path('api/getimage/', views.get_iamge, name='get_image'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

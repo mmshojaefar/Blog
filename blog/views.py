@@ -537,3 +537,8 @@ def get_tag(request):
     tags = Post_tag.objects.values_list('id', 'tag__name').filter(post=post)
     # print(list(tags))
     return JsonResponse(data={'tags': list(tags)})
+
+@require_http_methods(["POST"])
+def get_iamge(request):
+    print(request.FILES)
+    print(11111111111111111111111111111)
