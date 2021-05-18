@@ -145,8 +145,9 @@
                             {% endif %}
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink" style="text-align:right;">
-                            <li><a class="dropdown-item" href="{% url 'main_profile' user.username %}">پروفایل</a></li>
-                            <li><a class="dropdown-item" href="{% url 'password_change' %}">تغییر گذرواژه</a></li>
+                            <li><a class="dropdown-item" href="{% url 'main_profile' user.username %}">پست ها</a></li>
+                            <li><a class="dropdown-item" href="{% url 'newpost' user.username %}">ارسال پست</a></li>
+                            <li><a class="dropdown-item" href="{% url 'settings' %}">حساب کاربری</a></li>
                             <li><a class="dropdown-item" href="{% url 'logout' %}">خروج</a></li>
                         </ul>
                     </div>

@@ -14,15 +14,4 @@ urlpatterns = [
     path('tag/<str:name>/', views.showtag, name='showtag'),
     path('tags/', views.alltags, name='alltags'),
     path('about/', views.aboutus, name='aboutus'),
-
-    path('api/likepost/', views.apilike, name='apilike'),
-    path('api/likecomment/', views.apilikecomment, name='apilikecomment'),
-    path('api/dislikepost/', views.apidislike, name='apidislike'),
-    path('api/dislikecomment/', views.apidislikecomment, name='apidislikecomment'),
-    path('api/acceptpost/', views.api_accept_post, name='api_accept_post'),
-    path('api/acceptcomment/', views.api_accept_comment, name='api_accept_comment'),
-    path('api/addtag/', views.add_tag, name='add_tag'),
-    path('api/checkusername/', views.check_username, name='check_username'),
-    path('api/gettag/', views.get_tag, name='get_tag'),
-    path('api/getimage/', views.get_iamge, name='get_image'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

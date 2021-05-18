@@ -1,20 +1,14 @@
 from datetime import datetime
 from django.shortcuts import redirect, render, HttpResponseRedirect, reverse, Http404
-from django.http import JsonResponse
 from blog.forms import PostForm, UserForm, SearchForm
 from blog.models import Post_rating, Comment_rating, Post, Comment, Tag, User, Category, Post_tag
-# from tinymce.views import render_to_link_list
-# from unicodedata import bidirectional
 from django.contrib.auth.decorators import login_required, permission_required
-from django.views.decorators.http import require_http_methods
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import Group
-from django.core import serializers
-from django.core.exceptions import ValidationError
 from django.contrib.postgres.search import TrigramSimilarity
 from django.contrib import messages
-from django.db.models import Q, Count, Subquery, OuterRef
+from django.db.models import Q, Count
 from bs4 import BeautifulSoup
 import json
 
@@ -393,155 +387,5 @@ def register(request):
     form = UserForm()
     return render(request, 'blog/register.html', context={'form':form})
 
-
 def aboutus(request):
     return render(request, 'blog/aboutus.html')
-
-@login_required()
-@require_http_methods(["POST"])
-def apilike(request):
-    try:
-        post = Post.objects.get(pk=request.POST['post'])
-    except Post.DoesNotExist:
-        return JsonResponse(data={'ok':'NOT FOUND'})
-
-    try:
-        like = Post_rating.objects.get(post=post, user=request.user)
-    except Post_rating.DoesNotExist:
-        like = Post_rating.objects.create(post=post, user=request.user, positive=True)
-        return JsonResponse(data={'ok':'like'})
-    else:
-        if like.positive == False:
-            dislike = Post_rating.objects.get(post=post, user=request.user)
-            dislike.delete()  
-            return JsonResponse(data={'ok':'removedislike'})
-    return JsonResponse(data={'ok':'nothing'})
-
-@login_required()
-@require_http_methods(["POST"])
-def apidislike(request):
-    try:
-        post = Post.objects.get(pk=request.POST['post'])
-    except Post.DoesNotExist:
-        return JsonResponse(data={'ok':'NOT FOUND'})
-
-    try:
-        dislike = Post_rating.objects.get(post=post, user=request.user)
-    except Post_rating.DoesNotExist:
-        dislike = Post_rating.objects.create(post=post, user=request.user, positive=False)
-        return JsonResponse(data={'ok':'dislike'})
-    else:
-        if dislike.positive == True:
-            like = Post_rating.objects.get(post=post, user=request.user)
-            like.delete()  
-            return JsonResponse(data={'ok':'removelike'})
-    return JsonResponse(data={'ok':'nothing'})
-
-@permission_required('accept_post')
-@require_http_methods(["POST"])
-def api_accept_post(request):
-    try:
-        post = Post.objects.get(pk=request.POST['post'])
-    except Post.DoesNotExist:
-        return JsonResponse(data={'ok':'NOT FOUND'})
-    else:
-        if not post.accept_by_admin:
-            for ptag in Post_tag.objects.filter(post=post):
-                # print(ptag.tag.accept_by_admin, ptag.tag)
-                ptag.tag.accept_by_admin = True
-                ptag.tag.save()
-
-    post.accept_by_admin = (not post.accept_by_admin)
-    post.save()
-    return JsonResponse(data={'ok':'ok'})
-    # return JsonResponse(data={})
-
-@permission_required('accept_comment')
-@require_http_methods(["POST"])
-def api_accept_comment(request):
-    try:
-        comment = Comment.objects.get(pk=request.POST['comment'])
-    except Comment.DoesNotExist:
-        return JsonResponse(data={'ok':'NOT FOUND'})
-    comment.accept_by_admin = (not comment.accept_by_admin)
-    comment.save()
-    return JsonResponse(data={'ok':'ok'})
-    # return JsonResponse(data={})
-
-@login_required()
-@require_http_methods(["POST"])
-def apilikecomment(request):
-    try:
-        comment = Comment.objects.get(pk=request.POST['comment'])
-    except Comment.DoesNotExist:
-        return JsonResponse(data={'ok':'NOT FOUND'})
-
-    # print(comment)
-    try:
-        like = Comment_rating.objects.get(comment=comment, user=request.user)
-    except Comment_rating.DoesNotExist:
-        like = Comment_rating.objects.create(comment=comment, user=request.user, positive=True)
-        return JsonResponse(data={'ok':'like'})
-    else:
-        if like.positive == False:
-            dislike = Comment_rating.objects.get(comment=comment, user=request.user)
-            dislike.delete()  
-            return JsonResponse(data={'ok':'removedislike'})
-    return JsonResponse(data={'ok':'nothing'})
-
-@login_required()
-@require_http_methods(["POST"])
-def apidislikecomment(request):
-    try:
-        comment = Comment.objects.get(pk=request.POST['comment'])
-    except Comment.DoesNotExist:
-        return JsonResponse(data={'ok':'NOT FOUND'})
-
-    try:
-        dislike = Comment_rating.objects.get(comment=comment, user=request.user)
-    except Comment_rating.DoesNotExist:
-        dislike = Comment_rating.objects.create(comment=comment, user=request.user, positive=False)
-        return JsonResponse(data={'ok':'dislike'})
-    else:
-        if dislike.positive == True:
-            like = Comment_rating.objects.get(comment=comment, user=request.user)
-            like.delete()
-            return JsonResponse(data={'ok':'removelike'})
-    return JsonResponse(data={'ok':'nothing'})
-
-@require_http_methods(["POST"])
-def add_tag(request):
-    tag = request.POST['tag']
-    # result = Tag.objects.filter(name__icontains=tag).only("pk", "name")
-    result = Tag.objects.filter(name__icontains=tag, accept_by_admin=True)
-    # print(result)
-    # print(serializers.serialize("json" ,result))
-    return JsonResponse(data={'result': serializers.serialize("json" ,result)})
-
-@require_http_methods(["POST"])
-def check_username(request):
-    username = request.POST['username']
-    try:
-        User.validate_username_custom(username)
-    except ValidationError:
-        return JsonResponse(data={'ok': None})
-    else:
-        num = User.objects.filter(username=username).count()
-        # print(num)
-        if num == 0:
-            return JsonResponse(data={'ok': True})
-        return JsonResponse(data={'ok': False})
-
-@require_http_methods(["POST"])
-def get_tag(request):
-    print('yesss')
-    id = request.POST.get('id')
-    post = Post.objects.get(pk=id)
-    tags = Post_tag.objects.values_list('id', 'tag__name').filter(post=post)
-    # print(list(tags))
-    return JsonResponse(data={'tags': list(tags)})
-
-@require_http_methods(["POST"])
-def get_iamge(request):
-    print(request.FILES)
-    print(11111111111111111111111111111)
