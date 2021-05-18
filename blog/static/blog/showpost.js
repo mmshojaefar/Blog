@@ -3,7 +3,7 @@ function likePost() {
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
         $postId = window.location.href.split('/').filter(function (i) { return i }).pop();
         $.post({
-            url: 'http://127.0.0.1:8000/blog/api/likepost/',
+            url: 'http://127.0.0.1:8000/api/likepost/',
             headers: { 'X-CSRFToken': csrftoken }
         },
             {
@@ -43,7 +43,7 @@ function dislikePost() {
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
         $postId = window.location.href.split('/').filter(function (i) { return i }).pop();
         $.post({
-            url: 'http://127.0.0.1:8000/blog/api/dislikepost/',
+            url: 'http://127.0.0.1:8000/api/dislikepost/',
             headers: { 'X-CSRFToken': csrftoken }
         },
             {
@@ -79,7 +79,7 @@ function acceptPost() {
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
         $postId = window.location.href.split('/').filter(function (i) { return i }).pop();
         $.post({
-            url: 'http://127.0.0.1:8000/blog/api/acceptpost/',
+            url: 'http://127.0.0.1:8000/api/acceptpost/',
             headers: { 'X-CSRFToken': csrftoken }
         },
             {
@@ -103,7 +103,7 @@ function acceptComment() {
         $comment = $(this)
         $commentId = $comment.closest('.comment').attr('id').substring(2)
         $.post({
-            url: 'http://127.0.0.1:8000/blog/api/acceptcomment/',
+            url: 'http://127.0.0.1:8000/api/acceptcomment/',
             headers: { 'X-CSRFToken': csrftoken }
         },
             {
@@ -132,7 +132,7 @@ function likeComment() {
         $commentId = $comment.attr('id').substring(2)
 
         $.post({
-            url: 'http://127.0.0.1:8000/blog/api/likecomment/',
+            url: 'http://127.0.0.1:8000/api/likecomment/',
             headers: { 'X-CSRFToken': csrftoken }
         },
             {
@@ -169,7 +169,7 @@ function dislikeComment() {
         $commentId = $comment.attr('id').substring(2)
 
         $.post({
-            url: 'http://127.0.0.1:8000/blog/api/dislikecomment/',
+            url: 'http://127.0.0.1:8000/api/dislikecomment/',
             headers: { 'X-CSRFToken': csrftoken }
         },
             {

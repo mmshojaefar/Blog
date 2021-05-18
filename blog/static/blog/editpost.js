@@ -10,7 +10,7 @@ tinymce.init({
     toolbar: 'undo redo | bold italic | alignleft aligncenter alignright alignjustify | indent outdent | ltr rtl | code link image table | preview',
     image_title: true,
     automatic_uploads: true,
-    images_upload_url: 'http://127.0.0.1:8000/',
+    images_upload_url: 'http://127.0.0.1:8000/api/get_image',
     file_picker_types: 'image',
 
     file_picker_callback: function (cb, value, meta) {
@@ -73,7 +73,7 @@ $("#tag").on('input', function () {
     addTag();
     if ($("#tag").val().length > 2) {
         $.post({
-            url: 'http://127.0.0.1:8000/blog/api/addtag/',
+            url: 'http://127.0.0.1:8000/api/addtag/',
             headers: { 'X-CSRFToken': csrftoken }
         },
             {
@@ -126,7 +126,7 @@ function start() {
     postId = arr[arr.length - 2]
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     $.post({
-        url: 'http://127.0.0.1:8000/blog/api/gettag/',
+        url: 'http://127.0.0.1:8000/api/gettag/',
         headers: { 'X-CSRFToken': csrftoken }
     },
         {

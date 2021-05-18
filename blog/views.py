@@ -18,9 +18,11 @@ from django.db.models import Q, Count, Subquery, OuterRef
 from bs4 import BeautifulSoup
 import json
 
-most_comment_posts = Post.objects.filter(accept_by_admin=True, show_post=True) \
-                .annotate(num_comments=Count('comment')) \
-                .order_by('-num_comments')
+def get_most_comment_posts():
+    most_comment_posts = Post.objects.filter(accept_by_admin=True, show_post=True) \
+                    .annotate(num_comments=Count('comment')) \
+                    .order_by('-num_comments')
+    return most_comment_posts
 
 # Create your views here.
 
@@ -85,17 +87,17 @@ def index(request):
                 posts = allposts.annotate(similarity=TrigramSimilarity('safe_text', data)).\
                                             filter(similarity__gt=0.1).order_by('-similarity')
                 return render(request, 'blog/index.html', 
-                              context={'posts':posts, 'form':form, 'adv':False, 'most_comment_posts':most_comment_posts[:10]})
+                              context={'posts':posts, 'form':form, 'adv':False, 'most_comment_posts':get_most_comment_posts()[:10]})
             else:
                 return render(request, 'blog/index.html', 
-                              context={'posts':adv_posts, 'form':form, 'adv':True, 'user':request.user, 'most_comment_posts':most_comment_posts[:10]})
+                              context={'posts':adv_posts, 'form':form, 'adv':True, 'user':request.user, 'most_comment_posts':get_most_comment_posts()[:10]})
         else:
             return render(request, 'blog/index.html', 
-                          context={'form':form, 'user':request.user, 'most_comment_posts':most_comment_posts[:10]})
+                          context={'form':form, 'user':request.user, 'most_comment_posts':get_most_comment_posts()[:10]})
     else:
         posts = Post.objects.filter(accept_by_admin=True, show_post=True).order_by('-post_send_time').filter()[:10]
     return render(request, 'blog/index.html', 
-                  context={'posts':posts, 'form':form, 'user':request.user, 'most_comment_posts':most_comment_posts[:10]})
+                  context={'posts':posts, 'form':form, 'user':request.user, 'most_comment_posts':get_most_comment_posts()[:10]})
 
 def popular(request):
     """
@@ -127,7 +129,7 @@ def popular(request):
     posts = sorted(unordered_posts, key=lambda post: posts_pk.index(post.pk) )
 
     return render(request, 'blog/index.html', 
-                  context={'posts':posts, 'form':form, 'user':request.user, 'most_comment_posts':most_comment_posts[:10]})
+                  context={'posts':posts, 'form':form, 'user':request.user, 'most_comment_posts':get_most_comment_posts()[:10]})
 
 def categorytree(request):
     """
@@ -162,7 +164,7 @@ def showcategory(request, name):
     get_object_or_404(Category, name=name)
     posts = Post.objects.filter(categories__name=name, accept_by_admin=True, show_post=True).order_by('-post_send_time')
     return render(request, 'blog/showcategory.html', 
-                  context={'posts':posts, 'category':name, 'form':SearchForm(), 'most_comment_posts':most_comment_posts[:10]})
+                  context={'posts':posts, 'category':name, 'form':SearchForm(), 'most_comment_posts':get_most_comment_posts()[:10]})
  
 def alltags(request):
     """
@@ -197,7 +199,7 @@ def showtag(request, name):
     get_object_or_404(Tag, name=name)
     posts = Post.objects.filter(tags__name=name, accept_by_admin=True, show_post=True).order_by('-post_send_time')
     return render(request, 'blog/showtag.html', 
-                  context={'posts':posts, 'tag':name, 'form':SearchForm(), 'most_comment_posts':most_comment_posts[:10]})
+                  context={'posts':posts, 'tag':name, 'form':SearchForm(), 'most_comment_posts':get_most_comment_posts()[:10]})
  
 @login_required
 @permission_required('blog.add_post')
@@ -382,8 +384,9 @@ def register(request):
             user.save()
             std_user = Group.objects.get(name='کاربران عادی')
             std_user.user_set.add(user)
-            # return HttpResponseRedirect(reverse('blog:profile', args=(user.username)))
-            return HttpResponseRedirect(reverse('profile', args=(user.username)))
+            print(user.username)
+            # return HttpResponseRedirect(reverse('main_profile', kwargs={'username':user.username}))
+            return HttpResponseRedirect(reverse('login'))
         else:
             form = UserForm(request.POST, request.FILES)
             return render(request, 'blog/register.html', context={'form':form})
@@ -532,7 +535,7 @@ def check_username(request):
 @require_http_methods(["POST"])
 def get_tag(request):
     print('yesss')
-    # id = request.POST.get('id')
+    id = request.POST.get('id')
     post = Post.objects.get(pk=id)
     tags = Post_tag.objects.values_list('id', 'tag__name').filter(post=post)
     # print(list(tags))

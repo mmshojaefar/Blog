@@ -10,7 +10,7 @@ tinymce.init({
     toolbar: 'undo redo | bold italic | alignleft aligncenter alignright alignjustify | indent outdent | ltr rtl | code link image table | preview',
     image_title: true,
     automatic_uploads: true,
-    images_upload_url: 'http://127.0.0.1:8000/blog/api/getimage/',
+    images_upload_url: 'http://127.0.0.1:8000/api/getimage/',
     file_picker_types: 'image',
     file_picker_callback: function (cb, value, meta) {
         var input = document.createElement('input');
@@ -77,7 +77,7 @@ $("#tag").on('input', function () {
     addTag();
     if ($("#tag").val().length > 2) {
         $.post({
-            url: 'http://127.0.0.1:8000/blog/api/addtag/',
+            url: 'http://127.0.0.1:8000/api/addtag/',
             headers: { 'X-CSRFToken': csrftoken }
         },
             {
