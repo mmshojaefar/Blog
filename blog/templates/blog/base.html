@@ -7,9 +7,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v28.0.0/dist/font-face.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="{% static 'blog/lib/css/bootstrap.min.css' %}"> 
     <link rel="stylesheet" href="{% static 'blog/base.css' %}">
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v28.0.0/dist/font-face.css" rel="stylesheet" type="text/css" />
     <title>{% block title %}{% endblock %}</title>
     {% block header %}{% endblock %}
 </head>
@@ -184,7 +184,8 @@
     <script src="{% static 'blog/lib/js/jquery-3.4.1.min.js' %}"></script>  
     <script src="{% static 'blog/lib/js/bootstrap.min.js' %}"></script>  
     <script src="{% static 'blog/base.js' %}"></script>
-    <script src="https://kit.fontawesome.com/3ddc925580.js" crossorigin="anonymous"></script>
+    {% comment %} <script src="https://kit.fontawesome.com/3ddc925580.js" crossorigin="anonymous"></script> {% endcomment %}
+    <script src="{% static '3ddc925580.js' %}"></script>
     {% block script %}{% endblock %}
 </body>
 
