@@ -33,8 +33,8 @@ tinymce.init({
         };
         input.click();
     },
-    images_upload_handler: 
-    content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:15px; line-height: 0.4}'
+    // images_upload_handler: 
+    content_style: 'body { font-family:"Vazir",Helvetica,Arial,sans-serif; font-size:15px; line-height: 0.4}'
 });
 
 

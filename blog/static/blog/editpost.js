@@ -32,7 +32,7 @@ tinymce.init({
         };
         input.click();
     },
-    content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:15px; line-height: 0.4}'
+    content_style: 'body { font-family:"Vazir",Helvetica,Arial,sans-serif; font-size:15px; line-height: 0.4}'
 });
 
 function invalid_input() {
