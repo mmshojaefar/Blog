@@ -1,3 +1,6 @@
+from os import stat
+from django.contrib.auth.models import Permission
+from django.db.models.query import QuerySet
 from django.http import JsonResponse
 from blog.models import Post_rating, Comment_rating, Post, Comment, Tag, User, Category, Post_tag
 from django.contrib.auth.decorators import login_required, permission_required
@@ -5,27 +8,53 @@ from django.views.decorators.http import require_http_methods
 from django.core import serializers
 from django.core.exceptions import ValidationError
 import json
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, renderer_classes
+from .serializers import TagSerializers, CategorySerializer, CommentSerializer, PostSerializer
+from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
+from rest_framework import status, viewsets, mixins
+from django.shortcuts import get_object_or_404
+from rest_framework.renderers import AdminRenderer, JSONRenderer, BrowsableAPIRenderer
 
 
-@login_required()
-@require_http_methods(["POST"])
+# @login_required()
+# @require_http_methods(["POST"])
+# def apilike(request):
+#     try:
+#         post = Post.objects.get(pk=request.POST['post'])
+#     except Post.DoesNotExist:
+#         return JsonResponse(data={'ok':'NOT FOUND'})
+
+#     try:
+#         like = Post_rating.objects.get(post=post, user=request.user)
+#     except Post_rating.DoesNotExist:
+#         like = Post_rating.objects.create(post=post, user=request.user, positive=True)
+#         return JsonResponse(data={'ok':'like'})
+#     else:
+#         if like.positive == False:
+#             dislike = Post_rating.objects.get(post=post, user=request.user)
+#             dislike.delete()  
+#             return JsonResponse(data={'ok':'removedislike'})
+#     return JsonResponse(data={'ok':'nothing'})
+
+@api_view(['POST', 'GET'])
 def apilike(request):
     try:
         post = Post.objects.get(pk=request.POST['post'])
     except Post.DoesNotExist:
-        return JsonResponse(data={'ok':'NOT FOUND'})
+        return Response({'ok':'NOT FOUND'}, status=status.HTTP_404_NOT_FOUND)
 
     try:
         like = Post_rating.objects.get(post=post, user=request.user)
     except Post_rating.DoesNotExist:
         like = Post_rating.objects.create(post=post, user=request.user, positive=True)
-        return JsonResponse(data={'ok':'like'})
+        return Response({'ok':'like'}, status=status.HTTP_201_CREATED)
     else:
         if like.positive == False:
             dislike = Post_rating.objects.get(post=post, user=request.user)
             dislike.delete()  
-            return JsonResponse(data={'ok':'removedislike'})
-    return JsonResponse(data={'ok':'nothing'})
+            return Response({'ok':'removedislike'}, status=status.HTTP_204_NO_CONTENT)
+    return Response({'ok':'nothing'}, status=status.HTTP_208_ALREADY_REPORTED)
 
 @login_required()
 @require_http_methods(["POST"])
@@ -147,3 +176,90 @@ def get_tag(request):
 def get_iamge(request):
     print(request.FILES)
     print(11111111111111111111111111111)
+
+@api_view(['GET', 'POST'])
+@renderer_classes([BrowsableAPIRenderer, AdminRenderer, JSONRenderer])
+def tags(request):
+    if request.method == 'POST':
+        new_tag = TagSerializers(data=request.data)
+        if new_tag.is_valid():
+            # Tag(name=new_tag.validated_data['name'], accept_by_admin=new_tag.validated_data['accept_by_admin']).save()
+            new_tag.save()
+            return Response({'created':'ok'}, status=status.HTTP_201_CREATED)
+        else:
+            return Response(new_tag.errors, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        tags = Tag.objects.all()
+        serialized_tags = TagSerializers(tags, many=True)
+        return Response(serialized_tags.data, status=status.HTTP_200_OK)
+
+@api_view()
+@renderer_classes([BrowsableAPIRenderer, AdminRenderer, JSONRenderer])
+def categories(request):
+    paginator = PageNumberPagination()
+    paginator.page_size = 10
+    categories = Category.objects.all()
+    result_page = paginator.paginate_queryset(categories, request)
+    serialized_categories = CategorySerializer(result_page, many=True)
+    return paginator.get_paginated_response(serialized_categories.data)
+
+
+# from django.contrib.auth.decorators import login_required 
+# from django.utils.decorators import method_decorator 
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+
+class CommentViewset(viewsets.ViewSet):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    renderer_classes = [BrowsableAPIRenderer, AdminRenderer, JSONRenderer]
+
+    def list(self, request):
+        queryset = Comment.objects.all()
+        comment_serialized = CommentSerializer(queryset, many=True)
+        return Response(comment_serialized.data, status=status.HTTP_200_OK)
+
+    def retrieve(self, request, pk):
+        queryset = Comment.objects.all()
+        comment = get_object_or_404(queryset, pk=pk)
+        comment_serialized = CommentSerializer(comment)
+        return Response(comment_serialized.data, status=status.HTTP_200_OK)
+
+    def create(self, request):
+        comment_serialized = CommentSerializer(data=request.data)
+        if comment_serialized.is_valid():
+            comment_serialized.save(request.user)
+            return Response({'created':'ok'}, status=status.HTTP_201_CREATED)
+        else:
+            return Response(comment_serialized.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, pk=None):
+        queryset = Comment.objects.all()
+        comment_instance = get_object_or_404(queryset, pk=pk)
+        comment_serialized = CommentSerializer(comment_instance, data=request.data)
+        if comment_serialized.is_valid():
+            comment_serialized.save(request.user)
+            return Response({'updated':'ok'}, status=status.HTTP_205_RESET_CONTENT)
+        else:
+            return Response(comment_serialized.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def partial_update(self, request, pk=None):
+        queryset = Comment.objects.all()
+        comment_instance = get_object_or_404(queryset, pk=pk)
+        comment_serialized = CommentSerializer(comment_instance, data=request.data, partial=True)
+        if comment_serialized.is_valid():
+            comment_serialized.save(request.user)
+            return Response({'partial updated':'ok'}, status=status.HTTP_206_PARTIAL_CONTENT)
+        else:
+            return Response(comment_serialized.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, pk=None):
+        queryset = Comment.objects.all()
+        comment_instance = get_object_or_404(queryset, pk=pk)
+        comment_instance.delete();
+        return Response({'deleted':'ok'}, status=status.HTTP_204_NO_CONTENT)
+
+
+class PostViewset(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    renderer_classes = [BrowsableAPIRenderer, AdminRenderer, JSONRenderer]

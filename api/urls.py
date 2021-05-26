@@ -1,9 +1,19 @@
+from django import urls
+# from django.db import router
 from django.urls import path
+from django.urls.conf import include
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
+from api.api_url_routers import comment_router, post_router
+
 
 urlpatterns = [
+    path('tags/', views.tags, name='apitag'),
+    path('categories/', views.categories, name='apicategories'),
+    path('comments/', include(comment_router.urls)),
+    path('posts/', include(post_router.urls)),
+
     path('likepost/', views.apilike, name='apilike'),
     path('likecomment/', views.apilikecomment, name='apilikecomment'),
     path('dislikepost/', views.apidislike, name='apidislike'),
