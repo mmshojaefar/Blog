@@ -4,7 +4,7 @@ from django.db.models.query import QuerySet
 from django.http import JsonResponse
 from blog.models import Post_rating, Comment_rating, Post, Comment, Tag, User, Category, Post_tag
 from django.contrib.auth.decorators import login_required, permission_required
-from django.views.decorators.http import require_http_methods
+# from django.views.decorators.http import require_http_methods
 from django.core import serializers
 from django.core.exceptions import ValidationError
 import json
@@ -15,32 +15,17 @@ from rest_framework.pagination import PageNumberPagination, LimitOffsetPaginatio
 from rest_framework import status, viewsets, mixins
 from django.shortcuts import get_object_or_404
 from rest_framework.renderers import AdminRenderer, JSONRenderer, BrowsableAPIRenderer
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+import logging
 
+logger = logging.getLogger(__name__)
 
-# @login_required()
-# @require_http_methods(["POST"])
-# def apilike(request):
-#     try:
-#         post = Post.objects.get(pk=request.POST['post'])
-#     except Post.DoesNotExist:
-#         return JsonResponse(data={'ok':'NOT FOUND'})
-
-#     try:
-#         like = Post_rating.objects.get(post=post, user=request.user)
-#     except Post_rating.DoesNotExist:
-#         like = Post_rating.objects.create(post=post, user=request.user, positive=True)
-#         return JsonResponse(data={'ok':'like'})
-#     else:
-#         if like.positive == False:
-#             dislike = Post_rating.objects.get(post=post, user=request.user)
-#             dislike.delete()  
-#             return JsonResponse(data={'ok':'removedislike'})
-#     return JsonResponse(data={'ok':'nothing'})
-
-@api_view(['POST', 'GET'])
+@login_required()
+@api_view(['POST'])
 def apilike(request):
+    logger.info(f'{request.user} send {request.method} request and like/remove dislike post id={request.data["post"]}')
     try:
-        post = Post.objects.get(pk=request.POST['post'])
+        post = Post.objects.get(pk=request.data['post'])
     except Post.DoesNotExist:
         return Response({'ok':'NOT FOUND'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -57,32 +42,34 @@ def apilike(request):
     return Response({'ok':'nothing'}, status=status.HTTP_208_ALREADY_REPORTED)
 
 @login_required()
-@require_http_methods(["POST"])
+@api_view(['POST'])
 def apidislike(request):
+    logger.info(f'{request.user} send {request.method} request and dislike/remove like post id={request.data["post"]}')
     try:
-        post = Post.objects.get(pk=request.POST['post'])
+        post = Post.objects.get(pk=request.data['post'])
     except Post.DoesNotExist:
-        return JsonResponse(data={'ok':'NOT FOUND'})
+        return Response({'ok':'NOT FOUND'}, status=status.HTTP_404_NOT_FOUND)
 
     try:
         dislike = Post_rating.objects.get(post=post, user=request.user)
     except Post_rating.DoesNotExist:
         dislike = Post_rating.objects.create(post=post, user=request.user, positive=False)
-        return JsonResponse(data={'ok':'dislike'})
+        return Response({'ok':'dislike'}, status=status.HTTP_201_CREATED)
     else:
         if dislike.positive == True:
             like = Post_rating.objects.get(post=post, user=request.user)
             like.delete()  
-            return JsonResponse(data={'ok':'removelike'})
-    return JsonResponse(data={'ok':'nothing'})
+            return Response({'ok':'removelike'}, status=status.HTTP_204_NO_CONTENT)
+    return Response({'ok':'nothing'}, status=status.HTTP_208_ALREADY_REPORTED)
 
 @permission_required('accept_post')
-@require_http_methods(["POST"])
+@api_view(['POST'])
 def api_accept_post(request):
+    logger.info(f'{request.user} send {request.method} request to change confirmness of post id={request.data["post"]}')
     try:
-        post = Post.objects.get(pk=request.POST['post'])
+        post = Post.objects.get(pk=request.data['post'])
     except Post.DoesNotExist:
-        return JsonResponse(data={'ok':'NOT FOUND'})
+        return Response({'ok':'NOT FOUND'}, status=status.HTTP_404_NOT_FOUND)
     else:
         if not post.accept_by_admin:
             for ptag in Post_tag.objects.filter(post=post):
@@ -91,69 +78,72 @@ def api_accept_post(request):
 
     post.accept_by_admin = (not post.accept_by_admin)
     post.save()
-    return JsonResponse(data={'ok':'ok'})
+    return Response({'ok':'ok'}, status=status.HTTP_206_PARTIAL_CONTENT)
 
 @permission_required('accept_comment')
-@require_http_methods(["POST"])
+@api_view(['POST'])
 def api_accept_comment(request):
+    logger.info(f'{request.user} send {request.method} request to change confirmness of comment id={request.data["comment"]}')
     try:
-        comment = Comment.objects.get(pk=request.POST['comment'])
+        comment = Comment.objects.get(pk=request.data['comment'])
     except Comment.DoesNotExist:
-        return JsonResponse(data={'ok':'NOT FOUND'})
+        return Response({'ok':'NOT FOUND'}, status=status.HTTP_404_NOT_FOUND)
     comment.accept_by_admin = (not comment.accept_by_admin)
     comment.save()
-    return JsonResponse(data={'ok':'ok'})
+    return Response({'ok':'ok'}, status=status.HTTP_206_PARTIAL_CONTENT)
 
 @login_required()
-@require_http_methods(["POST"])
+@api_view(['POST'])
 def apilikecomment(request):
+    logger.info(f'{request.user} send {request.method} request and like/remove dislike comment id={request.data["comment"]}')
     try:
-        comment = Comment.objects.get(pk=request.POST['comment'])
+        comment = Comment.objects.get(pk=request.data['comment'])
     except Comment.DoesNotExist:
-        return JsonResponse(data={'ok':'NOT FOUND'})
-
+        return Response({'ok':'NOT FOUND'}, status=status.HTTP_404_NOT_FOUND)
     try:
         like = Comment_rating.objects.get(comment=comment, user=request.user)
     except Comment_rating.DoesNotExist:
         like = Comment_rating.objects.create(comment=comment, user=request.user, positive=True)
-        return JsonResponse(data={'ok':'like'})
+        return Response({'ok':'like'}, status=status.HTTP_201_CREATED)
     else:
         if like.positive == False:
             dislike = Comment_rating.objects.get(comment=comment, user=request.user)
-            dislike.delete()  
-            return JsonResponse(data={'ok':'removedislike'})
-    return JsonResponse(data={'ok':'nothing'})
+            dislike.delete()
+            return Response({'ok':'removedislike'}, status=status.HTTP_204_NO_CONTENT)
+    return Response({'ok':'nothing'}, status=status.HTTP_208_ALREADY_REPORTED)
 
 @login_required()
-@require_http_methods(["POST"])
+@api_view(['POST'])
 def apidislikecomment(request):
+    logger.info(f'{request.user} send {request.method} request and dislike/remove like comment id={request.data["comment"]}')
     try:
-        comment = Comment.objects.get(pk=request.POST['comment'])
+        comment = Comment.objects.get(pk=request.data['comment'])
     except Comment.DoesNotExist:
-        return JsonResponse(data={'ok':'NOT FOUND'})
-
+        return Response({'ok':'NOT FOUND'}, status=status.HTTP_404_NOT_FOUND)
     try:
         dislike = Comment_rating.objects.get(comment=comment, user=request.user)
     except Comment_rating.DoesNotExist:
         dislike = Comment_rating.objects.create(comment=comment, user=request.user, positive=False)
-        return JsonResponse(data={'ok':'dislike'})
+        return Response({'ok':'dislike'}, status=status.HTTP_201_CREATED)
     else:
         if dislike.positive == True:
             like = Comment_rating.objects.get(comment=comment, user=request.user)
             like.delete()
-            return JsonResponse(data={'ok':'removelike'})
-    return JsonResponse(data={'ok':'nothing'})
+            return Response({'ok':'removelike'}, status=status.HTTP_204_NO_CONTENT)
+    return Response({'ok':'nothing'}, status=status.HTTP_208_ALREADY_REPORTED)
 
-@require_http_methods(["POST"])
+@login_required()
+@api_view(['POST'])
 def add_tag(request):
-    tag = request.POST['tag']
-    # result = Tag.objects.filter(name__icontains=tag).only("pk", "name")
+    logger.info(f'return all tag similar to {request.data["tag"]}. The request method is {request.method}')
+    tag = request.data['tag']
     result = Tag.objects.filter(name__icontains=tag, accept_by_admin=True)
     return JsonResponse(data={'result': serializers.serialize("json" ,result)})
 
-@require_http_methods(["POST"])
+@api_view(['POST'])
 def check_username(request):
-    username = request.POST['username']
+    logger.info(f'check the username: {request.data["username"]} be unique. The request method is {request.method}')
+    username = request.data['username']
     try:
         User.validate_username_custom(username)
     except ValidationError:
@@ -164,18 +154,22 @@ def check_username(request):
             return JsonResponse(data={'ok': True})
         return JsonResponse(data={'ok': False})
 
-@require_http_methods(["POST"])
+@api_view(['POST'])
 def get_tag(request):
-    print('yesss')
-    id = request.POST.get('id')
+    logger.info(f'return all tags of post id={request.data.get("id")}. The request method is {request.method}.')
+    id = request.data.get('id')
     post = Post.objects.get(pk=id)
     tags = Post_tag.objects.values_list('id', 'tag__name').filter(post=post)
     return JsonResponse(data={'tags': list(tags)})
 
-@require_http_methods(["POST"])
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.clickjacking import xframe_options_exempt
+
+@xframe_options_exempt
+@csrf_exempt
+@api_view(['POST'])
 def get_iamge(request):
     print(request.FILES)
-    print(11111111111111111111111111111)
 
 @api_view(['GET', 'POST'])
 @renderer_classes([BrowsableAPIRenderer, AdminRenderer, JSONRenderer])
@@ -203,10 +197,6 @@ def categories(request):
     serialized_categories = CategorySerializer(result_page, many=True)
     return paginator.get_paginated_response(serialized_categories.data)
 
-
-# from django.contrib.auth.decorators import login_required 
-# from django.utils.decorators import method_decorator 
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 class CommentViewset(viewsets.ViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
@@ -263,3 +253,4 @@ class PostViewset(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     renderer_classes = [BrowsableAPIRenderer, AdminRenderer, JSONRenderer]
+

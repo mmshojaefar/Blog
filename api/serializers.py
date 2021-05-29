@@ -1,7 +1,6 @@
 # from api.views import categories
-from os import write
-
-from django.core.validators import slug_re
+# from os import write
+# from django.core.validators import slug_re
 from rest_framework import serializers
 from blog.models import Category, Comment, Post, Tag
 from datetime import datetime
@@ -55,16 +54,6 @@ class CommentSerializer(serializers.Serializer):
                 raise serializers.ValidationError("شما نمی توانید نظر فرد دیگری را تغییر دهید.")
         return new_user
 
-
-# {
-#         "id": 42,
-#         "text": "اووف",
-#         "accept_by_admin": false,
-#         "comment_send_time": "2021-05-26T20:00:13.036010+04:30",
-#         "post": 3,
-#         "user": "Mahdi",
-#         "comment_likes": []
-#     },
 
 class PostSerializer(serializers.ModelSerializer): 
     categories = serializers.StringRelatedField()

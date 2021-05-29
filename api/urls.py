@@ -15,11 +15,11 @@ urlpatterns = [
     path('posts/', include(post_router.urls)),
 
     path('likepost/', views.apilike, name='apilike'),
-    path('likecomment/', views.apilikecomment, name='apilikecomment'),
     path('dislikepost/', views.apidislike, name='apidislike'),
-    path('dislikecomment/', views.apidislikecomment, name='apidislikecomment'),
     path('acceptpost/', views.api_accept_post, name='api_accept_post'),
     path('acceptcomment/', views.api_accept_comment, name='api_accept_comment'),
+    path('likecomment/', views.apilikecomment, name='apilikecomment'),
+    path('dislikecomment/', views.apidislikecomment, name='apidislikecomment'),
     path('addtag/', views.add_tag, name='add_tag'),
     path('checkusername/', views.check_username, name='check_username'),
     path('gettag/', views.get_tag, name='get_tag'),

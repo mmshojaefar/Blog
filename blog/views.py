@@ -11,8 +11,12 @@ from django.contrib import messages
 from django.db.models import Q, Count
 from bs4 import BeautifulSoup
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 def get_most_comment_posts():
+    logger.info('get most comment posts')
     most_comment_posts = Post.objects.filter(accept_by_admin=True, show_post=True) \
                     .annotate(num_comments=Count('comment')) \
                     .order_by('-num_comments')
@@ -35,6 +39,7 @@ def index(request):
     Returns:
         [class HttpResponse]: It show the main page of blog by rendering index.html
     """
+    logger.info(f'load index page. search form:{"search" in request.GET}')
     form = SearchForm()
 
     # check search to determine show the main page or results
@@ -108,6 +113,7 @@ def popular(request):
     Returns:
         [class HttpResponse]: It show the main page of blog by rendering index.html
     """
+    logger.info('load popular page.')
     form = SearchForm()
     # get post with most likes in descending order.
     allposts = Post_rating.objects.filter(post__accept_by_admin=True, post__show_post=True)
@@ -138,6 +144,7 @@ def categorytree(request):
     Returns:
         [class HttpResponse]: It show the category tree by rendering categorytree.html
     """
+    logger.info('load category tree page.')
     categories = Category.objects.all()
     return render(request, 'blog/categorytree.html', context={'categories':categories, 'form':SearchForm()})
 
@@ -155,6 +162,7 @@ def showcategory(request, name):
         [class HttpResponse]: It shows the posts of geiven category by rendering showcategory.html.
                               If there is NOT any category with given name, it returns 404 not found.
     """
+    logger.info(f'load specified category({name}) page.')
     get_object_or_404(Category, name=name)
     posts = Post.objects.filter(categories__name=name, accept_by_admin=True, show_post=True).order_by('-post_send_time')
     return render(request, 'blog/showcategory.html', 
@@ -173,6 +181,7 @@ def alltags(request):
     Returns:
         [class HttpResponse]: It show all tags by rendering alltags.html
     """
+    logger.info('load all tags page.')
     tags = Tag.objects.filter(accept_by_admin=True).order_by('name')
     return render(request, 'blog/alltags.html', context={'tags':tags, 'form':SearchForm()})
 
@@ -190,6 +199,7 @@ def showtag(request, name):
         [class HttpResponse]: It shows the posts of geiven tag by rendering showtag.html.
                               If there is NOT any tag with given name, it returns 404 not found.
     """
+    logger.info(f'load specified tag({name}) page.')
     get_object_or_404(Tag, name=name)
     posts = Post.objects.filter(tags__name=name, accept_by_admin=True, show_post=True).order_by('-post_send_time')
     return render(request, 'blog/showtag.html', 
@@ -214,11 +224,11 @@ def newpost(request, username):
     Returns:
         [class HttpResponse]: It shows PostForm by rendering newpost.html
     """
-
     user = request.user
     if not user.username == username:
         return HttpResponseRedirect(reverse('newpost', kwargs={'username':request.user.username}))
 
+    logger.info(f'{request.user} want to create new post. request method is {request.method}')
     if request.POST:
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
@@ -262,8 +272,13 @@ def editpost(request, username, pk):
         [class HttpResponse]: If username is the owner of post with given pk, owner can edits the post of geiven pk 
         by rendering editpost.html
     """
+    logger.info(f'{request.user} want to edit post id={pk}. request method is {request.method}')
     user = request.user
+
+    post = get_object_or_404(Post, pk=pk)
     if not user.username == username:
+        raise Http404
+    if post.user != user:
         raise Http404
     if request.method=='GET':
         post = Post.objects.get(pk=pk)
@@ -321,7 +336,8 @@ def showpost(request, username, pk):
     Returns:
         [class HttpResponse]: If username is the owner of post with given pk, it shows the post of geiven pk 
         by rendering showpost.html
-    """    
+    """
+    logger.info(f'show post id={pk} to {request.user}')
     post = get_object_or_404(Post, pk=pk)
     can_accept =  request.user.groups.filter(name='مدیران').exists() or request.user.groups.filter(name='ویراستاران').exists()
     owner = (request.user == post.user)
@@ -357,4 +373,15 @@ def showpost(request, username, pk):
     return render(request ,'blog/showpost.html', context=context)
 
 def aboutus(request):
+    """
+    Summary:
+        Showing a html page that there is some information in it to know more about us!
+
+    Args:
+        request ([class HttpRequest]): It is an HttpRequest object which is typically named request. It contains metadata 
+                                       about the request
+
+    Returns:
+        [class HttpResponse]: It show some information about us by rendering aboutus.html
+    """
     return render(request, 'blog/aboutus.html')
