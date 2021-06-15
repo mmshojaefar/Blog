@@ -9,7 +9,7 @@ class Command(BaseCommand):
         In this command 4 groups of user will be created:
             Standard User, Writer User, Editor User, Admin User.
         Standard User: This user can leave comments, like and dislike posts and comments.
-        Writer User: In addition to the above permissions, This user can ddd post and edit and archive her/his posts.
+        Writer User: In addition to the above permissions, This user can add post and edit and archive her/his posts.
             (deactive showing post for others)
             Note: If someone archive her/his posts, NO ONE cant see the post until the post writer/editor/admin active
                   the showing post for others.
