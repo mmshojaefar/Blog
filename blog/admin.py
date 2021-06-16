@@ -1,5 +1,6 @@
 from django import forms
-from django.contrib import admin
+from django.contrib import admin, messages
+from django.utils.translation import ngettext
 from django.contrib.auth.models import Group
 from django.utils import timezone
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
@@ -10,13 +11,9 @@ from django.contrib.auth.password_validation import validate_password
 
 # Register your models here.
 
-admin.site.register(Tag)
-admin.site.register(Category)
-admin.site.register(Comment)
 admin.site.register(Comment_rating)
 admin.site.register(Post_rating)
 admin.site.register(Post_tag)
-admin.site.register(Post)
 
 class UserCreationForm(forms.ModelForm):
     '''
@@ -85,6 +82,92 @@ class UserAdmin(BaseUserAdmin, admin.ModelAdmin):
     ordering = ('username',)
     # filter_horizontal = ()
 
-
-# Now register the new UserAdmin...
 admin.site.register(User, UserAdmin)
+
+
+
+class TagAdmin(admin.ModelAdmin):
+    list_display = ('name', 'accept_by_admin')
+    actions = ['accepetـtag']
+    search_fields = ['name',]
+    list_filter = ('accept_by_admin',)
+
+    def accepetـtag(self, request, queryset):
+        updated = queryset.update(accept_by_admin=True)
+        self.message_user(request, ngettext(
+            '%d برچسب تایید شد.',
+            '%d برچسب تایید شدند.',
+            updated,
+        ) % updated, messages.SUCCESS)
+
+    accepetـtag.short_description = 'تایید تمام برچسب های انتخاب شده'
+
+admin.site.register(Tag, TagAdmin)
+
+
+
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'supercategory')
+    search_fields = ['name',]
+
+admin.site.register(Category, CategoryAdmin)
+
+
+
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('get_text', 'accept_by_admin', 'post', 'get_user')
+    actions = ['accepetـcomment']
+    search_fields = ['user__username']
+    list_filter = ('accept_by_admin',)
+    ordering = ['post__title']
+
+    def get_text(self, obj):
+        return str(obj.text)[:40] + (len(obj.text)>40)*'...'
+    get_text.short_description = 'نظر'
+
+    def get_user(self, obj):
+        return obj.user.username
+    get_user.short_description = 'کاربر'
+
+
+    def accepetـcomment(self, request, queryset):
+        updated = queryset.update(accept_by_admin=True)
+        self.message_user(request, ngettext(
+            '%d نظر تایید شد.',
+            '%d نظر تایید شدند.',
+            updated,
+        ) % updated, messages.SUCCESS)
+
+    accepetـcomment.short_description = 'تایید تمام نظر های انتخاب شده'
+
+admin.site.register(Comment, CommentAdmin)
+
+
+
+class PostAdmin(admin.ModelAdmin):
+    list_display = ('get_title', 'accept_by_admin', 'show_post', 'get_user', 'categories')
+    actions = ['accepetـpost']
+    search_fields = ['safe_text']
+    list_filter = ('accept_by_admin',)
+    ordering = ['post_send_time']
+
+    def get_title(self, obj):
+        return str(obj.title)[:40] + (len(obj.title)>40)*'...'
+    get_title.short_description = 'عنوان پست'
+
+    def get_user(self, obj):
+        return obj.user.username
+    get_user.short_description = 'کاربر'
+
+
+    def accepetـpost(self, request, queryset):
+        updated = queryset.update(accept_by_admin=True)
+        self.message_user(request, ngettext(
+            '%d پست تایید شد.',
+            '%d پست تایید شدند.',
+            updated,
+        ) % updated, messages.SUCCESS)
+
+    accepetـpost.short_description = 'تایید تمام پست های انتخاب شده'
+
+admin.site.register(Post, PostAdmin)

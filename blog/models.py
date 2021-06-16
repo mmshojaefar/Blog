@@ -118,6 +118,9 @@ class Post_tag(models.Model):
     post = models.ForeignKey('Post', on_delete=models.CASCADE)
     tag = models.ForeignKey('Tag', on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f'{self.post} : {self.tag}'
+
 class Post_rating(models.Model):
     class Meta:
         verbose_name = 'پسندیدن/نپسندیدن پست'
@@ -131,6 +134,12 @@ class Post_rating(models.Model):
     positive = models.BooleanField(
         verbose_name='پسندیدن؟'
     )
+
+    def __str__(self):
+        if self.positive:
+            return f'{self.user.username} ' + 'پسندید ' + 'پست ' + f'"{self.post}"'
+        else:
+            return f'{self.user.username} ' + 'نپسندید ' + 'پست ' + f'"{self.post}"'
 
 class Comment(models.Model):
     class Meta:
@@ -187,6 +196,12 @@ class Comment_rating(models.Model):
     positive = models.BooleanField(
         verbose_name='پسندیدن؟'
     )
+
+    def __str__(self):
+        if self.positive:
+            return f'{self.user.username} ' + 'پسندید ' + 'نظر ' + f'"{self.comment}"'
+        else:
+            return f'{self.user.username} ' + 'نپسندید ' + 'نظر ' + f'"{self.comment}"'
 
 class CustomUserManager(BaseUserManager):
     '''
