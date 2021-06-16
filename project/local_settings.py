@@ -160,20 +160,17 @@ MEDIA_ROOT = '/home/mahdi/Desktop/Blog/media'
 
 AUTH_USER_MODEL = 'blog.user'
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-# EMAIL_PORT = 25
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_PORT = 587
-# EMAIL_HOST_USER = '<your gmail>'
-# EMAIL_HOST_PASSWORD = '<your password>'
-# EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 'YOUR PORT'
+EMAIL_HOST_USER = 'YOUR EMAIL'
+EMAIL_HOST_PASSWORD = 'YOUR PASSWORD'
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'Blog Website <blog@gmail.com>'
 
-# LOGIN_REDIRECT_URL = '/accounts/profile/'
 
-ADMINS = [('Mohammad Mahdi', 'mamasho123@gmail.com')]
+ADMINS = [('YOUR ADMIN', 'YOUR ADMIN EMAIL')]
 
 LOGGING = {
     'version': 1,
