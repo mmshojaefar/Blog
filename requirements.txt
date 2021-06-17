@@ -5,3 +5,5 @@ djangorestframework
 psycopg2
 Pillow
 beautifulsoup4
+celery
+future

@@ -3,12 +3,15 @@ from blog.models import Post, User
 from django.shortcuts import render, redirect, HttpResponseRedirect, reverse
 from django.shortcuts import get_object_or_404
 from blog.views import get_most_comment_posts
-from .forms import settingsForm
+from .forms import settingsForm, PasswordResetForm
 from blog.forms import UserForm
 from django.contrib import messages
 from django.utils import timezone
 from django.contrib.auth.models import Group
+from django.contrib.auth import views as auth_views
+from django.urls import reverse_lazy
 import logging
+
 
 logger = logging.getLogger(__name__)
     
@@ -97,3 +100,8 @@ def register(request):
             return render(request, 'accounts/register.html', context={'form':form})
     form = UserForm()
     return render(request, 'accounts/register.html', context={'form':form})
+
+class MyPasswordResetView(auth_views.PasswordResetView):
+    template_name = 'registration/password_reset_form.html'
+    success_url = reverse_lazy('password_reset_done')
+    form_class = PasswordResetForm
