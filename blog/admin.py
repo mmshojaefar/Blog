@@ -149,7 +149,7 @@ class PostAdmin(admin.ModelAdmin):
     actions = ['accepetـpost']
     search_fields = ['safe_text']
     list_filter = ('accept_by_admin',)
-    ordering = ['post_send_time']
+    ordering = ['-post_send_time']
 
     def get_title(self, obj):
         return str(obj.title)[:40] + (len(obj.title)>40)*'...'

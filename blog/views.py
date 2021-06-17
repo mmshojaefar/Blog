@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, time
 from django.shortcuts import redirect, render, HttpResponseRedirect, reverse, Http404
 from blog.forms import PostForm, UserForm, SearchForm
 from blog.models import Post_rating, Comment_rating, Post, Comment, Tag, User, Category, Post_tag
@@ -10,6 +10,8 @@ from django.contrib.postgres.search import TrigramSimilarity
 from django.contrib import messages
 from django.db.models import Q, Count
 from bs4 import BeautifulSoup
+from blog.tasks import create_post
+from base64 import encodebytes
 import json
 import logging
 
@@ -232,21 +234,40 @@ def newpost(request, username):
     if request.POST:
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
-            post = form.save(commit=False)
-            tags = request.POST.getlist('tags')
-            post.post_send_time = timezone.now()
-            post.user = user
-            soup = BeautifulSoup(post.text, features="html.parser")
-            post.safe_text = soup.get_text()
-            post.save()
-            for tag in set(tags):
-                selected_tag, _ = Tag.objects.get_or_create(name=tag)
-                _, _ = Post_tag.objects.get_or_create(tag=selected_tag, post=post)
-            return HttpResponseRedirect(reverse('showpost', kwargs={'username':username, 'pk':post.pk}))
+            if request.POST['scheduledMessage']:
+                tags = request.POST.getlist('tags')
+                scheduledMessage = request.POST.getlist('scheduledMessage')
+                scheduled_post = timezone.make_aware(datetime.strptime(' '.join(scheduledMessage), '%Y-%m-%d %H:%M'))
+                if scheduled_post < timezone.now():
+                    eta = timezone.now() + timezone.timedelta(minutes=1)
+                else:
+                    eta = scheduled_post
+                create_post.apply_async((request.POST, 
+                                         {
+                                            'image':encodebytes(request.FILES['image'].read()).decode('utf-8'), 
+                                            'name': str(request.FILES['image'])
+                                         },
+                                         request.user.username, 
+                                         tags),
+                                         eta =  eta)
+                return HttpResponseRedirect(reverse('profile',))
+            else:
+                post = form.save(commit=False)
+                tags = request.POST.getlist('tags')
+                post.post_send_time = timezone.now()
+                post.user = user
+                soup = BeautifulSoup(post.text, features="html.parser")
+                post.safe_text = soup.get_text()
+                post.save()
+                for tag in set(tags):
+                    selected_tag, _ = Tag.objects.get_or_create(name=tag)
+                    _, _ = Post_tag.objects.get_or_create(tag=selected_tag, post=post)
+                return HttpResponseRedirect(reverse('showpost', kwargs={'username':username, 'pk':post.pk}))
         else:
-            form = PostForm(request.POST)
+            form = PostForm(request.POST, request.FILES)
     else:
         form = PostForm()
+    form = PostForm()
     return render(request, 'blog/newpost.html', context={'postForm':form, 'form':SearchForm()})
 
 @permission_required('blog.change_post')
