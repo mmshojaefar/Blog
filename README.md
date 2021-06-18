@@ -13,6 +13,7 @@ Of course there are many features that will be explain below in details.
 - Add tags and categories to posts.
 - Like and dislike posts and comments.
 - Edit posts.
+- Schedule a post.
 - Search in posts text.
 - Advanced search in post text,title, tags and writers.
 - Change password, user data and reset password if register with valid email.
